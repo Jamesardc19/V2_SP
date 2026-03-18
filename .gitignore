@@ -1,0 +1,57 @@
+# Archive folder (old V1 files - not for GitHub)
+Archive_V1/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Environment
+.env
+.venv
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.qodo/
+
+# Model files (too large for GitHub)
+*.pkl
+*.joblib
+*.h5
+*.pt
+*.pth
+
+# Large data files
+*.csv
+*.npy
+*.npz
+
+# Trained models (too large - use Git LFS or external storage)
+Trained_Models_Improved_V2/*.joblib
+Trained_Models_Improved_V2/*.pkl
+
+# Preprocessed data (too large - can be regenerated)
+PREPROCESS_OUTPUT_IMPROVED_V2/*.npy
+PREPROCESS_OUTPUT_IMPROVED_V2/*.joblib
+
+# CatBoost logs
+catboost_info/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.log
+*.bak
