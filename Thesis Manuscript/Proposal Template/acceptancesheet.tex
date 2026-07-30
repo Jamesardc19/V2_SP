@@ -1,0 +1,134 @@
+%Acceptance Sheet Template (UP Manila CompSci)
+%use \input{acceptancesheet.tex} in main file
+%define title and other parameters using
+% \defsptitle
+% \defadviserblank
+% \defadviser
+% \defunitheadblank
+% \defunithead
+% \defchairblank
+% \defchair
+% \defdean
+% \defdeanblank
+% \defpanelone ... \defpanelseven
+% in preamble of main file
+%use \acceptancesheet to create acceptance sheet at wanted location
+
+%variables
+%\usepackage{setspace}
+%\usepackage[top=1in, left=1.5in, right=1in, bottom=1in]{geometry}
+
+%\newcommand{\defsptitle}[1]{\def \sptitle {#1}}
+
+%\newcommand{\defauthor}[1]{\def \authorname {#1 }}
+
+\newcommand{\defadviserblank}[1]{\def \adviserblank {#1}} %Define the size of the blank for the adviser
+\newcommand{\defadviser}[1]{\def \adviser {#1}} %Adviser Name
+
+\newcommand{\defunitheadblank}[1]{\def \unitheadblank {#1}} %Define the size of the blank for the unithead
+\newcommand{\defunithead}[1]{\def \unithead {#1}} %Unit Head Name
+
+\newcommand{\defchairblank}[1]{\def \chairblank {#1}} %Define the size of the blank for the Dep Chair
+\newcommand{\defchair}[1]{\def \chair {#1}} %Unit Head Name
+
+\newcommand{\defdeanblank}[1]{\def \deanblank {#1}} %Define the size of the blank for the dean
+\newcommand{\defdean}[1]{\def \dean {#1}} %Dean Name
+
+%Panel Members
+
+\newcommand{\defpanelone}[1]{\def \panelone {#1}}
+\newcommand{\defpaneltwo}[1]{\def \paneltwo {#1}}
+\newcommand{\defpanelthree}[1]{\def \panelthree {#1}}
+\newcommand{\defpanelfour}[1]{\def \panelfour {#1}}
+\newcommand{\defpanelfive}[1]{\def \panelfive {#1}}
+\newcommand{\defpanelsix}[1]{\def \panelsix {#1}}
+
+\newcommand{\acceptancesheet}{
+\newpage
+		\singlespacing
+		\begin{center}
+			\textbf{APPROVAL SHEET}
+		\end{center}
+		
+		\hspace{4em} The special problem entitled ``\textit{\MyTitle}''$\;$prepared and submitted by \MyAuthor$\;$in partial fulfillment of the requirements for the degree of Bachelor of Science in Computer Science is hereby accepted.
+		\vspace{33pt}	
+			\begin{flushright}
+						%\makebox[0.35\textwidth]{\underline{\hspace{\adviserblank}}}\\	
+						\makebox[0.35\textwidth]{\underline{\textbf{\adviser}}}\\
+						\makebox[0.35\textwidth]{Adviser}\\
+			\end{flushright}
+		\vspace{22pt}
+			
+			\begin{flushleft}
+			%\textbf{EXAMINERS:}\\
+			%\makebox[0.5\textwidth]{}
+			%\makebox[0.23\textwidth]{\textbf{Approved}}
+			%\makebox[0.23\textwidth]{\textbf{Disapproved}}\\[22pt]
+			
+			%Panel 1
+			%\makebox[0.5\textwidth][l]{\hspace{0.3cm}1. \panelone}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}\\
+			%Panel 2
+			%\makebox[0.5\textwidth][l]{\hspace{0.3cm}2. \paneltwo}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}\\
+			%Panel 3
+			%\makebox[0.5\textwidth][l]{\hspace{0.3cm}3. \panelthree}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}\\
+			%Panel 4
+			%\makebox[0.5\textwidth][l]{\hspace{0.3cm}4. \panelfour}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}\\
+			%Panel 5
+			%\makebox[0.5\textwidth][l]{\hspace{0.3cm}5. \panelfive}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}\\
+			%Panel 6
+			%\makebox[0.5\textwidth][l]{\hspace{0.3cm}6. \panelsix}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}
+			%\makebox[0.23\textwidth]{\underline{\hspace{2.5cm}}}\\[33pt]
+					
+			\hspace{2em} Accepted as partial fulfillment of the requirements for the degree of Bachelor of Science in Computer Science.\\[44pt]
+			
+			%\makebox[0.48\textwidth]{\underline{\hspace{\unitheadblank}}}
+			%\makebox[0.48\textwidth]{\underline{\hspace{\chairblank}}}\\
+			
+			%\makebox[0.48\textwidth]{\small \textbf{\unithead}}
+			%\makebox[0.48\textwidth]{\small \textbf{\chair}}\\		
+
+			%\makebox[0.48\textwidth]{Unit Head}
+			%\makebox[0.48\textwidth]{Chair}\\
+			
+			%\makebox[0.48\textwidth]{Mathematical and Computing Sciences Unit}
+			%\makebox[0.48\textwidth]{Department of Physical Sciences}\\
+			
+			%\makebox[0.48\textwidth]{Department of Physical Sciences}
+			%\makebox[0.48\textwidth]{and Mathematics}
+			
+			%\makebox[0.48\textwidth]{and Mathematics}
+			%\makebox[0.48\textwidth]{}\\[33pt]
+			
+			%\makebox[\textwidth]{\underline{\hspace{\deanblank}}}
+			%\makebox[\textwidth]{\textbf{\dean}}
+			%\makebox[\textwidth]{Dean}
+			%\makebox[\textwidth]{College of Arts and Sciences}
+			
+			\end{flushleft}
+
+			\vspace{33pt}	
+			\begin{flushright}						
+						\makebox[0.4\textwidth]{\underline{\textbf{\chair}}}\\
+						\makebox[0.4\textwidth]{Chair}\\
+						\makebox[0.5\textwidth]{Department of Physical Sciences and Mathematics}\\
+			\end{flushright}
+
+			\vspace{33pt}	
+			\begin{flushleft}						
+						\makebox[0.52\textwidth]{\underline{\textbf{\dean}}}\\
+						\makebox[0.52\textwidth]{Dean}\\
+						\makebox[0.52\textwidth]{College of Arts and Sciences}\\
+			\end{flushleft}
+		\vspace{22pt}
+}

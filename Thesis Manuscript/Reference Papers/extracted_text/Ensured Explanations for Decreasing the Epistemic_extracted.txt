@@ -1,0 +1,1011 @@
+
+--- Page 1 ---
+Ensured: Explanations for Decreasing the Epistemic
+Uncertainty in Predictions
+Helena L ¨ofstr ¨oma,, Tuwe L ¨ofstr ¨oma, Johan Hallberg Szabadvarya
+aJ¨ onk¨ oping AI Lab, Department of Computing, J¨ onk¨ oping University, J¨ onk¨ oping, Sweden
+Abstract
+This paper addresses a significant gap in explainable AI: the necessity of interpret-
+ing epistemic uncertainty in model explanations. Although current methods mainly
+focus on explaining predictions, with some including uncertainty, they fail to provide
+guidance on how to reduce the inherent uncertainty in these predictions. To over-
+come this challenge, we introduce new types of explanations that specifically target
+epistemic uncertainty. These include ensured explanations , which highlight feature
+modifications that can reduce uncertainty, and categorisation of uncertain explanations
+counter-potential ,semi-potential , and super-potential which explore alternative sce-
+narios. Our work emphasises that epistemic uncertainty adds a crucial dimension to
+explanation quality, demanding evaluation based not only on prediction probability but
+also on uncertainty reduction. We introduce a new metric, ensured ranking , designed to
+help users identify the most reliable explanations by balancing trade-o ffs between un-
+certainty, probability, and competing alternative explanations. Furthermore, we extend
+theCalibrated Explanations method, incorporating tools that visualise how changes
+in feature values impact epistemic uncertainty. This enhancement provides deeper in-
+sights into model behaviour, promoting increased interpretability and appropriate trust
+in scenarios involving uncertain predictions.
+Keywords: Uncertainty Estimation, Epistemic Uncertainty, Ensured Explanations,
+Venn Abers, Conformal Predictive Systems, Explainable AI
+Email address: helena.lofstrom@ju.se (Helena L ¨ofstr ¨om)
+Preprint submitted to Elsevier October 10, 2024arXiv:2410.05479v1  [cs.AI]  7 Oct 2024
+--- Page 2 ---
+1. Introduction
+Decisions in critical contexts, such as criminal justice [1] or medicine [2], require a
+well-founded basis for decision-making. Today, this is often achieved by incorporating
+Artificial Intelligence (AI) using Machine Learning (ML) models trained on extensive
+historical data. Although highly accurate, these models are not inherently objective
+or infallible. They are a result of identified patterns in the input data and, therefore,
+dependent on both the input and the algorithm itself.
+The output of ML models often consists of a single output from the trained model,
+indicating, e.g., a likely house price or the probable diagnosis of a patient. To under-
+stand, critically inspect, and get support for decisions, it is essential that those a ffected
+can understand the reasons behind the output. In other words, human users require and
+have the right to demand explanations behind the decisions of these models. Several
+countries have also highlighted the critical aspects of transparency and explanations in
+such a system [3, 4].
+Explanations can take various forms when presented to users [5], such as based on
+examples similar to the instance to be explained [6], contributions of features [7, 8, 9],
+pixels in images [10], or words in texts [11]. The explanations are generated to answer
+the questions of why, how, and what if [12], to help the user identify when to trust
+and not trust the model, and to provide the possibilities to make high-quality decisions
+[13, 14, 15, 16].
+Explanations can also be of di fferent types , depending on what they are intended
+to explain [17, 18]. Factual explanations try to answer the question of why the model
+predicts a certain outcome, whereas counter-factual explanations reveal the minimal
+changes to the feature values which cause a change in the prediction [19, 20, 21],
+e.g., what to change to get a loan when the model recommends a reject. Other types
+of explanations include semi-factuals [22], representing maximal changes that can be
+made without changing prediction, and super-factuals [23], representing changes that
+increase belief in the predicted outcome. Counter–, semi-, and super-factuals all ex-
+plore alternative outcomes when changing feature values in the data. The common
+denominator of the explanation types is their focus on explaining the outcome of the
+2
+--- Page 3 ---
+prediction. In other words, existing explanation types present how (changes to) feature
+values a ffect the prediction or outcome.
+However, recently [24, 25, 26, 27, 28, 29, 30, 31] uncertainty has been highlighted
+as critical in explaining predictions. A model may present a prediction with a probabil-
+ity of 85%, and simultaneously be highly uncertain that this is the actual value. Only
+presenting the probability to the user can in such a situation give the impression of a
+trustworthy prediction, which may have caused another decision if the user knew about
+the level of uncertainty. [32] showed that users rank the prediction uncertainty as more
+important than the actual outcome in an AI model, and [33] highlights user uncertainty
+as one of four (information overload, time pressure, and complexity) stress factors that
+affect decision quality, while [25, 34] point to uncertainty as a form of transparency.
+Due to this change in focus, new explanation methods have recently been developed
+that reveal the uncertainty in the predictions. In SkiNet [35] and [36] the authors obtain
+Bayesian versions of LIME and KernelSHAP, called BayesLIME and BayesSHAP that
+include uncertainty in the form of credible intervals. In both ConformaSight [37] and
+Calibrated Explanations [27] the authors use the Conformal Prediction framework to
+gain statistically guaranteed confidence sets to estimate the level of uncertainty.
+Although showing the uncertainty in the predictions, today’s explanations still fo-
+cus on the prediction probability and outcome.
+With uncertainty, predictions achieve an additional dimension to explain; possi-
+ble increase and decrease of uncertainty. There is no explanation type to catch these
+situations. Existing explanation methods could be said to explain a factual situation
+of the included uncertainty, in the sense that they show feature values that cause the
+actual level of uncertainty. Left to explain is, similar to the counterfactual situation,
+when users want to understand what would cause a move from the current level of
+uncertainty, i.e., to get ensured explanations.
+Diversity (to generate several distinct explanations) and proximity (closeness to the
+original datapoint) are two essential characteristics for alternative explanations [21, 19,
+38, 39] which are also highly relevant to ensured explanations. With the possibility
+to generate a large amount of explanations, it is essential to be able to identify the
+most e fficient ones. This paper explores several promising metrics and methods to
+3
+--- Page 4 ---
+identify ensured explanations, to help identify alternative explanations with the lowest
+uncertainty and the highest probability.
+To summarise, the main contributions of this paper are:
+•The presentation of a new type of explanation, ensured explanations , which tar-
+gets the question of reducing the epistemic uncertainty in explanations for AI
+models.
+•A new metric, ensured ranking metric to help users identify the most reliable ex-
+planations and balance the trade-o ffs between uncertainty, probability, and com-
+peting alternative explanations.
+•An extension of the explanation method Calibrated Explanations with tools to
+visualise how changes in feature values impact the balance between epistemic
+uncertainty and probability1, including example plots pointing to the usefulness
+ofensured explanations .
+The paper is organised as follows: The next Section reviews fundamental concepts
+related to explanation methods and calibration. The main contributions are introduced
+in Section 3, defining ensured explanations and the implementation in Calibrated Ex-
+planations. In Sections 5 and 4, the setup and results of the experiments involving the
+suggested metric and methods are presented. The paper ends with a discussion and
+conclusions.
+2. Background
+2.1. Post-Hoc Explanation Methods
+Within eXplainable Artificial Intelligence (XAI), there are generally two approaches:
+either developing models that are inherently interpretable and transparent or employing
+post-hoc methods to explain black box models. In post-hoc explanation techniques,
+simplified and interpretable models are constructed to uncover the relationships be-
+tween feature values and the model’s predictions. The explanations are either local,
+1Source code and documentation of the explanation type is found at Github: Calibrated Explanations.
+4
+--- Page 5 ---
+focusing on explaining a single prediction, or global, focusing on explaining the be-
+haviour of an entire model [17, 18].
+There are two distinct strategies for explaining model predictions (see Figure 1),
+factual explanations , where a feature value directly influences the prediction outcome,
+andalternative explanations (such as, e.g., counter-factuals), exploring the potential
+impact on predictions when altering the values of a feature [19, 20, 21]. Importantly,
+alternative explanations are intrinsically local. They are particularly human-friendly,
+mirroring how human reasoning operates [17].
+Explanations of Outcome
+Explain as it is
+FactualExplore Alternatives
+Change Prediction
+Counter-FactualSame Prediction
+Semi-Factual Super-Factual
+Figure 1: The structure of post-hoc explanations when considering model prediction.
+When considering probabilistic explanations2, there exist di fferent types (also called
+modal narratives [23]) of explanations focusing on the prediction probability:
+•Factual : The explanation is factual, as it explains the current situation, showing
+how each feature value directly influences the prediction outcome [40].
+•Counter-factual : In a counter-factual explanation, the minimal modifications
+that cause a change in prediction of features are highlighted, e.g. going from a
+probability above 0 .5 for the actual prediction to a probability below 0 .5, effec-
+tively predicting a di fferent outcome [19, 20, 21].
+•Super-factual : The super-factual explanation focuses on the constraining fac-
+tors to prevent the counter-factual explanations could happen [41, 23]. In other
+2We are assuming a binary scenario, focusing on the probability for the predicted class.
+5
+--- Page 6 ---
+words, super-factual explanations help identify changes that increase the proba-
+bility of the predicted class.
+•Semi-factual : The semi-factual explanation shows the maximum feature modifi-
+cation that does not cause a change of the prediction, i.e. the possible maximum
+feature changes that do not alter the prediction [42, 43, 22, 44].
+Factual explanations are directly applicable to regression as well, whereas counter-
+factual, super-factual and semi-factual do not have any clear-cut definition in a regres-
+sion context. Assuming higher predictions are better, a counter-factual could be defined
+as any explanation3resulting in a lower prediction, and a super-factual would then be
+any explanation resulting in a higher prediction. If lower is better, the reasoning can
+simply be reversed, with counter-factuals for higher predictions and super-factuals for
+lower. Semi-factuals would not fill any meaningful use in this scenario. However,
+taking this reasoning one step further, we can assume a threshold (similar to 0.5 in
+a probabilistic setting) and define counter-factuals, super-factuals, and semi-factuals
+analogously as for probabilities above. Semi-factuals would represent any explanation
+indicating outcomes between the original prediction and the threshold, counter-factuals
+would represent any explanation beyond the threshold and super-factuals would repre-
+sent any explanation above (or below) the prediction moving further away from the
+threshold.
+In the remainder of this paper, the main focus will be on explaining probabilistic
+predictions, even if standard regression may be touched upon occasionally.
+2.2. Calibration and Uncertainty Quantification
+Making decisions based on accurate information is essential for e ffective decision-
+making, emphasising the requirements of well-calibrated predictive models with guar-
+antees.
+Conformal Prediction (CP) [45] is a model-agnostic framework that generates pre-
+diction regions with guaranteed coverage. Errors occur when the true value lies out-
+3An explanation in this context is pointing at an alternative feature value that result in an alternative
+prediction.
+6
+--- Page 7 ---
+side these regions. Somewhat simplified, conformal predictors remain valid under the
+assumption of exchangeability, maintaining a long-term error rate of ϵ. Conformal re-
+gression (CR) o ffers prediction intervals with user-specified coverage guarantees, while
+conformal predictive systems (CPS) [46] generate a cumulative conformal predictive
+distribution (CPD). These CPDs allow querying for intervals with guaranteed cover-
+age, similar to CR but with more flexibility. Intervals are determined by percentiles in
+the distribution; for example, a symmetric interval with 90% coverage can be obtained
+using the 5thand 95thpercentiles. In addition, CPDs can be queried to determine the
+probability that the actual value falls below a user-defined threshold, which corresponds
+to the percentile of that threshold within the distribution.
+In classification, the emphasis typically shifts to ensuring that the probability esti-
+mates provided by the classifier are well-calibrated, defined as follows:
+P(c|Pc)≈Pc, (1)
+Pcdenotes the probability estimate for the class label c. A well-calibrated model
+ensures that the predicted probabilities align closely with the actual observed predic-
+tions. For example, when a model assigns a probability estimate of 0 .9 to an instance,
+the true accuracy of all such instances should be approximately 90%.
+It is widely recognised that many predictive models generate poorly calibrated
+probability estimates [47]. To correct this, an external calibration technique can be
+applied using a separate set of the labelled dataset, the calibration set , to revise the
+predicted probabilities and improve the calibration.
+Within the Conformal Prediction framework, Venn [48] and Venn-Abers (V A) [49]
+predictors are used to generate multiprobabilistic predictors as confidence-based prob-
+ability intervals. Venn prediction works by employing a Venn taxonomy, which groups
+calibration data to estimate probabilities. The probability estimate for a test instance
+is determined by the relative frequency of each class among the calibration instances
+within the same category (including the test instance). Designing an appropriate Venn
+taxonomy can be complex, which is where V A predictors o ffer an advantage.
+Venn-Abers Calibration automates taxonomy optimisation by leveraging isotonic
+regression, producing dynamic probability intervals for binary classification tasks. V A
+7
+--- Page 8 ---
+outputs one probability estimate for each of the possible class labels and one of the
+probabilities is a perfectly calibrated probability estimate. Since the instance must
+belong to one of these, the true probability must be either one or the other. Although
+the true class label is unknown, the width and placement of the interval provide valuable
+insights. A narrower interval implies greater confidence in the prediction, while a wider
+interval reflects more uncertainty. To make the probability estimate more practical,
+especially for the positive class, regularising the interval is a common approach used
+to get a single probability estimate.
+To construct a V A predictor for a test object xn+1, we define the training set as
+Z={z1,..., zn}, where n=l+q. Each instance zi=(xi,yi) includes an object xi
+(with feature set F) and its corresponding label yi. Typically, a separate calibration set
+is needed, which is why the training set is divided into a proper training set Zlwith l
+instances, and a calibration set Zq={z1,..., zq}4. A scoring classifier is then trained on
+Zlto calculate the scores sfor{x1,..., xq,xn+1}. The score sis derived as the positive
+class probability estimate from a classifier h. The steps of inductive V A prediction are
+as follows:
+1. Use{(s1,y1),..., (sq,yq),(sn+1,yn+1=0)}to derive the isotonic calibrator g0and
+use{(s1,y1),..., (sq,yq),(sn+1,yn+1=1)}to derive the isotonic calibrator g1.
+2. The probability interval for yn+1=1 is defined as [ g0(sn+1),g1(sn+1)] (hereafter
+referred to as [Plow,Phigh], representing the lower and upper bounds of the inter-
+val).
+3. The regularised probability estimate for yn+1=1, minimising the log loss [49],
+can be defined as:
+P=Phigh
+1−P low+Phigh(2)
+To summarise: V A provides a calibrated (regularised) probability estimate P, along
+with a probability interval defined by its lower and upper bounds, [ Plow,Phigh].
+Conformal Predictive Systems (CPS) generate Conformal Predictive Distribu-
+4For convenience, the calibration set is indexed 1 ,..., qrather than l+1,..., n, assuming random order-
+ing.
+8
+--- Page 9 ---
+tions (CPDs) for each test instance xn+1when working with numeric target domains,
+such as in regression. To construct a CPS, assume there is an underlying regression
+model htrained on the set Zl. Like other conformal predictors, CPS relies on noncon-
+formity scores α, which measure the level of strangeness of a data point. In contrast to
+conformal regression, where nonconformity typically is defined by the absolute error
+αi=|yi−h(xi)|, CPS uses signed errors, defined as αi=yi−h(xi). The prediction for
+the test instance xn+1is then represented by the following CPD:
+CPD (y)=i+τ
+q+1,ify∈ C(i),C(i+1),fori∈{0,...,q}
+i′−1+(i′′−i′+2)τ
+q+1,ify=C(i),fori∈{1,...,q}(3)
+where C(1),..., C(q)are obtained from the calibration scores α1,...,α q, sorted in in-
+creasing order:
+C(i)=h(xn+1)+αi (4)
+with C(0)=−∞andC(q+1)=∞. If a tie occurs, τis drawn from a uniform distribution
+U(0,1) to ensure that the P-values of the target values are uniformly distributed. Here,
+i′′refers to the largest index where y=C(i′′), and i′refers to the smallest index where
+y=C(i′).
+The following examples illustrate the diversity of cases that CPD can be applied to:
+•Obtaining a two-sided symmetric prediction interval [Pϵ]for a chosen signifi-
+cance level ϵ, can be done by [Pϵ]=[C⌊(ϵ/2)(q+1)⌋,C⌈(1−ϵ/2)(q+1)⌉]. Since the CPS
+has guaranteed coverage, the expected error of the obtained interval will be ϵin
+the long run.
+•Still using the significance level ϵ, lower-bounded ( ⌊Pϵ⌋) and upper-bounded
+(⌈Pϵ⌉) one-sided prediction interval can be obtained by ⌊Pϵ⌋=[C⌊ϵ(q+1)⌋,∞] and
+⌈Pϵ⌉=[−∞,C⌈(1−ϵ)(q+1)⌉]. The coverage guarantees still apply.
+•Similarly, a point prediction corresponding to the median P0.5of the distribution
+can be obtained by P0.5=(C⌈0.5(q+1)⌉+C⌊0.5(q+1)⌋)/2. The median prediction can
+be seen as a calibration of the underlying model’s prediction. Unless the model
+is biased, the median will tend to be very close to the prediction of the underlying
+model.
+9
+--- Page 10 ---
+•Asymmetric intervals are obviously also possible, assigning any arbitrary per-
+centiles as lower and upper bounds5.
+•For a specific threshold t, the distribution can return the estimated probability
+P(C≤t). Thus, it is possible to get the probability of the true target being below
+the threshold t.
+A CPS o ffers richer opportunities to define intervals and probabilities through query-
+ing the CPD compared to conformal regression. A particular strength is the ability to
+calibrate the underlying model. For example, if the underlying model is consistently
+overly optimistic, the median from the CPS will adjust for that and provide a calibrated
+prediction that is better adjusted to reality.
+2.3. Uncertainty Estimation in Explanations
+Uncertainty is an inherent aspect of all decisions and a key component of machine
+learning methodology. In machine learning, uncertainty can be found both in the data
+and in the model, resulting in predictions attached to a varying level of uncertainty.
+Estimates of these di fferent types of uncertainty can o ffer critical insights into both the
+reliability of the data, the model, and its predictions [50, 51]:
+•Aleatoric (statistical) uncertainty represents the noise inherent in the data. It
+affects the spread of probability distributions (for probabilistic outcomes) and
+predictions (for regression). This uncertainty is irreducible because it reflects
+limitations in the data generation process. Incorporating calibration ensures ac-
+curate aleatoric uncertainty.
+•Epistemic (systematic) uncertainty arises from the model’s lack of knowledge
+due to limited training data or insu fficient complexity. It a ffects the confidence
+of the model in its output when it encounters unfamiliar or out-of-distribution
+data. Unlike aleatoric uncertainty, epistemic uncertainty is reducible - it can be
+minimised by gathering more data, improving the model architecture, or refining
+features.
+5As this possibility is not referred to later in the paper, no specific notation is defined for this case.
+10
+--- Page 11 ---
+There are di fferent approaches to quantifying uncertainty in models. The possi-
+bilities of producing probability intervals in V A for each prediction can be used to
+estimate the model uncertainty. The width of the intervals can be translated into the
+level of uncertainty. Another approach is to use accuracy-rejection curves, which illus-
+trate the accuracy of a predictor based on the percentage of rejections and the variance
+to represent uncertainty [52].
+In [53], di fferent techniques for calibrating uncertainty information are compared
+and V A is identified as the preferred method for complementing predictions with a mea-
+sure of uncertainty. The authors point out the simplicity of the V A approach, making it
+preferable to the other calibration methods discussed in the study. Uncertainty is also
+addressed in [36], where the authors develop a new method based on Naive Bayes. The
+authors in [54] use Venn predictors to quantify the uncertainty of rule-based explana-
+tions and highlight uncertainty quantification for additive feature importance methods
+as an attractive focus for research.
+2.4. Calibrated Explanations
+Calibrated Explanations is a recently released local explanation method for classi-
+fication [27] and regression [55] designed to enhance both the interpretability of model
+predictions and the quantification of uncertainty. The method provides calibrated ex-
+planations for both predictions and feature importance by quantifying aleatoric and
+epistemic uncertainty.
+By providing estimates for both aleatoric and epistemic uncertainty, Calibrated Ex-
+planations o ffers a comprehensive understanding of predictions, both in terms of accu-
+racy and confidence. This is particularly valuable in high-stakes environments where
+model reliability and interpretability are essential, such as in healthcare, finance, and
+autonomous systems.
+Calibrated Explanations produce instance-based (local) explanations, and a fac-
+tual explanation is composed of a calibrated prediction from the underlying model
+accompanied by an uncertainty interval and a collection of factual feature rules , each
+composed of a feature weight with an uncertainty interval and a factual condition , cov-
+11
+--- Page 12 ---
+ering that feature’s instance value. It also enables exploring alternative explanations6
+to provide insights about how changes to one or several features a ffect the calibrated
+prediction and uncertainty interval. Alternative explanations only contain a collection
+ofalternative feature rules , each composed of a prediction estimate with an uncer-
+tainty interval and an alternative condition , covering alternative instance values for
+the feature. For classification, the explanation explains the calibrated probability esti-
+mate (and its level of uncertainty) for the positive class7. For regression, there are two
+alternative use cases:
+1. The standard regression explanation explains a calibrated estimate of the predic-
+tion from the regressor, with a confidence interval covering the true target with a
+user-assigned level of confidence.
+2. The thresholded explanation explains the calibrated probability estimate (and its
+level of uncertainty) for the calibrated estimate of the prediction being below a
+user-given threshold.
+Calibrated Explanations assume the existence of a predictive model h, trained using
+the proper training set Zl, outputting a numeric value when predicting an object h(xi).
+For classification, the model is a scoring classifier, producing probability estimates for
+the positive class. For regression, it is an ordinary regressor predicting the expected
+value.
+The core of Calibrated Explanations relies on a numeric estimate and a lower and
+an upper bound defining an uncertainty interval for the numeric estimate. As a conse-
+quence, the algorithm is agnostic to whether it is a classification or regression problem,
+as long as the numeric estimate and the lower and upper bound can be defined.
+6In the initial version of Calibrated Explanations, as well as in earlier papers [27, 55, 56, 57], alternative
+explanations were referred to as counterfactual explanations . As has been discussed above, this terminology
+is too simplistic and somewhat misleading. Consequently, from this point on, such explanations will be
+referred to as alternative explanations .
+7For multi-class explanations, it is instead the probability estimate (and its level of uncertainty) for the
+predicted class [57]. Whenever a reference is made to the positive class in the remainder of the paper, it
+assumes binary classification and should be exchanged with the predicted class if working with multi-class
+problems.
+12
+--- Page 13 ---
+For classification, the probability estimate of the positive class is calibrated using a
+V A calibrator [49], producing a lower and an upper bound for the calibrated probability
+estimate (using a regularised mean of these bounds as the numeric estimate). For re-
+gression, a CPS [58], producing a CPD, is used as a calibrator of the underlying model.
+For the first regression use case, explaining the prediction value, the numeric estimate
+is the median from the CPD, and the lower and upper bounds are represented by user-
+selected percentiles in the CPD, defining the interval with guaranteed coverage. For
+the second use case, explaining the probability of being below a user-given threshold,
+the percentile in the CPD representing the threshold position is used as a probability
+estimate (similar to classification) upon which a V A calibrator is applied.
+As this paper is focusing on alternative explanations, Algorithm 1 provides a de-
+scription of how alternative explanations are generated for a test object x8.
+Categorical features produce one feature rule per alternative category. Numeric
+features produce alternative features rules defining a higher (or lower) threshold than
+the instance value. As an example, if test object xhas feature value petal width =1.7,
+then two possible alternative feature rules could be petal width <1.6 and petal width
+≥1.8. The scope of which possible feature values above or below the thresholds that
+are covered is determined using a statistical sampling strategy described in more detail
+in the original classification [27] and regression [55] papers.
+One option that Calibrated Explanations allow is the possibility to combine al-
+ternative explanations and get a conjunctive (combination of features) and calibrated
+alternative explanation. Since only existing explanations are combined, the operation
+is fairly e fficient, having only to perturb the test instance based on the rules being com-
+bined and calibrate. The new explanation is composed as in Algorithm 1, with the two
+rules being combined into a conjunction. This is an e fficient way to explore alternatives
+even further but at the same time also creating a large number of additional alternative
+explanations to consider.
+8The index n+1 is omitted to reduce clutter.
+13
+--- Page 14 ---
+Algorithm 1 Calibrated Explanations for alternative explanations
+1:Input: Test object x, Calibrator
+2:Output: Alternative explanation of x, calibrated numeric estimate φwith uncer-
+tainty intervalh
+φlow,φhighi
+forx
+3:To get a calibrated prediction and explanation for a test object x, apply a calibrator
+to get a calibrated numeric estimate φand uncertainty intervalh
+φlow,φhighi
+. For
+classification, the numeric estimate and uncertainty interval are defined by V A,
+resulting in φ=Pandh
+φlow=Plow,φhigh=Phighi
+. For regression, the median P0.5
+is used as numeric estimate ( φ=P0.5), and the intervalh
+φlow,φhighi
+is defined using
+either a one-sided interval (usingh
+φlow,φhighi
+=⌊Pϵ⌋orh
+φlow,φhighi
+=⌈Pϵ⌉) or a
+two-sided interval (using e.g.h
+φlow,φhighi
+=[Pϵ]), as described above.
+4:foreach feature f∈F:do
+5: Changing the value of feature f, one at a time in a systematic way,
+producing slightly perturbed versions of object x, the calibrator can
+be used to estimate the prediction φfand uncertainty intervals
+h
+φlow f,φhigh fi
+.
+6: The feature importance for feature fis defined as the di fference
+between the calibrated prediction φ, achieved on the original object
+x, and the estimated (averaged) calibrated prediction φf, achieved
+on the perturbed versions of x.
+7: The uncertainty intervals for the feature importance are defined
+analogously by calculating the di fference between φand the
+uncertainty intervalsh
+φlow f,φhigh fi
+for the perturbed versions of x.
+8:end for
+9:return The alternative explanation of xcomposed of the collection of alternative
+feature rules composed of an alternative condition, defining the how it violates the
+instance value, and an alternative numeric estimate φfwith uncertainty interval
+h
+φlow f,φhigh fi
+. Furthermore, the calibrated numeric estimate φwith uncertainty
+intervalh
+φlow,φhighi
+is also returned for reference.
+14
+--- Page 15 ---
+3. Ensured Explanations - Conceptual Framework
+Some of the fundamental aspects when explaining the outcome of a model is to be
+able to answer the questions of whythe model has come to its conclusions and why not
+another outcome. When adding uncertainty to the explanations, new questions arise,
+such as how certain are you? . These question are answered in existing explanation
+methods that include uncertainty (see, e.g. [25, 36, 27]). However, none of these
+approaches addresses the question of how to reduce the uncertainty in a prediction,
+how to get more certain or for short how to ensure?
+Most existing explanation frameworks operate in the probability space (classifica-
+tion) or the numeric prediction space (regression) and are evaluated in that dimension.
+However, when uncertainty is introduced, another dimension needs to be considered.
+This raises the question of how to incorporate uncertainty when ranking explanations
+or feature weights. In the following, uncertainty Uis defined as the di fference between
+the upper and lower bounds ( U=φhigh−φlow). First, we will examine the general case
+of predictions and uncertainty, before we consider how this impacts explanations.
+3.1. Probabilities and Uncertainty
+Probabilistic predictions refer to classification but also to regression with thresh-
+olds (P(y<t)). Probability ˆPis assumed to refer to the predicted class (which for
+thresholded regression is ˆP=max(P(y<t),P(y≥t))) if nothing else is mentioned.
+When considering predictions and uncertainty in probability space, both the probabil-
+ity and uncertainty is bounded to [0 ,1]. In a simplistic view of traditional ML, where
+uncertainty is not considered, a construed uncertainty interval would consist of a lower
+and upper bound equal to the prediction, resulting in zero uncertainty. When adding an
+uncertainty interval for the predicted probability, the maximum uncertainty covers the
+entire probability range, resulting in an uncertainty of 1. Since the probability is the
+mean (or regularised mean) of the lower and upper bound, maximum uncertainty would
+result in a probability of 0 .5. Furthermore, when both the lower and upper bound are
+either below or above 0 .5, the prediction is certain to be the positive class (if above 0 .5)
+or the negative class (if below 0 .5). An interval covering e.g. [0 ,0.5] would have an
+15
+--- Page 16 ---
+(a) Probability as mean of uncertainty bounds
+ (b) Probability as regularised mean of uncertainty bounds
+Figure 2: Probabilistic outcome with uncertainty
+uncertainty of 0 .5 and a mean probability of 0 .25. However, when the interval covers
+0.5, it is not clear which class to predict, since both classes are possible.
+Figure 2a shows the possible outcomes when the mean of the intervals represents
+the probability. The dark green area represents all probability intervals resulting in
+the predicted class, the dark red area represents all probability intervals resulting in
+changing prediction and the light-coloured area in the middle represents uncertain pre-
+dictions. If only the probability is taken into account, the light-green area would be the
+predicted class and the light-red area would change prediction. No explanation can fall
+into the white areas.
+Figure 2b shows the same plot for probabilities calculated as the regularised mean
+(see Equation 2). Since the regularisation pushes all probabilities towards 0 .5, the
+shape becomes somewhat skewed.
+3.2. Explanations and Uncertainty
+When considering explanations, we notice that there is some common ground be-
+tween explanations of probabilistic predictions and numeric predictions (regression).
+When discussing the common ground between explanations of both numeric and prob-
+abilistic predictions, Explanations of outcome will be used. Figure 3 shows the com-
+mon ground between all outputs when adding an uncertainty component. The basic
+form of explanations can be divided into factual explanations, providing insights into
+why an instance is predicted as it is, and exploring alternative explanations, providing
+16
+--- Page 17 ---
+insights into what would have happened with alternative inputs. In both these forms of
+explanations, an uncertainty component can be added, which Calibrated Explanations
+provide an example of.
+Explanations of outcome and uncertainty
+Explain as it is
+Factual uncertaintyExplore alternatives
+Decreased uncertainty
+Ensured explanationsIncreased uncertainty
+Unsured explanations
+Figure 3: The common structure of post-hoc explanations when adding uncertainty information to model
+predictions.
+For factual explanations, there is no need to delve deeper, since it provides an expla-
+nation of the prediction. Thus, the predictions of individual instances can be mapped
+to the framework described in Section 3.1 for probabilistic explanations.
+The existing explanation types (such as counter-, semi-, and super-factuals) only
+handle the prediction outcome. For example, if a doctor is trying to decide if a patient
+has cancer or not and uses an AI model, it is critical that the doctor can get an answer
+if and how it is possible to decrease the uncertainty. In other words, a new type of
+explanation is needed that outlines how to achieve predictions with a higher level of
+certainty. When looking solely at possible changes in uncertainty, the factual explana-
+tion (see Figure 3) covers an explanation answering the question of the reasons behind
+the existing outcome (as it is) including the factual uncertainty . Left to explore are
+explanations that include decreasement ( Ensured ) and increasement ( Unsured ) of un-
+certainty. With uncertainty, an explanation can not only change toward either a higher
+or lower outcome. An explanation can also move towards ensured (lower uncertainty)
+orunsured (higher uncertainty), where ensured explanations are generally desirable.
+While explanation types o ffer a clear understanding of the movements along the out-
+17
+--- Page 18 ---
+come axis, they do not regard how to change the uncertainty.
+3.3. Exploring Alternative Explanations in Probability Space
+When considering the exploration of alternative explanations, probabilistic expla-
+nations open up some further considerations, whereas numeric predictions do not. The
+reasons are the same as given in Section 3.1. When taking the uncertainty into account
+for probabilistic explanations, Figure 2 provides a key to a categorisation of possible
+explanations. In Figure 4, the di fferent possible kinds of explanations are shown.
+Exploration of alternatives for probability and uncertainty
+Change prediction
+Counter-factual Uncertain
+Counter-potential Semi-potential Super-potentialSame Prediction
+Semi-factual Super-factual
+Figure 4: Exploration of alternatives for probabilities and uncertainty.
+Figure 5 provides an example where the factual probability of the prediction is
+0.6, illustrating counter-factual (red), counter-potential (light red), semi-potential (light
+yellow), semi-factual (yellow), super-potential (light green) and super-factual (green)
+alternatives.
+Clearly, all uncertain alternative explanations will be both counter-poten-tial and
+semi-potential, as the definition of an uncertain alternative explanation is that the un-
+certainty interval covers 0 .5. Super-potential explanations only exist when the lower
+bound is lower than 0 .5 and the regularised mean is above the the predicted probabil-
+ity. This means that it is only possible for predictions with a probability lower than
+0.75 (or≈0.67 for regularised mean). For a predicted probability of exactly 0 .5, the
+concepts of counter-, semi-, and super-explanations lose their meaning. We choose the
+term potential for uncertain explanations, as it highlights the fact that they are more
+18
+--- Page 19 ---
+(a) Probability as mean of uncertainty bounds
+ (b) Probability as regularised mean of uncertainty bounds
+Figure 5: Probabilistic outcome with uncertainty with counter-, semi- and super-potential explanations
+likely to be e.g. a counter-explanation (if its regularised mean is indicating a changed
+prediction), but they may potentially be something else.
+3.4. Ranking Alternative Explanations
+The exploration of alternatives may result in a substantial number of generated
+explanations, especially if conjunctive rules are explored. Thus, having e fficient ways
+of filtering out the most promising alternative explanations, taking both aleatoric and
+epistemic uncertainty into account, is necessary. Or in other words, we need e fficient
+ways of exploring ensured explanations.
+There are two complementary approaches to ensured explanations. The first ap-
+proach relies on an explicit filtering using the categories in Figure 4. Using this ap-
+proach makes it possible to get e.g. all counter-explanations (i.e., all explanations
+located in any of the red areas in Figure 5) or only the counter-factual explanations,
+excluding any counter-potential explanations (i.e., only including the solid red areas in
+Figure 5). This is a crude but often e ffective way of filtering according to a well es-
+tablished and well-understood logic. However, it does not always make sense to make
+such an explicit division, since this categorisation is based primarily on the aleatoric
+scale, i.e., along the probability (or prediction) scale. Furthermore, even when using
+such a division, we may still end up with too many alternatives to explore. Another
+approach relies on ranking the explanations based on both aleatoric and epistemic un-
+certainty, and this is where the notion of an ensured alternative comes into picture.
+19
+--- Page 20 ---
+The goal of ensured alternatives is to identify alternatives that decrease the level
+of epistemic uncertainty. This can be done explicitly, filtering out any alternative with
+higher epistemic uncertainty. However, it may often be desirable to identify alternatives
+in the lower right area in Figure 5 (if super-factual explanations are sought), decreasing
+the epistemic uncertainty while at the same time increasing probability. Consequently,
+there is a trade-o ffbetween the calibrated probability for the predicted class ( ˆP) and
+uncertainty (U) when choosing the most suitable ensured explanation.
+In order to handle the trade-o ffwhile at the same time allow the user to choose
+between counter- and super-explanations, the following ranking metric is suggested:
+rank =(1−|w|)·(1−U)+|w|·−ˆPifw<0,
+ˆP otherwise,(5)
+where|w|is the absolute value of the ranking weight w, which is bounded by −1≤
+w≤1. A ranking weight w=0 means that alternative explanations are only ranked
+based on uncertainty, with less uncertain explanations ranked higher. Both ranking
+weight w=−1 and w=1 are ranked along ˆPalone, with positive weights ranking
+explanations with increased belief in the predicted class higher and vice versa.
+The figure shown in Figure 6 demonstrates how the ranking metric functions with
+different weights. In the plot, dark blue represents lower ranks and yellow represents
+higher ranks. The subplot in the middle illustrates how the ranking e ffectively pe-
+nalises high epistemic uncertainty and treats instances along the probability axis with
+equal emphasis when w=0. Conversely, the subplot on the right (and left) exclusively
+penalises low (high) probability for the predicted class. In the second (fourth) subplot,
+with a weight of w=−0.5 (w=0.5), an increase (decrease) in both epistemic uncer-
+tainty and probability for the predicted class is penalised. Based on the assumption that
+ensured explanations tend towards super-explanations, we recommend using a weight
+of 0.5 to focus on both low epistemic uncertainty and high probability for the predicted
+class.
+20
+--- Page 21 ---
+Figure 6: The higher ranked (yellow) and lower ranked (dark blue) explanations using di fferent weights.
+4. Experimental Setup
+Two experiments were conducted to exemplify the number of alternative explana-
+tions and how ensured explanations with the ranking metric can be used for decision-
+making. Two datasets were used in the experiments, Wine and California housing.
+The datasets are presented in Table 1, where #Attr. represents the number of attributes,
+#Inst. the number of instances in the dataset, and Type the type of problem. The al-
+ternative explanations were generated through experiments in which training and cali-
+bration sets were randomly re-sampled before a random forest model was trained and
+explained. The size of the calibration set was chosen to consist of 100 or 500 instances.
+To catch variated situations, the experiments were either run for single feature expla-
+nations or conjunctive explanations.
+Table 1: Data sets used in the study.
+Data set #Attr. #Inst. Type
+Wine 11 4898 Classification
+California Housing 10 20640 Regression
+The package is available at github.com /Moffran/calibrated explanations and can be
+installed using pipandconda .
+5. Results
+This section presents the experimental results, including the suggested ranking met-
+ric for alternative explanations and the plots for ensured explanations in Calibrated
+Explanations and how they can be used in decision-making.
+21
+--- Page 22 ---
+5.1. Experimental Results
+Tables 2 and 3 show the number of alternative explanations divided into di fferent
+categories. The rows represent the number of calibration instances and whether it is al-
+ternative explanations for single feature explanations ( s) or for conjunctive explanations
+(c). The columns represent the total number of explanations, which can be split up in
+counter-factual ( CoFa ), counter-potential ( CoPo ), semi-factual ( SeFa ), semi-potential
+(SePo ), super-factual ( SuFa ), and super-potential ( SuPo ) explanations. Furthermore,
+ensured ( Ens) explanations are the proportion of explanations having lower uncertainty.
+The purpose of evaluating using di fferently many calibration instances is to show how
+the epistemic uncertainty is a ffected by the calibration size.
+Table 2: Wine - Number of alternative explanations.
+Cal. Size Total CoFa CoPo SeFa SePo SuFa SuPo Ens
+100 (s) 13.03 1.17 0.35 8.40 0.21 2.90 0.0 4.67
+500 (s) 15.23 1.98 0.12 9.47 0.14 3.52 0.0 6.39
+100 (c) 33.84 6.05 1.18 18.72 0.99 6.32 0.0 10.53
+500 (c) 39.00 8.94 0.62 21.40 0.60 7.05 0.0 17.34
+Table 3: California Housing - Number of alternative explanations.
+Cal. Size Total CoFa CoPo SeFa SePo SuFa SuPo Ens
+100 (s) 26.45 1.03 1.97 8.80 1.88 12.33 0.48 12.41
+500 (s) 28.38 1.70 0.33 10.95 0.44 14.93 0.03 16.68
+100 (c) 71.18 5.27 3.70 23.24 4.99 32.45 1.12 33.89
+500 (c) 73.80 11.55 1.12 31.54 1.09 28.31 0.03 36.36
+The number of alternative explanations is generally high, with a notable increase
+for conjunctive explanations due to the number of possible combinations of features.
+In addition, the number of alternative explanations increases slightly with an increment
+in the number of instances in the calibration set. As expected, the number of uncer-
+tain predictions is clearly a ffected by the calibration size, with a drastic increase in
+potential-explanations for the smaller calibration set.
+22
+--- Page 23 ---
+5.2. Ensured Explanations in Calibrated Explanations
+In this section, a number of plots area presented, highlighting the challenge of a
+multitude of alternative explanations and how our proposed approach for filtering out
+ensured explanations can be used and uncerstood.
+(a) Wine
+ (b) California Housing, with threshold =500
+Figure 7: Plot showing, on a global level, the instances in the test set and their placement in the probabili-
+ty/uncertainty space for the Wine and California Housing data sets.
+Let us first look at Figure 7a, which shows the entire test set for the wine data set.
+It shows the position of each instance when both probability and epistemic uncertainty
+are taken into account. The blue dots signify a prediction of class 0 and the red crosses
+a prediction of class 1. This type of plot o ffers a direct global understanding of the
+epistemic uncertainty variations in the underlying model and if there are some instances
+that should be taken into consideration for further inspection. The instances show a
+relatively low level of uncertainty (often below 0 .10), although there are a few instances
+with a slightly higher level of uncertainty.
+Figure 7b presents the same type of global plot as Figure 7a from the California
+housing dataset. Since the target is numerical, a threshold value is set to be higher than
+or below 500, which was found to be a good approximation of the median value. The
+red crosses indicate that the predicted value is below 500 and the blue dots indicate that
+it is equal to or above 500. Variations in epistemic uncertainty are more pronounced,
+and some of the instances are around or above 0 .20.
+Figure 8a shows an instance (red dot) in the Wine data set with a large number of
+alternative explanations (blue dots), making it a challenge to distinguish and choose the
+23
+--- Page 24 ---
+(a) Alternative explanations with conjunctions
+ (b) Filter with weight =1
+(c) Bar plot showing the explanations when filtering with weight =1
+Figure 8: Instance from the Wine dataset, with all alternative explanations (8a) and with top ten explanations
+with weight w=1 (8b and 8c)
+best explanations. The plot clearly shows that almost all alternative explanations are
+ensured, i.e. they reduce uncertainty. We use the ranking metric to find the ten explana-
+tions with a focus ( w=1) on maximising the probability for the predicted class, which
+results in Figure 8b. Figure 8c shows a bar plot with the rule conditions on the right
+and the feature values to the left for the alternative explanations filtered in Figure 8b.
+The lighter red area in the background is the original prediction for reference, where
+the width indicates the uncertainty. The red bars correspond to the uncertainty interval
+for the alternative prediction resulting from the alternative condition proposed to the
+left.
+Looking at both figures, it is possible to see that the metric has succeeded in ef-
+fectively selecting the ten explanations that increase the likelihood of the prediction
+24
+--- Page 25 ---
+(a) All alternative explanations with conjunctions
+ (b) Filter with weight =0.5
+(c) Bar plot showing the explanations when filtering with weight =0.5
+Figure 9: Instance from the California Housing dataset, showing top five explanations with ranking method
+w=0.5 and the threshold value of 300
+the most. An interesting aspect is the blend of both conjunctive and single rules in the
+filtering of explanations. One feature that stand out as especially crucial to decreasing
+epistemic uncertainty in prediction is chlorides with a value below 0 .04. The feature
+is primarily singled out at the top of the ranked explanations, existing in four out of
+the ten most influential explanations. Moreover, the feature exists with the same rule
+in three conjunctive rules, which further hints at its significance for the prediction’s
+uncertainty. The answer on how to ensure the prediction of this instance is to decrease
+the chlorides from 0 .06 to below 0 .04. By decreasing the chlorides, the probability will
+increase simultaneously as the uncertainty decreases, resulting in a sharp prediction
+with high probability and low epistemic uncertainty.
+Figure 9 shows an instance from the California housing dataset with its alternative
+explanations. The threshold in this example is set to 500, which means that the proba-
+bility indicates whether the true target is below 500. An increase in probability in this
+case means that a higher price is even less likely.
+For this particular instance, with an already low uncertainty, the five explanations
+25
+--- Page 26 ---
+(a) All alternative explanations
+ (b) Filter with weight =0
+(c) Filter with weight =1
+ (d) Filter with weight =−0.5
+Figure 10: Instance from the California housing dataset, with di fferent weights and the threshold value of
+500, focusing on either the epistemic uncertainty, the probability, or a balance of them
+that we filter out using the weight w=0.5 take into account both the probability and
+epistemic uncertainty. The top ranked explanations dramatically increase the probabil-
+ity. However, they slightly increase the uncertainty. The barplot shows that the third
+explanation could be chosen if the lowered degree of epistemic uncertainty is preferred.
+Figure 10 shows the results of an instance with an uncertainty of approximately
+0.18 in the California housing dataset and the results when applying the suggested
+metric with di fferent weights to rank alternative explanations of interest. There are a
+notable number of alternative explanations for this case, where only one indicates a
+higher uncertainty. We first apply a weight of 0 to rank the five alternatives with the
+lowest epistemic uncertainty, resulting in 10b. Although it looks like there are only two
+explanations, there are four explanations resulting in almost identical probability and
+epistemic uncertainty. In this situation, primarily penalising the epistemic uncertainty,
+26
+--- Page 27 ---
+(a) All counter-factual explanations
+ (b) All super-factual explanations
+(c) All semi-factual and -potential explanations
+ (d) Filter explanations in 11c with weight =-1
+Figure 11: The same instance from the California housing dataset as in Figure 10, explicitly filtering counter-
+factual, semi-factual (with potential) and super-factual explanations
+the probability increases simultaneously, resulting in suggestions of sharp explanations
+with high probability. A slightly di fferent situation is seen in 10c, where the weight
+of 1 only penalises low probability. Here, the result also includes those with a higher
+uncertainty. Choosing a weight with 0 .5 would probably be very similar to choosing
+a weight of 0. In 10d, the weight of −0.5 is chosen, penalising a high epistemic un-
+certainty and high probability. The result is ensured explanations with low probability,
+similar to ensured counter-factuals.
+Figure 11 shows the same instance but using the filtering methods counter
+explanations ,semi explanations , and super explanations , showing all such
+alternative explanations. As mentioned earlier, when choosing a weight of −0.5 (seen
+in 10d, in Figure 10) the result is similar to counter-factual explanations as seen in 11a,
+in Figure 11. In 11b, all super-factual explanations are chosen. Although helpful, there
+27
+--- Page 28 ---
+are a considerable number of alternative explanations. When filtering is combined
+with ranking, an e fficient and dynamic tool is provided, enabling precise selection of
+subsets of explanations. An example of this is shown in Figure 11d, showing the subset
+of semi-explanations (shown in Figure 11c) closest to 0 .5.
+In summary, the experimental findings presented in this study demonstrate that
+multiple explanations frequently arise when exploring alternative explanations in order
+to reduce epistemic uncertainty. This phenomenon was particularly pronounced when
+allowing conjunctive explanations, due to the wide range of possible feature combi-
+nations. These results highlight the necessity of an e ffective filtering mechanism to
+identify the most optimal alternatives. To simplify filtering and o ffer the possibility to
+rank the most e ffective ensured explanations, we introduce a metric designed to priori-
+tise explanations based on epistemic uncertainty, probability, or a combination of both.
+The ranking of alternative explanations in the experiments revealed that key features
+often appeared in several of the top-ranked alternatives, encouraging deeper analysis
+of the instances.
+6. Conclusion
+Incorporating epistemic uncertainty into explanation methods addresses a critical
+challenge: understanding the confidence of the model in its predictions. Nevertheless,
+a fundamental question remains unresolved — whether, and how, this uncertainty can
+be reduced. Currently, no explanation type explicitly addresses this issue, and, to our
+knowledge, no existing method o ffers guidance on which feature modifications might
+decrease prediction uncertainty.
+This paper introduces novel explanatory types that focus on epistemic uncertainty,
+specifically:
+•Ensured explanations : which highlight the specific feature changes necessary
+to decrease epistemic uncertainty.
+•Counter-potential explanations : which are uncertain alternative explanations
+potentially changing prediction, with the uncertainty interval spanning 0 .5.
+28
+--- Page 29 ---
+•Semi-potential explanations : which are uncertain alternative explanations po-
+tentially likely not changing prediction, with the uncertainty interval spanning
+0.5.
+•Super-potential explanations : which are uncertain alternative explanations likely
+increasing the belief in the predicted class, with the uncertainty interval spanning
+0.5.
+Our work underscores that epistemic uncertainty introduces a new dimension of
+explanation quality. The evaluation of model trustworthiness now hinges not only on
+shifts in prediction probability but also on the reduction of epistemic uncertainty. Navi-
+gating the trade-o ffs between uncertainty, probability, and multiple competing explana-
+tions is inherently complex. To address this, we propose a novel ranking metric called
+ensured ranking , designed to aid in identifying the most reliable explanations.
+Finally, to demonstrate the utility of ensured explanations, we have extended the
+Calibrated Explanations method, incorporating visualisations that illustrate how vari-
+ations in feature values influence epistemic uncertainty. This enhancement facilitates
+a more comprehensive understanding of model behaviour, promoting appropriate trust
+and interoperability.
+Acknowledgements
+The authors acknowledge the Swedish Knowledge Foundation and industrial part-
+ners for financially supporting the research and education environment on Knowledge
+Intensive Product Realisation SPARK at J ¨onk¨oping University, Sweden. Projects:
+PREMACOP grant no. 20220187, AFAIR grant no. 20200223, and ETIAI grant no.
+20230040.
+Declaration of generative AI and AI-assisted technologies in the writing process
+During the preparation of this work the author(s) used ChatGPT, Perplexity, and
+Grammarly in order to brainstorm, improve language and style. After using these tool-
+s/services, the author(s) reviewed and edited the content as needed and take(s) full
+responsibility for the content of the published article.
+29
+--- Page 30 ---
+References
+[1] K. Devitt, M. Gan, J. Scholz, R. Bolia, A method for ethical ai in defence (2021).
+[2] A. Albahri, A. M. Duhaim, M. A. Fadhel, A. Alnoor, N. S. Baqer, L. Alzubaidi,
+O. Albahri, A. Alamoodi, J. Bai, A. Salhi, et al., A systematic review of trustwor-
+thy and explainable artificial intelligence in healthcare: Assessment of quality,
+bias risk, and data fusion, Information Fusion (2023).
+[3] G. Malgieri, Automated decision-making in the eu member states: The right to
+explanation and other “suitable safeguards” in the national legislations, Computer
+law & security review 35 (5) (2019) 105327.
+[4] High-Level Expert Group on AI, Ethics Guidelines for Trustworthy AI, Report,
+European Commission, Brussels (Apr. 2019).
+[5] R. Guidotti, A. Monreale, S. Ruggieri, F. Turini, F. Giannotti, D. Pedreschi, A
+survey of methods for explaining black box models, ACM computing surveys
+(CSUR) 51 (5) (2018) 1–42.
+[6] J. van der Waa, E. Nieuwburg, A. Cremers, M. Neerincx, Evaluating xai: A com-
+parison of rule-based and example-based explanations, Artificial intelligence 291
+(2021) 103404.
+[7] M. T. Ribeiro, S. Singh, C. Guestrin, ”Why Should I Trust You?”: Explaining the
+Predictions of Any Classifier, in: Proceedings of the 22nd ACM SIGKDD, KDD
+’16, 2016, p. 1135–1144.
+[8] S. M. Lundberg, S.-I. Lee, A unified approach to interpreting model predictions,
+in: Proceedings of the 31st international conference on neural information pro-
+cessing systems, 2017, pp. 4768–4777.
+[9] A. Holzinger, A. Saranti, C. Molnar, P. Biecek, W. Samek, Explainable ai
+methods-a brief overview, in: International Workshop on Extending Explainable
+AI Beyond Deep Models and Classifiers, Springer, 2020, pp. 13–38.
+30
+--- Page 31 ---
+[10] S. Bach, A. Binder, G. Montavon, F. Klauschen, K.-R. M ¨uller, W. Samek, On
+pixel-wise explanations for non-linear classifier decisions by layer-wise relevance
+propagation, PloS one 10 (7) (2015) e0130140.
+[11] D. Martens, P. Foster, Explaining data-driven document classifications, MIS
+Quaterly 38 (1) (2014) 73–100.
+[12] David Gunning, Explainable Artificial Intelligence, Web, DARPA (2017).
+URL https://www.darpa.mil/attachments/XAIProgramUpdate.pdf
+[13] Y . Zhang, X. Chen, Explainable recommendation: A survey and new perspec-
+tives, arXiv preprint arXiv:1804.11192 (2018).
+[14] F. Yang, Z. Huang, J. Scholtz, D. L. Arendt, How do visual explanations foster
+end users’ appropriate trust in machine learning?, in: Proceedings of the 25th
+International Conference on Intelligent User Interfaces, 2020, pp. 189–201.
+[15] J. A. Alvarado-Valencia, L. H. Barrero, Reliance, trust and heuristics in judgmen-
+tal forecasting, Computers in human behavior 36 (2014) 102–113.
+[16] Z. Buc ¸inca, P. Lin, K. Z. Gajos, E. L. Glassman, Proxy tasks and subjective mea-
+sures can be misleading in evaluating explainable ai systems, in: Proceedings of
+the 25th international conference on intelligent user interfaces, 2020, pp. 454–
+464.
+[17] C. Molnar, Interpretable Machine Learning, 2nd Edition, 2022.
+URL https://christophm.github.io/interpretable-ml-book
+[18] M. Moradi, M. Samwald, Post-hoc explanation of black-box classifiers using con-
+fident itemsets, Expert Systems with Applications 165 (2021) 113941.
+[19] R. K. Mothilal, A. Sharma, C. Tan, Explaining machine learning classifiers
+through diverse counterfactual explanations, in: Proceedings of the 2020 con-
+ference on fairness, accountability, and transparency, 2020, pp. 607–617.
+[20] R. Guidotti, Counterfactual explanations and how to find them: literature review
+and benchmarking, Data Mining and Knowledge Discovery (2022) 1–55.
+31
+--- Page 32 ---
+[21] S. Wachter, B. Mittelstadt, C. Russell, Counterfactual explanations without open-
+ing the black box: Automated decisions and the gdpr, Harv. JL & Tech. 31 (2017)
+841.
+[22] R. McCloy, R. M. Byrne, Semifactual “even if” thinking, Thinking & reasoning
+8 (1) (2002) 41–67.
+[23] P. Clark, C. Booth, M. Rowlinson, S. Procter, A. Delahaye, Project hindsight:
+Exploring necessity and possibility in cycles of structuration and co-evolution,
+Technology Analysis & Strategic Management 19 (1) (2007) 83–97.
+[24] P. Schwab, W. Karlen, Cxplain: Causal explanations for model interpretation un-
+der uncertainty, Advances in neural information processing systems 32 (2019).
+[25] U. Bhatt, J. Antor ´an, Y . Zhang, Q. V . Liao, P. Sattigeri, R. Fogliato, G. Melanc ¸on,
+R. Krishnan, J. Stanley, O. Tickoo, et al., Uncertainty as a form of transparency:
+Measuring, communicating, and using uncertainty, in: Proceedings of the 2021
+AAAI /ACM Conference on AI, Ethics, and Society, 2021, pp. 401–413.
+[26] G. Parmigiani, Measuring uncertainty in complex decision analysis models, Sta-
+tistical methods in medical research 11 (6) (2002) 513–537.
+[27] H. L ¨ofstr ¨om, T. L ¨ofstr ¨om, U. Johansson, C. S ¨onstr ¨od, Calibrated explanations:
+With uncertainty information and counterfactuals, Expert Systems with Applica-
+tions (2024) 123–154.
+[28] Y . Romano, R. F. Barber, C. Sabatti, E. Cand `es, With malice toward none: As-
+sessing uncertainty via equalized coverage, Harvard Data Science Review 2 (2)
+(2020) 4.
+[29] F. Wang, L. Cheng, R. Guo, K. Liu, P. S. Yu, Equal opportunity of coverage in
+fair regression, Advances in Neural Information Processing Systems 36 (2024).
+[30] J. Antor ´an, U. Bhatt, T. Adel, A. Weller, J. M. Hern ´andez-Lobato, Getting a clue:
+A method for explaining uncertainty estimates, arXiv preprint arXiv:2006.06848
+(2020).
+32
+--- Page 33 ---
+[31] U. Johansson, T. L ¨ofstr ¨om, Well-calibrated and specialized probability estima-
+tion trees, in: Proceedings of the 2020 SIAM International Conference on Data
+Mining, SIAM, 2020, pp. 415–423.
+[32] J. Zhou, A. H. Gandomi, F. Chen, A. Holzinger, Evaluating the quality of ma-
+chine learning explanations: A survey on methods and metrics, Electronics 10 (5)
+(2021) 593.
+[33] G. Phillips-Wren, M. Adya, Decision making under stress: The role of infor-
+mation overload, time pressure, complexity, and uncertainty, Journal of Decision
+Systems 29 (sup1) (2020) 213–225.
+[34] C. Marx, Y . Park, H. Hasson, Y . Wang, S. Ermon, L. Huan, But are you sure? an
+uncertainty-aware perspective on explainable ai, in: International Conference on
+Artificial Intelligence and Statistics, PMLR, 2023, pp. 7375–7391.
+[35] R. K. Singh, R. Gorantla, S. G. R. Allada, P. Narra, Skinet: A deep learning
+framework for skin lesion diagnosis with uncertainty estimation and explainabil-
+ity, Plos one 17 (10) (2022) e0276836.
+[36] D. Slack, A. Hilgard, S. Singh, H. Lakkaraju, Reliable post hoc explanations:
+Modeling uncertainty in explainability, Advances in neural information process-
+ing systems 34 (2021) 9391–9404.
+[37] F. R. Yapicioglu, A. Stramiglio, F. Vitali, Conformasight: Conformal prediction-
+based global and model-agnostic explainability framework, in: World Conference
+on Explainable Artificial Intelligence, Springer, 2024, pp. 270–293.
+[38] S. Dandl, C. Molnar, M. Binder, B. Bischl, Multi-objective counterfactual ex-
+planations, in: International conference on parallel problem solving from nature,
+Springer, 2020, pp. 448–469.
+[39] S. Verma, J. Dickerson, K. Hines, Counterfactual explanations for machine learn-
+ing: A review, arXiv preprint arXiv:2010.10596 2 (2020) 1.
+33
+--- Page 34 ---
+[40] A.-H. Karimi, B. Sch ¨olkopf, I. Valera, Algorithmic recourse: from counterfactual
+explanations to interventions, in: Proceedings of the 2021 ACM conference on
+fairness, accountability, and transparency, 2021, pp. 353–362.
+[41] G. Maielli, Counterfactuals, superfactuals and the problematic relationship be-
+tween business management and the past, Management & Organizational History
+2 (4) (2007) 275–294.
+[42] S. Aryal, M. T. Keane, Even if explanations: Prior work, desiderata & bench-
+marks for semi-factual xai, arXiv preprint arXiv:2301.11970 (2023).
+[43] E. Kenny, W. Huang, The utility of “even if” semifactual explanation to opti-
+mise positive outcomes, Advances in Neural Information Processing Systems 36
+(2024).
+[44] S. Aryal, M. T. Keane, Even-ifs from if-onlys: Are the best semi-factual expla-
+nations found using counterfactuals as guides?, in: International Conference on
+Case-Based Reasoning, Springer, 2024, pp. 33–49.
+[45] V . V ovk, A. Gammerman, G. Shafer, Algorithmic Learning in a Random World,
+Springer-Verlag, Berlin, Heidelberg, 2005.
+[46] V . V ovk, J. Shen, V . Manokhin, M.-g. Xie, Nonparametric predictive distributions
+based on conformal prediction, in: Conformal and probabilistic prediction and
+applications, PMLR, 2017, pp. 82–102.
+[47] B. Van Calster, D. J. McLernon, M. Van Smeden, L. Wynants, E. W. Steyerberg,
+Calibration: the achilles heel of predictive analytics, BMC medicine 17 (1) (2019)
+1–7.
+[48] V . V ovk, G. Shafer, I. Nouretdinov, Self-calibrating probability forecasting, in:
+Advances in Neural Information Processing Systems, 2004, pp. 1133–1140.
+[49] V . V ovk, I. Petej, Venn-Abers predictors, arXiv preprint arXiv:1211.0025 (2012).
+34
+--- Page 35 ---
+[50] E. H ¨ullermeier, W. Waegeman, Aleatoric and epistemic uncertainty in machine
+learning: An introduction to concepts and methods, Machine learning 110 (3)
+(2021) 457–506.
+[51] V .-L. Nguyen, S. Destercke, E. H ¨ullermeier, Epistemic uncertainty sampling, in:
+Discovery Science: 22nd International Conference, DS 2019, Split, Croatia, Oc-
+tober 28–30, 2019, Proceedings 22, Springer, 2019, pp. 72–86.
+[52] M. H. Shaker, E. H ¨ullermeier, Aleatoric and epistemic uncertainty with random
+forests, in: 18th International Symposium on Intelligent Data Analysis, IDA
+2020, Konstanz, Germany, Springer, 2020, pp. 444–456.
+[53] T. Pereira, S. Cardoso, M. Guerreiro, S. C. Madeira, A. D. N. Initiative, et al.,
+Targeting the uncertainty of predictions at patient-level using an ensemble of clas-
+sifiers coupled with calibration methods, venn-abers, and conformal predictors: a
+case study in ad, Journal of biomedical informatics 101 (2020) 103350.
+[54] A. Alkhatib, H. Bostr ¨om, U. Johansson, Assessing explanation quality by venn
+prediction, in: Conformal and Probabilistic Prediction with Applications, PMLR,
+2022, pp. 42–54.
+[55] T. L ¨ofstr ¨om, H. L ¨ofstr ¨om, U. Johansson, C. S ¨onstr ¨od, R. Matela, Calibrated ex-
+planations for regression (2023). arXiv:2308.16245 .
+[56] H. L ¨ofstr ¨om, T. L ¨ofstr ¨om, Conditional calibrated explanations: Finding a path
+between bias and uncertainty, in: Explainable Artificial Intelligence, Springer
+Nature Switzerland, Cham, 2024, pp. 332–355.
+[57] T. L ¨ofstr ¨om, H. L ¨ofstr ¨om, U. Johansson, Calibrated explanations for multi-class,
+V ol. 230 of Proceedings of Machine Learning Research, PMLR, 2024, pp. 175–
+194.
+[58] V . V ovk, I. Petej, I. Nouretdinov, V . Manokhin, A. Gammerman, Computation-
+ally e fficient versions of conformal predictive distributions, Neurocomputing 397
+(2020) 292–308.
+35

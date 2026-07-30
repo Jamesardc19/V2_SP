@@ -1,0 +1,199 @@
+\section{Review of Related Literature}
+
+This chapter presents a comprehensive review of existing literature relevant to diabetes prediction using machine learning and explainable artificial intelligence, with particular emphasis on Philippine-specific contexts and datasets. The review is organized into seven major themes: the burden of diabetes in the Philippines, available Philippine datasets for diabetes prediction, machine learning models for diabetes classification, explainable AI methods, calibrated explanations, probability calibration techniques, and evaluation metrics for imbalanced datasets.
+
+\subsection{Burden of Diabetes in the Philippines}
+
+Diabetes mellitus represents a critical and escalating public health challenge in the Philippines, with profound implications for mortality, morbidity, and healthcare costs. The burden of diabetes has reached alarming proportions, with an estimated 4.3 million Filipinos diagnosed with diabetes and an additional 2.8 million remaining undiagnosed in 2021. The age-standardized prevalence stands at 7.5\% among adults aged 20-79 years as of 2024, with projections indicating an increase to 8.6 million cases by 2050. This represents a substantial increase from 1.2 million cases in 2000, underscoring the rapidly growing epidemic.
+
+The mortality burden is equally concerning. Diabetes mellitus consistently ranks among the top five leading causes of death in the Philippines. In 2024 alone, diabetes was responsible for 43,944 deaths, accounting for approximately 6.3\% of all deaths nationally. By March 31, 2025, diabetes-related mortality had already reached 31,321 cases, or 6.6\% of total deaths. These figures highlight the urgent need for early detection and intervention strategies to prevent premature mortality.
+
+The complications of diabetes further compound the disease burden in the Philippines. Diabetic retinopathy is identified as a leading cause of preventable blindness, particularly in Region 3 of the Philippines. Moreover, diabetic nephropathy contributes to 38\% of all renal disease cases in the country, emphasizing the systemic nature of diabetes complications and their strain on healthcare resources.
+
+The local burden is exacerbated by structural and socioeconomic challenges. Financial constraints, including limited insurance coverage and high out-of-pocket costs, significantly impede access to diabetes care, amplifying the disease's impact on vulnerable populations. The Filipino diet, typically high in refined carbohydrates, added sugar, and unhealthy fats, contributes to obesity, insulin resistance, and elevated blood glucose levels. Cultural practices centered around food celebrations further increase the risk of overconsumption of high-calorie and high-sugar foods.
+
+A study analyzing the 8th Philippine National Nutrition Survey found that young Filipinos with diabetes exhibited higher risk profiles, including obesity class II prevalence of 22\% compared to 12\% in older adults, along with elevated rates of current drinking (56\% vs 37\%) and smoking (28\% vs 18\%). Additionally, 80\% of both young-onset and late-onset diabetes patients presented with metabolic syndrome.
+
+The COVID-19 pandemic exacerbated diabetes management challenges in the Philippines. Access to essential diabetes care, including routine monitoring and medication distribution, was significantly disrupted during quarantine periods. The temporary suspension of offloading devices and wound monitoring led to progression of diabetic foot ulcers to severe soft tissue infections requiring amputations. The intersection of diabetes care with pandemic-related disruptions underscores the fragility of healthcare systems and the necessity for resilient, accessible early detection mechanisms to prevent complications.
+
+This substantial burden—characterized by high prevalence, significant mortality, debilitating complications, and socioeconomic barriers—establishes the critical need for early detection tools and interpretable prediction models that can be deployed effectively across diverse healthcare settings in the Philippines.
+
+\subsection{Philippine Datasets for Diabetes Risk Prediction}
+
+The availability and characteristics of Philippine datasets for diabetes risk prediction are crucial for developing locally relevant machine learning models. However, the literature reveals significant challenges and gaps in this domain.
+
+The Department of Science and Technology-Food and Nutrition Research Institute (DOST-FNRI) conducts the Expanded National Nutrition Survey (ENNS), which provides comprehensive data on the eating habits, nutrition, and health status of Filipinos. The 2018-2020 ENNS was designed as a rolling survey covering 45,957 households in 2018 and 49,042 households in 2019 across various provinces and highly urbanized cities. This dataset includes information on diabetes prevalence and related metabolic indicators. According to the 2021 ENNS, Filipino adults had a diabetes prevalence of 7.1\% in the 20-79 age group, and the survey documented pre-diabetes status among the population. While DOST-FNRI datasets are valuable for nutritional and epidemiological research, access requires formal requests through the Freedom of Information portal.
+
+Studies have utilized Philippine-specific datasets for diabetes prediction model development. One study optimized a bagged tree ensemble classifier using data from the 2019 Philippine National Nutrition Survey to predict diabetes prevalence in Filipino women. The model focused on six key predictors: pregnancies, glucose levels, blood pressure, BMI, age, and diabetes pedigree function.
+
+Recent research developed an automated machine learning (AutoML) model for referable diabetic retinopathy using 2,000 ultrawide field (UWF) retinal images from local Philippine datasets. The dataset was labeled according to the Early Treatment Diabetic Retinopathy Study (ETDRS) severity grading and split with 80\% for training, 10\% for validation, and 10\% for testing. The model achieved a sensitivity of 88\% (95\% CI: 0.80-0.94) and specificity of 83\% (95\% CI: 0.74-0.89) on external validation, approaching US FDA requirements for referable DR diagnosis.
+
+A 2025 study employed a multi-method classification approach involving binomial logistic regression, K-means clustering, and decision tree analysis on 947 Filipino participants aged 24-79 years. The study identified BMI as the most significant predictor ($\chi^2$(1) = 104.44, p < .001), followed by HbA1c ($\chi^2$(1) = 51.80, p < .001), triglycerides ($\chi^2$(1) = 12.44, p < .001), and LDL ($\chi^2$(1) = 9.15, p = .002). The model demonstrated excellent predictive performance with a McFadden $R^2$ of 0.80 and Nagelkerke $R^2$ of 0.85. K-means clustering successfully categorized participants into two distinct groups based on biomarker profiles, differentiating those at higher and lower diabetes risk.
+
+Despite these efforts, significant preprocessing challenges exist when working with Philippine datasets. Common issues include missing data, class imbalance (with diabetes cases typically representing a minority class), heterogeneous data sources, and the need for culturally appropriate feature engineering.
+
+\subsection{Machine Learning Models for Diabetes Prediction}
+
+The application of machine learning to diabetes prediction has evolved significantly, with various algorithms demonstrating varying degrees of success. Recent literature emphasizes the importance of model selection, hyperparameter optimization, and ensemble methods to achieve robust predictive performance.
+
+\subsubsection{Random Forest}
+
+Random Forest has demonstrated strong performance across multiple diabetes prediction studies. A 2024 study reported that Random Forest achieved an F1-score of 0.87 and accuracy of 89\% on diabetes prediction tasks. The algorithm's effectiveness stems from its ability to handle both linear and non-linear relationships, reduce overfitting through ensemble averaging, and provide feature importance rankings that aid clinical interpretation. Remarkably, using only four features (general health, high blood pressure, BMI, and age), the model still achieved a robust F1-score of 0.751, suggesting that simpler models using fewer but high-impact features can be effectively deployed without sacrificing performance. A 2025 study comparing various algorithms found that Random Forest achieved 76.30\% accuracy, ranking second after Neural Networks (78.57\%) among evaluated algorithms.
+
+\subsubsection{K-Nearest Neighbors (KNN)}
+
+K-Nearest Neighbors is a non-parametric algorithm that classifies instances based on the majority class of their nearest neighbors in the feature space. A 2022 study addressing class imbalance in diabetes prediction using SMOTE-ENN resampling found that KNN achieved 98.38\% accuracy, outperforming other methods including logistic regression (75.32\%), decision tree (74.03\%), random forest (72.73\%), SVM (76.62\%), gradient boosting (74.68\%), and Naive Bayes (74.03\%). This exceptional performance was achieved on the processed BRFSS dataset after applying the synthetic minority over-sampling technique integrated with the edited nearest neighbor method.
+
+A comprehensive 2024 study investigating the optimal k and distance measures found that the best performance was achieved with k=35 and Euclidean distance, producing 80.5\% accuracy on the Indian Diabetes PIMA dataset. The study emphasized that choosing the appropriate distance measure greatly affects classification accuracy, and selecting the optimal K value helps eliminate problems of overfitting and underfitting. However, the algorithm's computational complexity increases with dataset size, as it requires calculating distances to all training instances for each prediction.
+
+\subsubsection{XGBoost}
+
+XGBoost (eXtreme Gradient Boosting) has emerged as one of the most powerful algorithms for diabetes prediction, consistently achieving state-of-the-art results. A 2024 study using XGBoost with Recursive Feature Elimination (RFE) achieved an impressive 96.4\% accuracy, 95\% precision, 96\% recall, 95.5\% F1-score, and 0.98 AUC, demonstrating a +17\% accuracy and +15\% F1-score enhancement over norm models such as Logistic Regression and Support Vector Machine. The study emphasized that XGBoost's capability to identify highly relevant predictors, including HbA1c level and blood glucose, combined with its scalability and built-in regularization, makes it highly suitable for clinical field usage.
+
+A 2025 study employing Bayesian optimization to fine-tune XGBoost hyperparameters achieved 97.26\% accuracy, 95.72\% F1-score, and 81.18\% MCC (Matthews Correlation Coefficient). The study demonstrated that Bayesian optimization efficiently locates global optima through a model-based approach, making it more efficient than traditional grid search or random search methods.
+
+Multiple studies have consistently ranked XGBoost among top-performing algorithms. A 2025 comparison study found that XGBoost achieved the highest overall predictive performance with AUC of 0.8168, followed by Random Forest and Logistic Regression (AUCs around 0.79). The model demonstrated approximately 85\% accuracy while maintaining high specificity (>97\%). Another 2025 study leveraging XGBoost and explainable AI techniques achieved 96.07\% accuracy and 99.29\% AUC, outperforming CatBoost and demonstrating substantial improvement with SMOTE balancing.
+
+XGBoost's effectiveness stems from several algorithmic advantages: parallel processing capabilities that accelerate training, built-in handling of missing values, L1 and L2 regularization to prevent overfitting, and tree pruning that optimizes model complexity. Feature importance analysis reveals that HbA1c, fasting blood sugar, glucose levels, and BMI consistently rank as top predictors in XGBoost models.
+
+\subsubsection{Bayesian Optimized TabNet}
+
+Bayesian Optimized TabNet (BO-TabNet) represents a recent advancement in deep learning for tabular healthcare data, specifically designed to provide both high accuracy and interpretability. A seminal 2022 study developed a hybrid Bayesian optimized explainable TabNet model that achieved remarkable accuracy rates of 92.2\% on the Pima Indians Diabetes Dataset (PIDD) and 99.4\% on the Early-Stage Diabetes Risk Prediction Dataset (ESDRPD). The model significantly surpassed benchmark classifiers including fully convolutional networks (FCN), deep neural networks (DNN), and traditional machine learning models.
+
+TabNet's architecture incorporates a sequential attention mechanism that enables both local and global interpretability specific to the model. This attention mechanism allows the model to selectively focus on the most relevant features for each prediction, mimicking clinical decision-making processes. XAI analyses revealed that Insulin (importance value: 0.301) was the most significant attribute for diabetes classification from PIDD, while Polyuria (importance value: 0.206) was most significant for ESDRPD. The study employed LIME and SHAP as robust explainable AI tools to enhance model interpretability further.
+
+Bayesian optimization was utilized to efficiently tune TabNet's numerous hyperparameters, addressing the challenge that traditional methods like grid search pose due to being time-consuming. A 2023 study on blood glucose level prediction using TabNet reported that the model achieved the best performance in terms of RMSE (0.5097) and MSE (0.2523) compared to Logistic Regression, Decision Tree, SVM, Random Forest, and Elastic Net algorithms.
+
+\subsubsection{Ensemble Methods}
+
+Ensemble learning combines multiple models to improve predictive performance. Voting classifiers that aggregate predictions from multiple base learners have demonstrated improved robustness. A 2025 study reported that a weighted voting ensemble achieved an F2-score of 0.72, though this did not significantly exceed the performance of the best individual model (XGBoost with F2-score of 0.69).
+
+Stacking ensembles use a meta-learner to combine base model predictions. However, the added complexity often does not translate to substantial performance gains, particularly when the base models are already well-optimized. The risk of overfitting and increased computational requirements are important considerations when deploying ensemble methods in clinical settings.
+
+\subsection{Explainable Artificial Intelligence (XAI) Methods}
+
+The deployment of machine learning models in healthcare necessitates explainability to build trust, enable clinical validation, and meet regulatory requirements. Explainable AI (XAI) methods provide insights into model predictions, helping clinicians understand which features drive risk assessments.
+
+\subsubsection{SHAP (SHapley Additive exPlanations)}
+
+SHAP has emerged as one of the most widely adopted XAI methods due to its solid theoretical foundation in cooperative game theory. SHAP values quantify each feature's contribution to a prediction by computing the average marginal contribution across all possible feature combinations. For diabetes prediction models, SHAP analysis consistently identifies blood pressure, waist circumference, triglycerides, and body weight as top predictors, aligning with established clinical knowledge.
+
+A 2024 study analyzing diabetes prediction showed that glucose had the highest mean absolute SHAP value, followed by BMI, indicating these features had the strongest overall impact on predictions. SHAP summary plots (beeswarm plots) show the distribution of SHAP values for each feature across all instances, with color indicating feature values. A 2024 study's SHAP summary plot revealed that high glucose levels (red dots) consistently had positive SHAP values, pushing predictions toward diabetes, while low glucose levels (blue dots) had negative SHAP values, reducing diabetes risk.
+
+SHAP waterfall plots visualize how each feature contributes to moving the prediction from the base value to the final prediction for a specific individual. A 2025 study demonstrated that for a high-risk patient, the waterfall plot showed BMI contributing +0.15 to the risk score, glucose adding +0.22, and age adding +0.08, while physical activity contributed -0.05, collectively moving the prediction to 0.85 (high risk). This allows clinicians to identify which modifiable factors could most effectively reduce a patient's risk.
+
+SHAP dependence plots show the relationship between a feature's value and its SHAP value, revealing non-linear relationships and interactions. A 2024 study's SHAP dependence plot for glucose showed that the relationship was approximately linear up to 120 mg/dL, but became more pronounced above this threshold, indicating that higher glucose levels have exponentially greater impact on diabetes risk.
+
+A key advantage of SHAP is its model-agnostic nature, allowing it to explain any machine learning model. TreeExplainer, an optimized implementation for tree-based models, provides exact SHAP values efficiently. However, SHAP can be computationally expensive for large datasets and complex models, and the explanations may be unstable for highly correlated features.
+
+\subsubsection{LIME (Local Interpretable Model-agnostic Explanations)}
+
+LIME generates local explanations by approximating the model's behavior in the vicinity of a specific instance using an interpretable surrogate model (typically linear regression). A 2025 study implementing LIME for diabetes prediction showed that for a specific prediction, LIME identified that BMI > 30 contributed +0.25 toward diabetes risk, age > 45 contributed +0.15, while regular exercise contributed -0.10 away from risk.
+
+While LIME is computationally efficient and easy to implement, it suffers from instability—small perturbations in the input can lead to significantly different explanations. This lack of consistency is a critical limitation for clinical applications where reliable explanations are essential for decision-making.
+
+\subsubsection{Integration of Calibration with XAI}
+
+Several studies have emphasized integrating calibration assessment with XAI techniques. A 2025 study employed SHAP analysis alongside calibration plots to ensure that not only were predictions interpretable, but they were also well-calibrated to reflect true probabilities. The study found that glucose (SHAP value: 2.34) and BMI (SHAP value: 1.87) were primary predictors, demonstrating strong clinical concordance, while calibration plots confirmed that predicted probabilities aligned with observed outcomes.
+
+\subsection{Calibrated Explanations}
+
+Calibrated Explanations (CE) represents a novel approach to explainable AI that addresses critical limitations of traditional XAI methods by integrating probability calibration directly into the explanation framework.
+
+\subsubsection{Foundations of Calibrated Explanations}
+
+Calibrated Explanations is built on the foundation of Venn-Abers calibration, a distribution-free method that provides well-calibrated probability estimates. Unlike traditional XAI methods that explain predictions from potentially poorly calibrated models, CE ensures that both the predictions and their explanations are calibrated. This means that when a model predicts a 70\% diabetes risk, approximately 70\% of similar cases will actually have diabetes.
+
+The method addresses a fundamental problem in existing XAI approaches: feature importance explanations are often unreliable when the underlying model produces miscalibrated probabilities. By calibrating the model first, CE provides more trustworthy feature importance scores with uncertainty quantification.
+
+\subsubsection{Key Features of Calibrated Explanations}
+
+CE provides several advantages over traditional XAI methods:
+
+\begin{enumerate}
+    \item \textbf{Uncertainty Quantification}: CE provides confidence intervals for feature importance weights, allowing users to assess the reliability of explanations. This is particularly valuable in clinical settings where understanding the certainty of risk factors is crucial.
+    
+    \item \textbf{Factual and Counterfactual Explanations}: CE supports both factual explanations (why did the model make this prediction?) and counterfactual explanations (what changes would alter the prediction?). Counterfactual explanations are especially valuable for patient counseling, as they can identify actionable interventions.
+    
+    \item \textbf{Conditional Rules}: CE generates easily interpretable conditional rules that explain predictions in human-understandable terms, making them accessible to clinicians without machine learning expertise.
+    
+    \item \textbf{Stability and Robustness}: Evaluation on 25 benchmark datasets demonstrated that CE provides more stable explanations compared to LIME and SHAP, with less sensitivity to small perturbations in input features.
+\end{enumerate}
+
+\subsubsection{Extensions and Applications}
+
+Recent extensions of Calibrated Explanations have broadened its applicability:
+
+\textbf{Calibrated Explanations for Regression} extends the framework to support both standard regression and probabilistic regression tasks, where the goal is to predict the probability that a target exceeds a threshold. This is particularly relevant for diabetes prediction when working with continuous biomarkers like HbA1c or fasting blood sugar.
+
+\textbf{Fast Calibrated Explanations} incorporates perturbation techniques to achieve significant computational speedups while maintaining uncertainty quantification. This makes CE suitable for real-time clinical applications where rapid risk assessment is required.
+
+\textbf{Ensured Explanations} addresses epistemic uncertainty by providing guidance on how to reduce prediction uncertainty through targeted feature modifications. This extension categorizes uncertain explanations into counter-potential, semi-potential, and super-potential scenarios, helping clinicians identify the most reliable predictions and understand when additional testing may be needed.
+
+\subsubsection{Comparison with Traditional XAI Methods}
+
+While SHAP and LIME focus solely on explaining model predictions, Calibrated Explanations integrates calibration and explanation into a unified framework. This distinction is critical: traditional XAI methods can provide misleading explanations when applied to poorly calibrated models, whereas CE ensures that explanations are grounded in well-calibrated probability estimates.
+
+However, it is important to note that Calibrated Explanations is a specific XAI method distinct from the approach of applying calibration techniques (such as Platt Scaling) to a model and then using separate XAI methods (like SHAP or LIME) for explanation. The latter approach, which involves two independent steps, is more common in practice and allows flexibility in choosing calibration and explanation methods separately.
+
+\subsection{Probability Calibration Techniques}
+
+Probability calibration is essential for ensuring that predicted probabilities accurately reflect true likelihoods, which is critical for clinical decision-making. Miscalibrated models may produce overconfident or underconfident predictions, leading to inappropriate treatment decisions.
+
+\subsubsection{Importance of Calibration in Clinical Settings}
+
+Calibration ensures that when a model predicts a patient has a 30\% probability of developing diabetes, approximately 30\% of such patients actually develop the condition. A 2024 study emphasized that calibration is as important as discrimination for clinical utility, as miscalibrated models can lead to inappropriate treatment decisions even when discrimination is excellent. The study found that a deployed malnutrition prediction model, despite having a c-index of 0.81, was miscalibrated with a calibration intercept of -1.17 and Brier score of 0.26, indicating the model systematically overestimated risks.
+
+Poor calibration has serious consequences in diabetes care. If a prediction model systematically underestimates diabetes risk (calibration intercept > 0), patients who actually need intensive interventions may not receive them, leading to preventable complications. Conversely, overestimation (calibration intercept < 0) leads to unnecessary interventions, anxiety, and healthcare costs.
+
+\subsubsection{Calibration Metrics}
+
+Multiple metrics assess different aspects of calibration:
+
+\textbf{Calibration-in-the-large (Calibration Intercept)} indicates systematic over- or underestimation across the model, with ideal value of 0; values < 0 suggest overestimation, while values > 0 suggest underestimation. A 2024 study recalibrating a pre-diabetes/diabetes model reported that simple recalibration improved the calibration intercept from -0.56 to -0.01.
+
+\textbf{Calibration Slope} represents the steepness of the calibration curve, with ideal value of 1; values < 1 indicate predictions are too extreme (overconfident), while values > 1 indicate predictions are too moderate. A 2024 validation study found that a diabetes prediction model had a calibration slope of 0.72, suggesting predictions were too extreme.
+
+\textbf{Brier Score} measures overall prediction accuracy by calculating the mean squared difference between predicted probabilities and actual outcomes (0 or 1), with values ranging from 0 (perfect) to 1 (worst). A 2024 study reported Brier scores of 0.26 before recalibration and 0.21 after recalibration, indicating improvement.
+
+\textbf{Expected Calibration Error (ECE)} divides predictions into bins and calculates the weighted average of the absolute difference between confidence and accuracy in each bin. A 2022 study achieving ECE of 0.0018 with LightGBM demonstrated excellent calibration.
+
+\subsubsection{Platt Scaling}
+
+Platt Scaling, also known as logistic calibration, fits a logistic regression model to map uncalibrated scores to calibrated probabilities. The method is particularly effective for models that produce sigmoid-shaped miscalibration. A 2024 study on diabetes prediction reported a 14.7\% improvement in Brier Score after applying Platt Scaling to an XGBoost model, with Log Loss decreasing from 0.6653 to 0.5872. Platt Scaling requires a separate calibration set and is computationally efficient, making it suitable for large-scale applications.
+
+\subsubsection{Isotonic Regression}
+
+Isotonic Regression is a non-parametric calibration method that fits a piecewise-constant, monotonically increasing function to map uncalibrated scores to calibrated probabilities. Unlike Platt Scaling, Isotonic Regression makes no assumptions about the form of miscalibration, making it more flexible. However, Isotonic Regression is more prone to overfitting, especially with small calibration sets, and may produce less smooth calibration curves.
+
+\subsubsection{Venn-Abers Calibration}
+
+Venn-Abers is a distribution-free calibration method based on conformal prediction that provides probabilistic predictions with theoretical guarantees. Unlike Platt Scaling and Isotonic Regression, Venn-Abers produces two probability estimates (lower and upper bounds) for each prediction, quantifying the uncertainty in the calibrated probability itself. Venn-Abers is particularly valuable when uncertainty quantification is critical, as it provides confidence intervals for probability estimates.
+
+\subsection{Evaluation Metrics for Imbalanced Datasets}
+
+Diabetes prediction is inherently an imbalanced classification problem, with diabetic cases typically representing a minority class. Traditional accuracy metrics can be misleading in such scenarios, necessitating the use of specialized evaluation metrics.
+
+\subsubsection{Limitations of Accuracy}
+
+Accuracy, defined as the proportion of correct predictions among total predictions, is misleading when class distributions are skewed. A 2024 study analyzing diabetes prediction on the BRFSS dataset demonstrated that models could achieve 82-83\% accuracy while having severely imbalanced performance metrics: precision (51-75\%), recall (7-16\%), and F1-score (13-26\%). This inconsistency occurred because the model predominantly predicted the majority (non-diabetic) class, achieving high overall accuracy despite failing to identify diabetic cases.
+
+\subsubsection{Recall (Sensitivity)}
+
+Recall, calculated as TP/(TP+FN), measures the proportion of actual positive cases correctly identified. In diabetes screening, high recall is critical because false negatives—failing to identify individuals with or at risk for diabetes—can lead to missed early intervention opportunities and progression to severe complications. A 2025 study noted that in prediction tasks where minimizing false negatives is critical, models should optimize for recall even if it somewhat reduces precision. The study's proposed model achieved 88.11\% recall, demonstrating strong capability to identify diabetic cases.
+
+\subsubsection{Precision}
+
+Precision, calculated as TP/(TP+FP), measures the proportion of positive predictions that are correct. High precision minimizes false positives, reducing unnecessary clinical follow-up and patient anxiety. A 2024 study achieving 89.08\% precision demonstrated that the model rarely misclassified non-diabetic individuals as diabetic, preventing unnecessary interventions and healthcare costs.
+
+\subsubsection{F1-Score and F2-Score}
+
+The F1-score, the harmonic mean of Precision and Recall, provides a balanced measure. However, the F2-score, which weights Recall twice as heavily as Precision, is often more appropriate for medical screening applications. A 2024 study on Philippine diabetes data reported an F2-score of 0.69 for an optimized XGBoost model, with Recall of 80.1\% and Precision of 44.9\%, indicating strong case detection capability suitable for population-level screening.
+
+\subsubsection{Area Under the Precision-Recall Curve (AUPRC)}
+
+AUPRC is particularly informative for imbalanced datasets, as it focuses on the performance of the positive class across different decision thresholds. Unlike ROC-AUC, which can be misleadingly optimistic for imbalanced data, AUPRC provides a more realistic assessment of model performance. Studies recommend AUPRC over ROC-AUC for diabetes prediction, as it better captures the trade-off between Precision and Recall.
+
+\subsubsection{G-means}
+
+G-means (geometric mean of sensitivity and specificity) provides a balanced measure particularly suited for imbalanced datasets. A 2018 study using SMOTE with AdaBoost achieved G-mean of 94.65\% and AUC of 0.9817 on diabetes follow-up data. G-means is advantageous because it requires both sensitivity and specificity to be high; if either is low, G-means will be low, preventing models from achieving high scores by simply predicting the majority class.

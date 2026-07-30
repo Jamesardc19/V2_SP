@@ -1,0 +1,5 @@
+\contentsline {table}{\numberline {1}{\ignorespaces Performance metrics for different models on test set}}{59}{table.1}%
+\contentsline {table}{\numberline {2}{\ignorespaces Calibration performance on XGBoost model}}{61}{table.2}%
+\contentsline {table}{\numberline {3}{\ignorespaces Top 10 features by SHAP importance}}{62}{table.3}%
+\contentsline {table}{\numberline {4}{\ignorespaces Comparison of SHAP and XGBoost native feature importance}}{63}{table.4}%
+\contentsline {table}{\numberline {5}{\ignorespaces XGBoost performance at different classification thresholds}}{63}{table.5}%

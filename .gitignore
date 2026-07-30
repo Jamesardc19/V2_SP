@@ -1,57 +1,99 @@
-# Archive folder (old V1 files - not for GitHub)
-Archive_V1/
-
-# Python cache
+# =============================================================================
+# PYTHON
+# =============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-
-# Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
-# Environment
+# =============================================================================
+# ENVIRONMENT / IDE
+# =============================================================================
 .env
 .venv
 env/
 venv/
-
-# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 .qodo/
 
-# Model files (too large for GitHub)
+# =============================================================================
+# OS FILES
+# =============================================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =============================================================================
+# TEMPORARY FILES
+# =============================================================================
+*.tmp
+*.log
+*.bak
+
+# =============================================================================
+# LARGE BINARY / MODEL FILES  (too large for GitHub)
+# =============================================================================
 *.pkl
 *.joblib
 *.h5
 *.pt
 *.pth
-
-# Large data files
-*.csv
+*.zip
 *.npy
 *.npz
 
-# Trained models (too large - use Git LFS or external storage)
-Trained_Models_Improved_V2/*.joblib
-Trained_Models_Improved_V2/*.pkl
+# =============================================================================
+# ARCHIVE  (old versions — not part of the study)
+# =============================================================================
+_ARCHIVE/
 
-# Preprocessed data (too large - can be regenerated)
-PREPROCESS_OUTPUT_IMPROVED_V2/*.npy
-PREPROCESS_OUTPUT_IMPROVED_V2/*.joblib
+# =============================================================================
+# OLD 2013 DATASET SCRIPTS  (exploratory — not the final pipeline)
+# =============================================================================
+calibration_2013.py
+xai_2013.py
+train_all_models_2013.py
+preprocessing_pipeline_2013.py
+dataset_comparison_2013_2015_2018_2021.md
 
-# CatBoost logs
+# Old standalone XAI helper (superseded by main_xai.py)
+xai_v7.py
+
+# =============================================================================
+# 2013 DATASET OUTPUT FOLDERS
+# =============================================================================
+CALIBRATION_2013/
+XAI_2013/
+TRAINED_MODELS_2013/
+MODEL_RESULTS_2013/
+PREPROCESS_OUTPUT_2013/
+
+# =============================================================================
+# RAW DATASETS  (never commit raw data)
+# =============================================================================
+DATASETS/
+
+# =============================================================================
+# TRAINED MODEL BINARIES  (regenerable — use external storage)
+# =============================================================================
+MAIN_TRAINED_MODELS/
+MAIN_TRAINED_MODELS_CALIB/
+
+# =============================================================================
+# REFERENCE MATERIAL
+# =============================================================================
+Reference/
+
+# =============================================================================
+# CATBOOST LOGS
+# =============================================================================
 catboost_info/
 
-# OS files
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Temporary files
-*.tmp
-*.log
-*.bak
+# =============================================================================
+# STALE DUPLICATE FILES  (old naming convention)
+# =============================================================================
+*_v7_rivera*

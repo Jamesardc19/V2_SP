@@ -1,0 +1,153 @@
+\section{Results}
+
+The dataset used in this study was requested through the eNutrition website of the Food and Nutrition Research Institute (FNRI). Four component datasets were merged: clinical, biochemical, anthropometric, and dietary datasets, using the features \texttt{hhnum} (household number) and \texttt{member\_code} (member identifier). The merged dataset was composed of 90,286 entries with 77 features. 
+
+Next, features irrelevant to individual health characteristics were dropped. Administrative and survey design variables including \texttt{regcode} (region code), \texttt{provcode} (province code), \texttt{psurec} (primary sampling unit), \texttt{strrec} (strata), and sampling weight variables (\texttt{finalwgt1}, \texttt{finalwgt4}) were removed to prevent data leakage. Additionally, rows without the target variable \texttt{fbs} (fasting blood sugar) were dropped. In feature elimination, \texttt{drnk\_30dnum} (number of drinks in past 30 days) was removed due to excessive missing values (>50\%).
+
+Afterward, the target variable was converted from a continuous numerical feature to a binary categorical feature, with 0 for non-diabetic (FBS < 100 mg/dL) and 1 for diabetic (FBS $\geq$ 100 mg/dL). To handle missing values, K-Nearest Neighbors (KNN) imputation with k=5 was used for numerical features and mode imputation for categorical features. Furthermore, MinMaxScaler was used for feature scaling, transforming all numerical features to a range of [0, 1].
+
+Highly correlated features (correlation coefficient > 0.8) were identified and removed to avoid multicollinearity. After performing the necessary preprocessing techniques, the dataset was reduced to 90,286 entries with 64 features and 1 target variable. The data was partitioned using a 70-15-15 train-validation-test split. Consequently, the training set contained 67,206 entries, the validation set contained 11,540 entries, and the test set contained 11,540 entries. SMOTE (Synthetic Minority Over-sampling Technique) was applied to the training set only after the split to address class imbalance, achieving a 65:35 majority-to-minority ratio.
+
+\subsection{Performance of Machine Learning Models}
+
+Nine machine learning models were trained and evaluated on the test set. Table~\ref{tab:model_performance} presents the performance metrics for all models. XGBoost (Tuned) achieved the highest F2-score of 0.692, demonstrating the model's capability to balance precision and recall while prioritizing recall for diabetes screening. The precision and recall scores of 0.449 and 0.801, respectively, indicated that the model correctly identified 80.1\% of diabetic cases, though with a moderate rate of false positives. The F2-score of 0.692 indicated good model performance for screening applications, where minimizing false negatives is critical. Additionally, an ROC-AUC of 0.700 affirmed the model's ability to distinguish between non-diabetic and diabetic patients.
+
+\begin{table}[htbp]
+\centering
+\caption{Performance metrics for different models on test set}
+\label{tab:model_performance}
+\begin{tabular}{lcccccc}
+\hline
+\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} & \textbf{F2} & \textbf{ROC-AUC} \\
+\hline
+XGBoost (Tuned) & 0.592 & 0.449 & 0.801 & 0.575 & \textbf{0.692} & 0.700 \\
+Naive Bayes & 0.634 & 0.476 & 0.623 & 0.540 & 0.587 & 0.675 \\
+Voting Ensemble & 0.675 & 0.527 & 0.575 & 0.550 & 0.565 & 0.713 \\
+AdaBoost (Tuned) & 0.676 & 0.528 & 0.562 & 0.545 & 0.555 & 0.706 \\
+Random Forest (Tuned) & 0.665 & 0.513 & 0.546 & 0.529 & 0.539 & 0.700 \\
+LightGBM & 0.683 & 0.552 & 0.435 & 0.486 & 0.454 & 0.710 \\
+CatBoost & 0.687 & 0.558 & 0.442 & 0.493 & 0.461 & 0.716 \\
+Stacking Ensemble & 0.674 & 0.533 & 0.435 & 0.479 & 0.452 & 0.694 \\
+kNN (Tuned) & 0.536 & 0.388 & 0.597 & 0.470 & 0.539 & 0.562 \\
+TabNet (Optimized) & 0.656 & 0.501 & 0.591 & 0.542 & 0.570 & 0.691 \\
+TabNet (Baseline) & 0.667 & 0.515 & 0.577 & 0.544 & 0.563 & 0.705 \\
+\hline
+\end{tabular}
+\end{table}
+
+Naive Bayes achieved moderate performance with a recall of 0.623 and F2-score of 0.587, demonstrating reasonable sensitivity for a baseline model. The Voting Ensemble and AdaBoost models showed balanced performance across metrics, with F2-scores of 0.565 and 0.555, respectively. Random Forest (Tuned) achieved comparable ROC-AUC to XGBoost (0.700) but lower recall (0.546), indicating fewer detected diabetic cases.
+
+LightGBM and CatBoost, despite achieving the highest accuracy (0.683 and 0.687) and ROC-AUC (0.710 and 0.716), demonstrated lower recall (0.435 and 0.442) and F2-scores (0.454 and 0.461). This indicated that these models prioritized precision over recall, resulting in more missed diabetic cases. The Stacking Ensemble showed similar patterns with high precision (0.533) but low recall (0.435).
+
+k-Nearest Neighbors (kNN) demonstrated moderate recall of 0.597 but the lowest precision (0.388) among all models, resulting in a high rate of false positives. TabNet models (both Baseline and Bayesian Optimized) achieved moderate performance, with F2-scores of 0.563 and 0.570, respectively. Despite the computational cost of Bayesian Optimization (214 minutes), the performance improvement over the baseline was minimal (0.007 F2-score increase).
+
+\subsection{Comparison of Models}
+
+In comparison of XGBoost with the other machine learning models, each model demonstrated strengths in different performance metrics. XGBoost excelled in terms of F2-score, achieving the highest score of 0.692. This demonstrated its capability to minimize false negatives, which is critical for diabetes screening applications. Notably, CatBoost and LightGBM achieved higher precision (0.558 and 0.552) and ROC-AUC (0.716 and 0.710) compared to XGBoost, demonstrating their effectiveness in reducing false positives. However, their significantly lower recall (0.442 and 0.435 vs. 0.801) meant they missed more than half of diabetic cases, making them unsuitable for screening purposes.
+
+The ensemble methods (Voting and Stacking) did not outperform XGBoost despite combining multiple base models. The Voting Ensemble achieved an F2-score of 0.565, while the Stacking Ensemble achieved 0.452, both substantially lower than XGBoost's 0.692. This suggested that XGBoost's performance was so dominant that averaging it with weaker models degraded overall performance.
+
+TabNet, despite being a deep learning architecture specifically designed for tabular data, underperformed compared to XGBoost. The Bayesian Optimized TabNet achieved an F2-score of 0.570, 17.6\% lower than XGBoost. The extensive hyperparameter optimization (12 iterations $\times$ 5 folds = 60 evaluations, 214 minutes) provided minimal improvement over the baseline TabNet (F2-score increase of only 0.007).
+
+\subsection{Probability Calibration Results}
+
+Probability calibration was applied to the XGBoost model to ensure that predicted probabilities accurately reflected true diabetes risk. Table~\ref{tab:calibration_results} presents the calibration performance using Platt Scaling and Isotonic Regression.
+
+\begin{table}[htbp]
+\centering
+\caption{Calibration performance on XGBoost model}
+\label{tab:calibration_results}
+\begin{tabular}{lccc}
+\hline
+\textbf{Method} & \textbf{Brier Score} & \textbf{Log Loss} & \textbf{Improvement} \\
+\hline
+Uncalibrated & 0.2364 & 0.6653 & --- \\
+Platt Scaling & \textbf{0.2016} & \textbf{0.5872} & -14.7\% \\
+Isotonic Regression & 0.2020 & 0.5937 & -14.5\% \\
+\hline
+\end{tabular}
+\end{table}
+
+Platt Scaling achieved the best calibration performance, reducing the Brier Score from 0.2364 to 0.2016 (14.7\% improvement) and Log Loss from 0.6653 to 0.5872. Isotonic Regression achieved similar performance with a Brier Score of 0.2020 and Log Loss of 0.5937 (14.5\% improvement). Both methods substantially improved the reliability of predicted probabilities, making them suitable for clinical risk assessment.
+
+The calibration improvement meant that when the calibrated model predicted a 70\% probability of diabetes, approximately 70\% of such cases were actually diabetic, compared to the uncalibrated model where the actual rate could vary significantly. This reliability is critical for clinical decision-making and risk-based screening strategies.
+
+\subsection{Explainable Artificial Intelligence Analysis}
+
+SHAP (SHapley Additive exPlanations) was implemented to assess how different features impacted the XGBoost model's predictions. Table~\ref{tab:shap_importance} presents the top 10 features ranked by mean absolute SHAP value.
+
+\begin{table}[htbp]
+\centering
+\caption{Top 10 features by SHAP importance}
+\label{tab:shap_importance}
+\begin{tabular}{clcc}
+\hline
+\textbf{Rank} & \textbf{Feature} & \textbf{SHAP Value} & \textbf{Clinical Relevance} \\
+\hline
+1 & Ave\_SBP & 0.0564 & Systolic blood pressure \\
+2 & waist & 0.0499 & Waist circumference \\
+3 & tri & 0.0098 & Triglycerides \\
+4 & epwt\_fg25 & 0.0068 & Energy-weighted food group 25 \\
+5 & weight & 0.0042 & Body weight \\
+6 & Ave\_DBP & 0.0041 & Diastolic blood pressure \\
+7 & fg15 & 0.0028 & Food group 15 intake \\
+8 & epwt\_fg15 & 0.0012 & Energy-weighted food group 15 \\
+9 & fg25 & 0.0006 & Food group 25 intake \\
+10 & hip & 0.0004 & Hip circumference \\
+\hline
+\end{tabular}
+\end{table}
+
+According to the SHAP analysis, the most influential feature was average systolic blood pressure (Ave\_SBP) with a SHAP value of 0.0564, followed by waist circumference (0.0499) and triglycerides (0.0098). These top three features are well-established risk factors for Type 2 diabetes in medical literature. Blood pressure and waist circumference are components of metabolic syndrome, a cluster of conditions that increase diabetes risk. Elevated triglycerides indicate lipid metabolism disorders commonly associated with insulin resistance.
+
+Anthropometric features (waist, weight, hip) appeared in the top 10, highlighting the importance of body composition in diabetes prediction. Dietary features (food groups 15 and 25, energy-weighted intakes) also contributed to predictions, though with lower SHAP values than clinical and anthropometric measurements.
+
+Notably, all top features represent clinically valid health indicators rather than administrative codes or survey design variables. This contrasts with models that may learn spurious patterns from geographic codes, demonstrating that the XGBoost model learned genuine clinical risk factors. The consistency between SHAP importance and XGBoost's native feature importance further validated the robustness of the results.
+
+\subsection{Feature Importance Consistency}
+
+The SHAP feature importance rankings were compared with XGBoost's native feature importance (based on information gain) to assess consistency. Table~\ref{tab:feature_consistency} presents the comparison for the top 5 features.
+
+\begin{table}[htbp]
+\centering
+\caption{Comparison of SHAP and XGBoost native feature importance}
+\label{tab:feature_consistency}
+\begin{tabular}{lcc}
+\hline
+\textbf{Feature} & \textbf{SHAP Rank} & \textbf{XGBoost Rank} \\
+\hline
+Ave\_SBP & 1 & 1 \\
+waist & 2 & 2 \\
+Ave\_DBP & 6 & 3 \\
+weight & 5 & 4 \\
+tri & 3 & 5 \\
+\hline
+\end{tabular}
+\end{table}
+
+The high agreement between SHAP and XGBoost native feature importance rankings indicated robust and trustworthy results. Both methods identified Ave\_SBP and waist as the top two most important features. The slight differences in ranking for Ave\_DBP, weight, and tri were expected, as SHAP measures marginal contribution to predictions while XGBoost's native importance measures information gain during tree construction. The overall consistency validated that the model's decision-making process was stable and interpretable.
+
+\subsection{Model Performance by Threshold}
+
+The XGBoost model's performance was evaluated across different classification thresholds to understand the trade-off between precision and recall. Table~\ref{tab:threshold_performance} presents the performance at key threshold values.
+
+\begin{table}[htbp]
+\centering
+\caption{XGBoost performance at different classification thresholds}
+\label{tab:threshold_performance}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Threshold} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{F2-Score} \\
+\hline
+0.3 & 0.389 & 0.876 & 0.539 & 0.710 \\
+0.4 & 0.424 & 0.838 & 0.563 & 0.706 \\
+0.5 (default) & 0.449 & 0.801 & 0.575 & 0.692 \\
+0.6 & 0.488 & 0.747 & 0.589 & 0.670 \\
+0.7 & 0.539 & 0.672 & 0.598 & 0.636 \\
+\hline
+\end{tabular}
+\end{table}
+
+At the default threshold of 0.5, the model achieved a balance between precision (0.449) and recall (0.801), resulting in an F2-score of 0.692. Lowering the threshold to 0.3 increased recall to 0.876 (87.6\% of diabetic cases detected) but decreased precision to 0.389, resulting in a higher F2-score of 0.710. This threshold would be appropriate for maximum sensitivity screening, accepting more false positives to minimize missed cases.
+
+Increasing the threshold to 0.7 improved precision to 0.539 but reduced recall to 0.672, resulting in a lower F2-score of 0.636. This threshold would be more appropriate for confirmatory testing where reducing false positives is prioritized. The threshold analysis demonstrated that the model's performance could be tuned based on the specific clinical application and acceptable trade-offs between false positives and false negatives.

@@ -1,0 +1,118 @@
+\section{Introduction}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\subsection{Background of the Study}
+Diabetes is a chronic disease characterized by elevated blood sugar levels and remains a significant public health concern in the Philippines. Individuals with diabetes face higher risks of cardiovascular disease, kidney failure, nerve damage, and vision impairment \cite{Khokhar2025}. Recent national data reveal that the prevalence of diabetes among Filipino adults has reached approximately 7.5\% as of 2024, with over 4.7 million cases reported and an alarming number of undiagnosed individuals, surpassing 53\% of the diabetes-affected population \cite{IDFPhilippines2025}. In 2020 alone, diabetes accounted for 37,265 deaths, ranking as the fourth leading cause of mortality in the country \cite{Cudis2021}. The increasing urbanization, sedentary lifestyles worsened by COVID-19 lockdowns, and changing dietary patterns have accelerated obesity and other risk factors among Filipinos, intensifying the diabetes epidemic \cite{Cando2024}.
+
+Despite numerous international studies on diabetes risk assessment, most rely on data from Western or global populations \cite{Kiran2025}, failing to account for the unique Filipino demographic, genetic, and environmental factors \cite{Cando2024}. This reliance on international datasets undermines the applicability and reliability of predictive models for local populations, which presents a distinctive research gap. The need for a customized, locally relevant platform for accurate diabetes risk prediction is critical to improving public health outcomes \cite{Khokhar2025}. Recent advancements in artificial intelligence (AI) and machine learning have opened new avenues for medical diagnostics and predictive healthcare. However, transparency and interpretability remain major challenges for clinical adoption. Explainable Artificial Intelligence (XAI) bridges this gap by providing interpretable predictions that empower healthcare practitioners and patients alike. 
+
+In the Philippine context, there is a pressing need for predictive models tailored to local data to ensure confidence in clinical decisions. This study addresses this gap by developing a machine learning system that integrates three key components: comprehensive evaluation of multiple machine learning models (including tree-based algorithms and deep learning approaches) trained exclusively on Philippine-specific data to identify the optimal predictor; Explainable Artificial Intelligence (XAI) techniques, specifically LIME and SHAP, to provide granular interpretations of predictions; and post-hoc calibration mechanisms to align predicted probabilities with actual clinical risk levels. By systematically combining rigorous model comparison, interpretability, and probabilistic calibration, this research aims to foster robust clinical confidence, thereby reducing undiagnosed cases and supporting effective diabetes prevention strategies within Filipino communities.
+
+
+\subsection{Statement of the Problem}
+Diabetes is a significant health challenge in the Philippines, and machine learning models have shown promise in predicting its risk. While Explainable Artificial Intelligence (XAI) techniques, such as LIME and SHAP, help provide transparency into model predictions, they often fail to address the issue of model calibration. Uncalibrated models produce probability estimates that may be overconfident or underconfident, leading to unreliable risk predictions. This undermines the potential of AI to support clinical decision-making and reduce diabetes incidence. Therefore, there is a critical need for calibration in XAI to ensure that predicted probabilities align with actual risks. By integrating calibration techniques into XAI models, this study aims to improve both the trustworthiness and interpretability of diabetes risk predictions. This research will contribute to developing a Calibrated Explainable AI model tailored to Philippine data, ultimately enhancing predictive accuracy and fostering greater confidence in AI-driven healthcare applications.
+
+\subsection{Objectives of the Study}
+
+ The study aims to facilitate early detection and prediction of diabetes risk among individuals in the Philippines. Calibrated Explanations will be implemented to provide confidence in the Explainable AI predictions. The specific objectives of this study are as follows:
+
+\begin{enumerate}
+    \item Allows the primary user (healthcare practitioner or end-user) to:
+    \begin{enumerate}
+        \item Input personal health information relevant to diabetes risk prediction (e.g., age, gender, medical history).
+        \item Request a prediction of the likelihood of developing diabetes based on the input data.
+        \item Receive an interpretable explanation of the prediction through XAI methods, such as Local Interpretable Model-agnostic Explanations (LIME) and SHapley Additive exPlanations (SHAP), to help understand the reasoning behind the model's output.
+        \item View the model's output in the form of diabetes risk levels, supporting better decision-making and preventive actions.
+    \end{enumerate}
+    
+    \item Allows the system to:
+    \begin{enumerate}
+        \item Perform comprehensive data pre-processing to ensure the dataset is clean, relevant, and optimized for machine learning analysis.
+        \item Evaluate and compare the performance of multiple machine learning models using metrics including Precision, Recall, F2-score, and Area Under the Precision-Recall Curve (AUPRC) Score for predicting diabetes risk among individuals in the Philippines via these methods
+        \begin{enumerate}
+            \item Preprocessing steps
+            \item Feature Scaling
+            \item Feature Elimination
+            \item SMOTE
+        \end{enumerate}
+        \item Implement and compare the performance of multiple machine learning models, including:
+        \begin{enumerate}
+            \item Traditional ML: Naive Bayes, k-Nearest Neighbors, Random Forest, XGBoost, LightGBM, CatBoost, AdaBoost
+            \item Deep Learning: TabNet with Bayesian Optimization
+            \item Ensemble Methods: Voting Ensemble, Stacking Ensemble
+        \end{enumerate}
+        \item Train the model on the National Nutrition Survey Dataset from 2018 to 2021, incorporating factors like clinical health, dietary components, anthropometric components, and biochemical components.
+        \item Implement calibration techniques, such as Platt Scaling or Isotonic Regression, to ensure the model's predicted probabilities align with actual outcomes, improving the reliability of the diabetes risk predictions.
+        \item Implement techniques such as SMOTE and LIME to enhance the model's performance and ensure interpretability.
+    \end{enumerate}
+    
+    \item Allows the user to:
+	\begin{enumerate}
+    \item Input a manual entry or upload a CSV file containing relevant information about the user for diabetes risk prediction.
+    \item Request a diabetes risk prediction with calibrated probability estimates and XAI explanations.
+    \item View the prediction results including:
+    \begin{enumerate}
+        \item Calibrated risk probability (e.g., "65\% diabetes risk")
+        \item Risk level classification (e.g., Low, Moderate, High)
+        \item XAI explanations (SHAP/LIME) showing which factors contributed to the prediction
+    \end{enumerate}
+\end{enumerate}
+\end{enumerate}
+
+
+\subsection{Significance of the Project}
+
+This study aims to provide a \textbf{reliable and calibrated explainable AI (XAI) model} for accurate and early prediction of diabetes risk, which will significantly contribute to the following:
+
+\begin{enumerate}
+    \item \textbf{Prediabetic Patients} \\
+    This study's \textit{calibrated XAI model} can provide actionable insights for prediabetic individuals, helping them make informed decisions regarding lifestyle changes to prevent or manage diabetes. The reliable predictions and interpretations provided by the model will empower patients to take timely actions toward healthier lifestyles and more proactive health management.
+
+    \item \textbf{Medical Professionals} \\
+    By integrating calibration with XAI, the study provides \textit{accurate, interpretable, and trustworthy} diabetes risk predictions that assist healthcare professionals in making informed clinical decisions. The ability to trust the \textit{probability estimates} generated by the model will facilitate personalized care, early intervention, and better patient outcomes. The explainability of the model also ensures that clinicians understand the reasoning behind the predictions, enhancing trust in the AI system.
+
+    \item \textbf{Future Researchers in Health and Machine Learning} \\
+    This study contributes to the field of healthcare AI by integrating calibration techniques into XAI models, making it a key reference for future researchers. The findings will offer insights into how calibration improves the reliability and clinical applicability of AI models, guiding future work in healthcare AI, particularly in ensuring that AI-based predictions are not only accurate but also trustworthy and interpretable.
+\end{enumerate}
+
+
+\subsection{Scope and Limitations}
+
+The following are the limitations of this study:
+
+\begin{enumerate}
+    \item This study will only utilize local datasets of \textbf{Department of Science and Technology - Food and Nutrition Research Institute (DOST-FNRI)} to develop and validate a model for predicting the risk of diabetes.
+    
+    \item The study will focus on developing and validating a \textit{Calibrated Explainable AI (XAI)} model using machine learning techniques such as tree-based algorithms and deep learning approaches, integrated with calibration methods like Platt scaling and Isotonic Regression, to ensure accurate and reliable risk predictions.
+    
+    \item Limitations in the quality and quantity of available Philippine health datasets may impact the model's performance, \textit{especially when trying to represent diverse regions or populations}.
+    
+    \item While XAI techniques like LIME will be used to enhance the \textit{interpretability} of the model, some features of the model may still be difficult to explain comprehensively, potentially influencing how users (healthcare professionals and researchers) interpret model predictions.
+    
+    \item The \textit{calibrated XAI} model developed in this study is intended as a \textit{decision support tool} to assist healthcare professionals with diabetes risk prediction. It is not intended to replace or override professional medical judgment or clinical decisions.
+    
+    \item The trained model's predictive capacity is limited to \textit{predicting the general risk of diabetes} and does not have the ability to distinguish between \textit{type 1 diabetes} and \textit{type 2 diabetes} in individual predictions.
+    
+    \item Calibration techniques applied on a dataset from the \textbf{Philippine population} may not generalize well to other populations or settings. This is because the calibration process is specific to the data used to train the model, and demographic, lifestyle, or healthcare-related differences in other regions could lead to miscalibrated predictions. Further research and cross-validation across diverse populations may be necessary.
+\end{enumerate}
+
+\subsection{Assumptions}
+\begin{enumerate}
+    \item It is assumed that sufficient \textbf{Philippine-specific health data} (including clinical health, dietary components, anthropometric components, and biochemical components) has been accurately collected and is representative of the target population, possessing sufficient quality to train the calibrated XAI model effectively.
+    
+    \item It is assumed that the health-related data used in the model has been \textbf{accurately collected and correctly labeled}. The data is assumed to be representative of the target population, which includes various demographics and regional characteristics of the Philippines.
+
+    \item It is assumed that the chosen machine learning models can effectively learn the patterns and relationships in the dataset for diabetes risk prediction. It is also assumed that the models will perform adequately after applying calibration techniques (such as Platt scaling and Isotonic Regression).
+
+    \item It is assumed that the \textbf{calibration techniques} applied to the models will significantly improve their reliability, ensuring that the predicted probabilities align well with actual outcomes for diabetes risk.
+
+    \item It is assumed that LIME (or any other chosen XAI method) will provide \textbf{accurate and understandable explanations} for the model's predictions, allowing healthcare professionals and patients to interpret why a certain risk prediction was made.
+
+    \item It is assumed that the predicted probabilities from the \textbf{calibrated XAI model} will be clinically actionable and useful for healthcare professionals in making informed decisions for early diabetes intervention.
+
+    \item It is assumed that the calibrated XAI model can be successfully integrated into a \textit{web application}, and the system will be able to provide real-time predictions with minimal delay, ensuring that it is useful in a clinical setting.
+
+    \item It is assumed that the \textbf{web application} will be deployed in a stable and secure environment, with adequate server resources to support the real-time operation of the calibrated XAI model without disruptions.
+
+\end{enumerate}

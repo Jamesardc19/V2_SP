@@ -1,0 +1,1189 @@
+
+--- Page 1 ---
+Expert Systems With Applications 246 (2024) 123154
+Available online 6 January 2024
+0957-4174/© 2024 The Author(s). Published by Elsevier Ltd. This is an open access article under the CC BY license ( http://creativecommons.org/licenses/by/4.0/ ).
+Contents lists available at ScienceDirect
+Expert Systems With Applications
+journal homepage: www.elsevier.com/locate/eswa
+Calibrated explanations: With uncertainty information and
+counterfactuals
+Helena Löfströma,b,∗, Tuwe Löfströmc, Ulf Johanssonc, Cecilia Sönströdc
+aJönköping International Business School, Jönköping University, Sweden
+bDepartment of Information Technology, University of Borås, Sweden
+cDepartment of Computing, Jönköping University, Sweden
+A R T I C L E I N F O
+Keywords:
+Explainable AI
+Feature importance
+Calibrated explanations
+Venn-Abers
+Uncertainty quantification
+Counterfactual explanationsA B S T R A C T
+While local explanations for AI models can offer insights into individual predictions, such as feature
+importance, they are plagued by issues like instability. The unreliability of feature weights, often skewed due
+to poorly calibrated ML models, deepens these challenges. Moreover, the critical aspect of feature importance
+uncertainty remains mostly unaddressed in Explainable AI (XAI). The novel feature importance explanation
+method presented in this paper, called Calibrated Explanations (CE), is designed to tackle these issues head-on.
+Built on the foundation of Venn-Abers, CE not only calibrates the underlying model but also delivers reliable
+feature importance explanations with an exact definition of the feature weights. CE goes beyond conventional
+solutions by addressing output uncertainty. It accomplishes this by providing uncertainty quantification for
+both feature weights and the model’s probability estimates. Additionally, CE is model-agnostic, featuring
+easily comprehensible conditional rules and the ability to generate counterfactual explanations with embedded
+uncertainty quantification. Results from an evaluation with 25 benchmark datasets underscore the efficacy of
+CE, making it stand as a fast, reliable, stable, and robust solution.
+1. Introduction
+A core task in many AI-based systems is predictive modelling, in
+which a machine learning (ML) algorithm is used to create a model,
+mapping input to target from historical examples to be able to predict
+novel inputs. Predictive models used for AI-based decision support
+are generally not designed for transparency. Although they operate in
+critical situations such as, e.g., medicine or defence, they are limited
+to only presenting a probable outcome ( Gunning , 2017 ; Ribeiro, Singh,
+& Guestrin , 2016 ), which can lead to either misuse (based on user
+reliance being higher than appropriate) or disuse (due to users having
+less reliance than appropriate) ( Alvarado-Valencia & Barrero , 2014 ;
+Buçinca, Lin, Gajos, & Glassman , 2020 ).
+Due to the lack of transparency, predictions from this type of model
+often require an explanation. In explainable artificial intelligence (XAI),
+the goal is to create methods that help human users identify when to
+trust a prediction and when not to, such as an erroneous prediction in
+a medical diagnosis ( Marx et al. , 2023 ). An explanation should reveal
+the strengths and weaknesses of the underlying model to communicate
+The code (and data) in this article has been certified as Reproducible by Code Ocean: ( https://codeocean.com/ ). More information on the Reproducibility
+Badge Initiative is available at https://www.elsevier.com/physical-sciences-and-engineering/computer-science/journals .
+∗Corresponding author at: Jönköping International Business School, Jönköping University, Sweden.
+E-mail addresses: helena.lofstrom@ju.se (H. Löfström), tuwe.lofstrom@ju.se (T. Löfström), ulf.johansson@ju.se (U. Johansson), cecilia.sonstrod@ju.se
+(C. Sönströd).how they will behave in the future ( Dimanov, Bhatt, Jamnik, & Weller ,
+2020 ; Gunning , 2017 ).
+There are two main categories of explanations: local explanations,
+which present information about the reasons for individual predictions,
+and global explanations, which provide information about the general
+behaviour of the model ( Guidotti, Monreale, Ruggieri, Turini, et al. ,
+2018 ; Martens & Foster , 2014 ; Moradi & Samwald , 2021 ). Local ex-
+planations have several drawbacks, such as instability, where slight
+variations in an instance can lead to significantly different explanations
+and create issues in evaluating the quality of explanations ( Rahnama &
+Boström , 2019 ; Slack, Hilgard, Singh, & Lakkaraju , 2021 ).
+Post hoc explanations can be either factual (the feature value causes
+this effect on the prediction) or counterfactual (what are the min-
+imal changes to an instance’s feature values that change the pre-
+diction) ( Guidotti , 2022 ; Mothilal, Sharma, & Tan , 2020 ; Wachter,
+Mittelstadt, & Russell , 2017 ). Counterfactual explanations are seen as
+highly human-friendly since they mirror how humans reason ( Molnar ,
+2022 ).
+https://doi.org/10.1016/j.eswa.2024.123154
+Received 3 May 2023; Received in revised form 3 January 2024; Accepted 3 January 2024
+--- Page 2 ---
+Expert Systems With Applications 246 (2024) 123154
+2H. Löfström et al.
+Another limitation of today’s state-of-the-art explanation methods is
+that they offer limited insights into model uncertainty and reliability.
+Although earlier authors have pointed out that uncertainty information
+is essential for decision-making (see, e.g., Parmigiani, 2002), it is only
+in recent years that uncertainty estimation has been identified as a
+necessary part of an explanation to make the underlying model more
+transparent (Antorán, Bhatt, Adel, Weller, & Hernández-Lobato, 2020;
+Bhatt et al., 2021; Slack et al., 2021). Zhou, Gandomi, Chen, and
+Holzinger (2021) point out that the primary problem for users of
+AI is not primarily the model’s opaqueness or complexity but rather
+the output uncertainty. Phillips-Wren and Adya (2020) highlight user
+uncertainty as one of four stress factors that affect decision quality.
+Consequently, accurate uncertainty estimation can improve the quality
+and usefulness of explanations in XAI. Although uncertainty is high-
+lighted as a critical factor in transparent decision-making, there are
+high costs of obtaining calibrated uncertainty estimates for complex
+problems (Bhatt et al., 2021; Marx et al., 2023).
+In local explanation methods, the probability estimate that most ML
+models output is commonly used as an indicator of the likelihood of
+each class. However, it is well-known that ML models are often poorly
+calibrated, meaning that the probability estimates do not correspond
+to the actual probabilities of being correct (Grushka-Cockayne, Jose, &
+Lichtendahl, 2017; Van Calster, McLernon, Van Smeden, Wynants, &
+Steyerberg, 2019). Calibration methods like Venn-Abers (VA) (Vovk &
+Petej, 2014) have been developed to address these issues. VA produces
+a probability interval for each prediction, which can be aggregated into
+a calibrated probability estimate through regularization to compare
+with other calibration methods or the underlying model’s probability
+estimate.
+When using VA for decision-making, it is crucial to note that the
+technique also provides intervals for each class, quantifying the un-
+certainty in the probability estimate, which is valuable from an ex-
+planatory perspective. The width of the interval reflects the model’s
+uncertainty, where a narrower interval indicates less uncertainty in the
+probability estimate and a wider interval indicates more uncertainty in
+the probability estimates.
+A core assumption of this paper is that it is of questionable value
+to use an explanation of a poorly calibrated model to support decision-
+making, as the poorly calibrated model will not reflect reality. The use
+of explanations of such models will likely eventually result in disuse
+since the explanations will be misleading in relation to reality. It is
+also assumed to be beneficial for understanding an explanation that it
+takes the form of conditional rules, clarifying under which conditions it
+applies and making it clearly interpretable. Furthermore, having an ex-
+actly defined meaning of the feature weight in relation to the prediction
+of the model is important. This paper applies to binary classification
+but focuses on explaining probability estimates rather than class labels,
+as probability estimates carry richer information about the prediction.
+Quantifying the uncertainty of the feature weight is an important tool
+to help users drill into a deeper understanding of the prediction. Finally,
+being able to explore both factual and counterfactual explanations
+easily is seen as beneficial from a decision-making perspective.
+This paper introduces a new local feature importance explanation
+method called Calibrated Explanations. Calibrated Explanations has the
+following key characteristics:
+1. As a pre-requisite for constructing the explanations, the under-
+lying model is calibrated to ensure alignment with reality. VA
+provides uncertainty estimation for the calibrated probability
+estimates, and this information is conveyed to the user.
+2. The Calibrated Explanations method provides feature weights
+with an exact meaning in relation to the calibrated probabil-
+ity estimate of the model. The feature weights indicate the
+importance of that feature for explaining the prediction.
+3. The feature weights are accompanied by uncertainty quantifi-
+cation, precisely defined in relation to the underlying model’s
+calibrated probability estimates.4. Conditional rules are defined so that they have a straightforward
+interpretation in relation to instance values.
+5. Calibrated Explanations support both factual and counterfac-
+tual explanations based on the model’s calibrated probability
+estimates.
+The paper is organized as follows: The next section reviews funda-
+mental concepts related to explanation methods, calibration, and VA
+predictors. The main contribution is introduced in Section 3, defining
+Calibrated Explanations. Section 4 provides a presentation of both
+factual and counterfactual explanations. In Section 5, the setup and
+results from three experiments are presented. The paper ends with a
+discussion followed by concluding remarks.
+2. Background
+2.1. Desiderata of explanations
+Creating high-quality explanations in XAI depends on the goals it
+addresses, which may vary, e.g. assessing how the users appreciate the
+explanation interface is distinct from evaluating if the explanation accu-
+rately mirrors the underlying model (Löfström, Hammar, & Johansson,
+2022). Nonetheless, specific characteristics are universally desirable for
+post-hoc explanation methods:
+•It is critical that an explanation method reliably mirror the un-
+derlying model, which is closely connected to the concept that an
+explanation method should have a high level of fidelity to the un-
+derlying model (Adadi & Berrada, 2018; Arrieta et al., 2020; Car-
+valho, Pereira, & Cardoso, 2019a; Chromik & Schuessler, 2020;
+Das & Rad, 2020; Doshi-Velez & Kim, 2017; Hoffman, Mueller,
+Klein, & Litman, 2018; Murdoch, Singh, Kumbier, Abbasi-Asl, &
+Yu, 2019; Slack et al., 2021; Wang, Yang, Abdul, & Lim, 2019). In
+that sense, a trustworthy explanation must have feature weights
+that accurately correspond to the probability estimates, which in
+turn must accurately reflect the reality, i.e., the model must be
+well-calibrated (Bhatt et al., 2021).
+•Stability and robustness are two additional critical features of
+explanation methods (Dimanov et al., 2020; Agarwal et al., 2022;
+Alvarez-Melis & Jaakkola, 2018; Chromik & Schuessler, 2020).
+Stability refers to the consistency of the explanations; the same
+instance and model should produce identical explanations across
+multiple runs (Carvalho et al., 2019a; Slack et al., 2021). Stability
+is pointed out as one of the essential characteristics of any ex-
+planation technique by (Zhou, Hooker, & Wang, 2021), and the
+authors write that an unstable method is considered unreliable
+since it provides little insight into how the model works (Adadi &
+Berrada, 2018; Agarwal et al., 2022; Carvalho et al., 2019a; Hoff-
+man et al., 2018; Moradi & Samwald, 2021; Mueller, Hoffman,
+Clancey, Emrey, & Klein, 2019; Slack et al., 2021; Wang et al.,
+2019). In contrast, robustness refers to the ability of an explana-
+tion method to produce consistent results even when an instance
+or its environment undergoes small perturbations (Dimanov et al.,
+2020; Doshi-Velez & Kim, 2017).
+Consequently, the essential characteristics of an explanation method
+in XAI are that it should be reliable, stable, and robust.
+Two of the most well-established local feature importance tech-
+niques are Local Interpretable Model-agnostic Explanations (LIME)
+(Ribeiro et al., 2016), and SHapley Additive exPlanations (SHAP)
+(Lundberg & Lee, 2017). LIME uses a surrogate model, which tries to
+explain each instance using a weighted linear model locally. It perturbs
+input data and observes the impact on model predictions to create a
+locally faithful explanation. Each feature explanation consists of a con-
+dition and a weight. The technique is sensitive to perturbation choices,
+which can cause instability and decreased robustness. The problem with
+instability in LIME has been highlighted in several studies (Agarwal
+et al., 2022; Rahnama & Boström, 2019; Zhou, Hooker et al., 2021).
+--- Page 3 ---
+Expert Systems With Applications 246 (2024) 123154
+3H. Löfström et al.
+SHAP values are based on cooperative game theory and provide
+a unified way to explain the impact of each feature on a model’s
+prediction by considering all possible feature combinations. As opposed
+to LIME, SHAP does not provide any rules or conditions. Instead,
+the explanation for any specific instance is in relation to a baseline,
+which could create interpretation challenges (Molnar, 2022). On the
+other hand, this also makes it possible to aggregate the explanations to
+gain global explanations. Calculating SHAP values is computationally
+intensive, especially for high-dimensional data, and the complexity
+increases with the number of features. As a consequence, it may require
+specialized libraries to implement effectively.
+While LIME and SHAP have emerged as two of the most used
+and known explanation methods, there are other explanation methods
+proposed that address different gaps, such as, e.g., Anchors for local
+Explanations (ANCHOR) (Ribeiro, Singh, & Guestrin, 2018), Model Ag-
+nostic suPervised Local Explanations (MAPLE) (Plumb, Molitor, & Tal-
+walkar, 2018), and LOcal Rule-based Explanations (LORE) (Guidotti,
+Monreale, Ruggieri, Pedreschi et al., 2018). ANCHOR identifies local
+rules or conditions and focuses on finding the most salient features
+and their thresholds. MAPLE is a supervised neighbourhood approach
+that combines ideas from local linear models and ensembles of decision
+trees. LORE aims to create interpretable, human-readable rules that
+describe why a particular prediction was made through counterfactuals.
+Model-Agnostic Counterfactual Explanations (MACE) (Karimi, Barthe,
+Balle, & Valera, 2020) is another counterfactual method that try to
+identify the set of features resulting in the desired prediction, while
+remaining at minimum distance from the original set of features de-
+scribing the instance. An interesting approach, with a framework based
+on Naïve Bayes, is presented by Slack et al. (2021) and instantiated in
+SHAP (BayesSHAP) and LIME (BayesLIME) to generate well-calibrated
+explanations with uncertainty information.
+2.2. Calibration and Venn-Abers predictors
+A probabilistic predictor generates a predicted class label and a
+probability distribution over all possible labels. To determine the va-
+lidity of the predicted probability distributions, statistical tests are
+performed based on observation of the actual labels. Achieving valid-
+ity for probabilistic predictions is generally impossible, as discussed
+by Vovk, Gammerman, and Shafer (2005). However, this paper focuses
+on calibration, which can be defined as follows:
+𝑝(𝑐∣𝑝𝑐) ≈𝑝𝑐, (1)
+where 𝑝𝑐represents the probability estimate for a particular class label
+𝑐. A well-calibrated model produces predicted probabilities that match
+observed accuracy. This means that if a model assigns a probability
+estimate of 0.9 to a specific label, that label should be correct approx-
+imately 90% of the time. A well-calibrated model will also produce
+well-calibrated probability estimates for each instance and class. How-
+ever, many predictive models produce poorly calibrated probability
+estimates (Van Calster et al., 2019). When a model is poorly calibrated,
+an external calibration method can be applied using a separate portion
+of the labelled data, called the calibration set, to adjust the predicted
+probabilities.
+Venn predictors are probabilistic predictors (Vovk, Shafer, & Nouret-
+dinov, 2003) that, for each label, output multi-probabilistic predictions.
+These multi-probabilistic predictions are converted into probability
+intervals where the interval size indicates confidence in the estimation.
+Ininductive Venn prediction (Lambrou, Nouretdinov, & Papadopou-
+los, 2015), the underlying model is used to divide the calibration
+instances into a number of categories based on a Venn taxonomy . Within
+each category, the estimated probability for test instances falling into
+a category is the relative frequency of each class label among all
+calibration instances in that category. Validity is achieved by including
+the test instance in the calculation. Since the correct label is unknownfor the test instances, every possible label is tried, resulting in the
+multi-probabilistic probability distribution.
+Choosing an appropriate taxonomy when using Venn predictors can
+be challenging. One alternative is Venn-Abers predictors (VA) (Vovk &
+Petej, 2014), where the taxonomy is automatically optimized using
+isotonic regression . Isotonic regression is a non-parametric regression
+technique that fits a piecewise constant function to the data, such that
+the function is monotonically increasing or decreasing. VA predictors
+are used together with scoring classifiers , and since VA predictors are
+Venn predictors, they inherit the validity guarantees.
+To define a VA calibrator, let 𝑍𝑇= {𝑧1,…, 𝑧𝑛}, where 𝑛=𝑙+𝑞, be a
+training set. Each instance 𝑧𝑖= (𝑥𝑖, 𝑦𝑖)consists of two parts; an object 𝑥𝑖
+and a label 𝑦𝑖. Since a calibration set is required for the calibration, the
+training set is divided into a proper training set 𝑍𝑞and a calibration set
+𝑍𝑙= {𝑧1,…, 𝑧𝑙}. Train a scoring classifier that outputs a prediction score
+𝑠(𝑥)when predicting an object 𝑥. A higher value of 𝑠(𝑥)signals a more
+pronounced belief in the positive class, i.e., class label 1. To obtain the
+predicted class label from a scoring classifier, the score is compared to
+a fixed threshold value 𝑡. The prediction gets the value of 1if𝑠(𝑥)> 𝑡,
+and0otherwise. When using VA with scoring classifiers, the threshold
+is not a fixed value 𝑡. Instead, an isotonic regression model is fitted
+to a number of prediction scores where the true targets are known,
+which creates an increasing function 𝑔(𝑠(𝑥))(Zadrozny & Elkan, 2001),
+interpreted as the probability that the label of 𝑥is1, i.e., a calibrator.
+Thus, an inductive VA predictor produces a multi-probabilistic pre-
+diction for a test object 𝑥1with corresponding unknown label 𝑦as
+follows:
+1. Let 𝑔0and 𝑔1be isotonic calibrators for {(𝑠(𝑥1), 𝑦1),…,
+(𝑠(𝑥𝑙), 𝑦𝑙),(𝑠(𝑥),0)}and{(𝑠(𝑥1), 𝑦1),…,(𝑠(𝑥𝑙), 𝑦𝑙),(𝑠(𝑥),1)}, respec-
+tively.
+2. Let the probability interval for 𝑦= 1 be[𝑔0(𝑠(𝑥)), 𝑔1(𝑠(𝑥))]
+(henceforth referred to as [𝑝0, 𝑝1]).
+3. When a regular probability estimate is needed, the probability
+intervals [𝑝0, 𝑝1]are aggregated into a single calibrated probability
+estimate by following the recommendation from Vovk and Petej
+(2014) to get a regularized value:
+𝑝=𝑝1
+1 −𝑝0+𝑝1(2)
+In summary, VA produces a calibrated probability estimate (the
+regularized 𝑝-value) and a probability interval [𝑝0, 𝑝1].
+3. Definition of calibrated explanations
+This section introduces a new feature importance explanation
+method called Calibrated Explanations (CE). At the heart of the pro-
+posed method lies the realization that the feature weights must have
+an intuitive meaning to facilitate understanding. A factual explanation
+in CE is composed of a calibrated prediction from the underlying model
+accompanied by an uncertainty interval and a collection of factual feature
+rules, each composed of a feature weight with an uncertainty interval and
+afactual condition , covering that feature’s instance value. Counterfactual
+explanations only contain a collection of counterfactual feature rules ,
+each composed of a prediction estimate with an uncertainty interval and
+acounterfactual condition , covering alternative instance values for the
+feature. The prediction estimate represents a probability estimate for
+the positive class.
+The following is a high-level description of how CE works: Let us
+assume that a scoring classifier, trained using the proper training set
+𝑍𝑞, exists for which a local explanation for test object 𝑥is wanted. Let
+VA calibrate the underlying model for 𝑥to get the probability interval
+[𝑝0, 𝑝1]and the calibrated probability estimate 𝑝. Use VA to estimate
+1For convenience, the index 𝑛+1is omitted from the test instance to reduce
+clutter.
+--- Page 4 ---
+Expert Systems With Applications 246 (2024) 123154
+4H. Löfström et al.
+probability intervals ( [𝑝′
+0.𝑓, 𝑝′
+1.𝑓]) and calibrated probability estimates
+(𝑝′
+𝑓) for slightly perturbed versions of object 𝑥, changing one feature at
+a time in a systematic way (see the detailed description below). To get
+the feature weight (and uncertainty interval) for feature 𝑓, calculate
+the difference between 𝑝to the average of all 𝑝′
+𝑓(and [𝑝′
+0.𝑓, 𝑝′
+1.𝑓]).2
+𝑤𝑓=𝑝−1
+|𝑉𝑓|− 1∑
+𝑝′
+𝑓, (3)
+𝑤𝑓
+0=𝑝−1
+|𝑉𝑓|− 1∑
+𝑝′
+0.𝑓, (4)
+𝑤𝑓
+1=𝑝−1
+|𝑉𝑓|− 1∑
+𝑝′
+1.𝑓. (5)
+The feature weight is exactly defined to be the difference between
+the calibrated probability estimate on the original test object 𝑥and
+the estimated (average) calibrated probability estimate achieved on
+the perturbed versions of 𝑥. The upper and lower bounds are defined
+analogously using the probability intervals from the perturbed versions
+of𝑥. As long as the same test object, underlying model and calibration
+set is used, the resulting explanation will also be the same.
+More formally, the following steps are pursued to achieve a factual
+explanation for a test object 𝑥:
+1. Use VA to get the probability interval [𝑝0, 𝑝1]and the calibrated
+probability estimate 𝑝for𝑥.
+2. Separate all features into categorical features 𝐶and numerical
+features 𝑁. Define a discretizer for numerical features that de-
+fine thresholds and smaller- or greater-than-conditions (≤, >)for
+these features.3
+3. For each feature 𝑓∈𝐶:
+(a) Iterate over all possible categorical values 𝑣∈𝑉𝑓and
+create a perturbed instance exchanging the feature value
+of𝑥𝑓with one value at a time, creating a perturbed
+instance 𝑥′
+𝑓=𝑣.
+(b) Calculate and store the probability intervals [𝑝′
+0.𝑓, 𝑝′
+1.𝑓]
+and the calibrated probability estimate 𝑝′
+𝑓for the per-
+turbed instance. Calculate the weights using Eqs. (3), (4),
+and (5).
+(c) Define a factual condition using the feature 𝑓, the value
+𝑣and the identity condition (=).
+4. For each feature 𝑓∈𝑁:
+(a) Use the thresholds of the discretizer to identify the closest
+lower or upper threshold 𝑡surrounding the feature value
+of𝑥𝑓. Divide all possible feature values in the calibration
+set for feature 𝑓into two groups 𝑉𝑓separated by 𝑡.
+(b) Within each group, percentile values 𝑝𝑣representing the
+25th, 50th and 75th percentiles are extracted. Iterate over
+the values in 𝑝𝑣and create a perturbed instance exchang-
+ing the feature value of 𝑥𝑓with one value at a time,
+creating a perturbed instance 𝑥′
+𝑓𝑝𝑣. Calculate and store the
+probability intervals [𝑝′
+0.𝑓𝑝𝑣, 𝑝′
+1.𝑓𝑝𝑣]and the calibrated prob-
+ability estimate 𝑝′
+𝑓𝑝𝑣for the perturbed instance. Average
+over all perturbed instances within the group, creating a
+probability interval [𝑝′
+0.𝑓, 𝑝′
+1.𝑓]and the calibrated proba-
+bility estimate 𝑝′
+𝑓for each group. Calculate the weights
+using Eqs. (3), (4), and (5).
+(c) Define a factual condition using threshold 𝑡and feature 𝑓.
+The≤or>condition is used so that the factual condition
+covers the instance value.
+2Exclude 𝑝(and [𝑝0, 𝑝1]), i.e., the VA results on 𝑥.
+3This is done using a binary subclass of the EntropyDiscretizer class
+in LIME.It is essential to discuss rule logic that results in unambiguously
+interpretable rules. For categorical features, the only logical factual
+rule is based on the identity condition. For numerical features, several
+different rules can be formed. As the feature weights are the difference
+between the calibrated probability estimate of 𝑥and the average cali-
+brated probability estimates on the perturbed instances within a group,
+it would obscure the meaning of the feature weight if the feature rule
+could be a between rule, i.e., be of the form 0<feature f ≤2. The
+reason is that it is often reasonable to assume that probabilities for
+values below the interval ( feature f ≤0) may differ significantly
+from probabilities for values above the interval ( feature f >2),
+making an average of the two hard to interpret. Consequently, it is only
+the threshold being closest to the feature value that is used to form a
+rule.
+The worst case computational complexity of the method is deter-
+mined by the following things:
+•Training of the underlying model and calculating the probabil-
+ity estimates on the calibration set. This is done once and the
+complexity is determined by the underlying model.
+•Initializing VA once, which involves sorting and pre-computing
+some values, taking at worst time 𝑂(𝑙log𝑙, i.e., being dependent
+on the size 𝑙of the calibration set (Petej, 2018).
+•The method operates feature-by-feature and iterates over all cat-
+egorical values for categorical features or over the number of
+percentile samples for numerical features. Each iteration makes
+a call to VA, which has a complexity of 𝑂(log𝑙)for producing
+the calibrated probability interval (Petej, 2018). Thus, the com-
+plexity for the method is 𝑂(|𝐹|𝑖log𝑙), where |𝐹|is the number
+of features and 𝑖is the number of iterations (i.e., the number of
+values or samples) per feature. Normally, there are a lot fewer
+features than instances, so that |𝐹|≪ 𝑙. The number of values or
+samples are also generally small (the default number of samples
+for numerical features is 3).
+•In connection to the call to VA, the underlying model is also called
+once to get the probability estimate. This is determined by the
+underlying model.
+By definition, CE calibrates the underlying model using VA, creating
+well-calibrated predictions with uncertainty quantification. The way
+that CE utilizes VA enables the method to also provide uncertainty
+quantification of feature weights. By using equality rules for cate-
+gorical features and binary rules for numerical features, interpreting
+the feature weights in relation to the rules and the instance values
+is straightforward and unambiguous. As opposed to LIME and SHAP,
+which rely on the creation of large sets of perturbed instances, CE
+instead rely on a calibration set which must be taken from the same
+distribution as the test instances. CE is relying on insights gained from
+the calibration set about the model when calibrating its probability
+estimates. The reliance on a calibration set from the same distribution
+as the test object will contribute to robust explanations as they will
+always be smoothed by the underlying distribution shared between
+test and calibration data. Depending on the size of the calibration set,
+which is used to train a few isotonic regression models per feature, the
+generation of well-calibrated explanations is fast.
+3.1. Counterfactual calibrated explanations
+Using the definition of CE above, it becomes straightforward to
+generate counterfactual rules. The main difference when using Coun-
+terfactual Calibrated Explanations (CCE) is that the conditions defined
+in steps 3(c) and 4(c) are counterfactual rather than factual. This
+means that the categorical counterfactual condition (step 3(c)) is using
+the≠condition. Numerical counterfactual conditions (step 4(c)) are
+defined as ≤-conditions and >-conditions but with conditions that
+exclude the instance value. Since non-binary discretizers are used for
+--- Page 5 ---
+Expert Systems With Applications 246 (2024) 123154
+5H. Löfström et al.
+numerical features, numerical counterfactual conditions will often al-
+low both counterfactual ≤-conditions and >-conditions to be formed.4
+Probability intervals [𝑝′
+0.𝑓, 𝑝′
+1.𝑓]are defined following the CE procedure
+described in steps 3 and 4 above. It is trivial to define a counterfactual
+rule for each of the alternative values, with the expected probability
+interval for each rule already defined by [𝑝′
+0.𝑓, 𝑝′
+1.𝑓]. The feature weights
+defined in Eq. (3) are only used for sorting counterfactual rules based
+on impact, i.e., the distance to 𝑝.
+In classification, counterfactual explanations normally refer to a
+method that provide the minimal set of changes necessary to alter
+the predicted class. CE and CCE are providing explanations in terms
+of probability estimates, making a definition of counterfactual expla-
+nations for continuous targets more relevant. Consequently, CCE is
+a counterfactual explanation in the sense that it creates rules that
+describe the alterations stemming from counterfactual conditions. Since
+the explanations operate on probability estimates rather than class
+labels, any adjustment to a probability estimate (or the probability
+intervals) can be considered an alternative outcome, even when it does
+not alter the predicted class label. It is important to note that while CCE
+showcases alterations in feature values critical to the prediction, it may
+not explicitly identify the true counterfactual for numerical features
+(i.e., the minimal value resulting in a change). CCE emphasizes the
+most impactful changes in driving the model’s prediction, providing a
+nuanced perspective on the model’s decision-making process.
+3.2. The calibrated-explanations package
+The proposed method calibrated-explanations.5is published as an
+open source Python package. The version described here is v0.3.0 .
+The package can be installed in the following ways:
+•pip install calibrated-explanations
+•conda install -c conda-forge calibrated-explanations
+To explain an already trained model, a CalibratedExplainer ,
+taking the model and a calibration set as input, can be used. To create
+a collection of calibrated explanations, the explain_factual()
+orexplain_counterfactual() methods, taking the test
+objects to be explained as input, is used. As an alternative, a
+WrapCalibratedExplainer , taking an untrained model, can be
+used to train (using the fit(train_X, train_y) function), cali-
+brate and create explanations in an integrated way.
+Theexplain_factual() orexplain_counterfactual()
+methods output a collection of explanations, Calibrated-
+Explanations , containing a set of FactualExplanation or
+CounterfactualExplanation objects. The whole collection of
+individual explanations can be plotted using the plot_all() method.
+To access individual explanations, get_explanation(index) can
+be used on the collection. plot_explanation() can be used on in-
+dividual explanations and plot_explanation(index) can be used
+on the collection. When plotting a FactualExplanation , all plot-
+ting functions accept an additional parameter uncertainty=True
+to create uncertainty plots.
+For further details regarding how to use the package, see the
+documentation or the notebookfolder for examples. The Venn-Abers
+implementation used is the venn-abers package by Ivan Petej (Vovk
+& Petej, 2014; Vovk, Petej, & Fedorova, 2015).
+4. Presentation of calibrated explanations
+CE and CCE can be analysed from different perspectives. In this
+paper, three different kinds of plots are used to illustrate factual and
+4All existing Discretizers in LIME can be used for counterfactual
+explanations. The EntropyDiscretizer class is used by default.
+5https://github.com/Moffran/calibrated_explanationscounterfactual explanations. The first two are used for factual explana-
+tions:
+•Regular explanations, providing well-calibrated explanations with-
+out any uncertainty information. These explanations are directly
+comparable to other feature importance explanation techniques,
+like LIME.
+•Uncertainty explanations, providing well-calibrated explanations
+including uncertainty intervals to highlight both the importance
+of a feature and the amount of uncertainty connected with its
+estimated importance. Uncertainty is visualized by adding the
+parameter uncertainty=True to the plot functions.
+These plots are inspired by LIME. Especially the rules in LIME have
+been seen as valuable information in the explanations. For the reasons
+given above, CE create binary rules with factual explanations.
+The third kind of plot is a counterfactual plot showing how the
+probability estimate is affected when other feature values are used.
+When plotting CE and CCE explanations, the user can choose to limit
+the number of rules to show. For factual explanations, the number of
+rules equals the number of features, as there is one rule per feature.
+However, in counterfactual explanations, where CCE creates as many
+counterfactual rules as possible, rules are ordered based on impact,
+starting with the most impactful rules.
+4.1. Factual calibrated explanations
+4.1.1. Without uncertainty
+Regular CE explanations are similar to LIME explanations in several
+ways. First, every feature has a corresponding conditional rule that
+identifies the condition under which the weight is defined (written out
+at the left side of the plot). Secondly, every rule has a corresponding
+feature weight, which is defined in such a way that the weight plus
+the probability achieved if the rule condition is broken results in the
+probability of the instance covered by the rule. As a consequence, the
+meaning of the rule and the weight it produces can be unambiguously
+understood.
+Fig. 1 shows a regular CE plot from the diabetes data set with
+a calibrated probability estimate of about 0.6 for the positive class,
+indicating that the patient should be classified as diabetic (shown by
+the two bars at the top). The main plot visualizes the feature weights,
+centred at the solid black line at 0, which corresponds to the cali-
+brated probability estimate 𝑝for the positive class, indicated by the
+solid line in the P(y=Diabetic) bar. Among the different features, one
+feature clearly contribute positively towards the patient being diabetic
+whereas the remaining three features contribute towards the patient
+being non-diabetic . In the given example, the feature Glucose influence
+the prediction the most, with a weight of 0.11 in favour of diabetic ,
+as long as the feature value stays above 106.5. Ageand Pregnancies
+are the second and third most influential features, where the low age
+and the number of pregnancies being less than 6.5 both influence the
+prediction towards non-diabetic with about 0.07. BloodPressure is the
+fourth feature that is identified as having an impact on the prediction,
+also favouring non-diabetic . The ambiguous prediction, with fairly even
+probability estimates, can be understood from the fact that the weights
+point in opposite directions.
+With a data set where the features have got categorical values and
+a binary target ( Democrat orRepublican ), as in Fig. 2, the rules look
+somewhat different. In the given example, the rules are either equal to
+0or1, with the feature values being covered by the rule. The data set is
+taken from results of the voting in US Congress 1984, where 0indicated
+the congressman had voted negatively to a law proposal and a 1that
+the vote was positive. In the figure, the top feature physician-fee-freeze
+is most influential in explaining why this congressman is predicted as
+Republican . Almost all features favour the positive class, explaining why
+this prediction has a high probability estimate for the positive class.
+--- Page 6 ---
+Expert Systems With Applications 246 (2024) 123154
+6H. Löfström et al.
+Fig. 1. Regular CE plot with continuous feature values from the data set Diabetes. The factual conditions are shown to the left and the actual feature values are shown to the
+right of the feature plot.
+Fig. 2. Regular CE plot with categorical feature values from the data set Vote.
+4.1.2. With uncertainty
+Since CE creates an uncertainty interval for the weights, it is possi-
+ble to learn from the uncertainty. When uncertainty is shown by setting
+the parameter uncertainty=True , CE adds intervals to the plot,
+showing the uncertainty of the prediction. A narrow interval indicates
+certainty in the estimate or weight, and a wider interval is more
+uncertain in the estimate or weight. Moreover, the feature interval also
+shows how the feature affects the prediction estimate. Fig. 3 presents
+the explanation of the same instance as in Fig. 1 with uncertainty
+added.
+The probability interval for the underlying model is indicated both
+in the probability bars at the top, as light blue or light red, and
+as the light grey area in the main part of the plot. Similarly, the
+feature weights are solidly coloured, from the black line, representing
+the calibrated probability estimate, to the lower bound of the weight
+interval and lightly coloured between the lower and upper bound of
+the interval. The rules are ordered based on the feature weights of
+the calibrated prediction. Blue bars indicate that the feature support
+thenon-diabetic class, and the red bars indicate support for the diabetic
+class. The amount of uncertainty of the different feature weights vary
+slightly, with the least important feature having the most uncertainty.
+The uncertainty interval for BloodPressure even covers the original
+probability estimate, indicating an uncertainty regarding if the feature
+affects the prediction at all.A different situation is seen in Fig. 4 where the probability of not
+having a liver disease is pending between the two classes. The weights
+point in both directions and the uncertainty intervals vary a lot. The
+upper bound for the mcv and sgot features are the same while the
+lower bound for sgotis much lower, indicating a much larger degree
+of uncertainty.
+4.2. Counterfactual calibrated explanations
+In CCE, the plots are not showing feature weights. Instead, the
+plot is focusing on the VA probability intervals. Each rule shows the
+alternative VA probability interval resulting from perturbing the feature
+value to a value covered by the counterfactual rule condition. Numer-
+ical features can, at most, result in two counterfactual rules (above or
+below the thresholds surrounding the feature value), whereas one coun-
+terfactual rule is created for each alternative categorical value. In the
+plots, only the counterfactual rules affecting the probability estimate
+are shown (see Fig. 5). Like the uncertainty plot, the counterfactual
+plot shows that the two features Glucose andAgeaffect the prediction
+most. However, in the plot, the rules show that even a small reduction
+in the Glucose feature ( Glucose <152.5) may change the probability
+estimate enough to change the prediction of the model. Higher Ageand
+Glucose will increase the likelyhood for the patient being diabetic .
+--- Page 7 ---
+Expert Systems With Applications 246 (2024) 123154
+7H. Löfström et al.
+Fig. 3. Uncertainty CE plot with intervals from the data set Diabetes.
+Fig. 4. Uncertainty CE plot with intervals from the data set Liver.
+Fig. 5. CCE counterfactual plot with continuous feature values from the data set Diabetes (the same instance as in Fig. 3). The counterfactual conditions are shown to the left
+and the feature values are shown to the right.
+In Fig. 6, the chosen instance is the same as in Fig. 2 with a clear
+prediction of the congressman being a Republican . There are some
+interesting features to point out for this instance. First, just as seen
+earlier in Fig. 2, the physician-fee-freeze feature is highly important for
+the prediction and changing the value according to the counterfac-
+tual rule would modify the prediction. The second counterfactual rule
+would decrease the certainty dramatically without clearly indicating
+whether the model would predict it as Democrat orRepublican . Severalof the remaining counterfactual rules also affect the probability and
+uncertainty a lot but without changing the prediction.
+5. Experiments
+5.1. Experimental setup
+In order to verify some of the claims of CE, three experiments have
+been run. Two experiments evaluate the stability and the robustness
+--- Page 8 ---
+Expert Systems With Applications 246 (2024) 123154
+8H. Löfström et al.
+Fig. 6. CE counterfactual plot with categorical feature values from the data set Vote.
+of the method. Stability is evaluated through experiments where the
+same model, calibration set and test set have been explained 30 times
+per data set. The only source of variation was the random seed. The
+experiment where run 30 times per data set with the same test set for
+all runs. A test set with 20 stratified instances (making sure both classes
+being equally represented) were used. The metric being tabulated is the
+mean variance of the most important feature, where the most important
+feature is determined from the 30 runs by taking the feature that is
+most often most important. The expectation is that a stable explanation
+method should result in low to non-existent variance in the feature
+weights.
+Robustness is evaluated through experiments where training and
+calibration sets have been randomly resampled before a new model was
+trained and explained. Robustness is measured in this way to avoid
+inferring perturbed instances which are not from the same distribu-
+tion as the test instances being explained. This form of evaluation
+of robustness evaluates how much the most important feature varies
+as a consequence of using different models and calibration sets. The
+experiment is mimicking the setup used for stability regarding instances
+and runs. The expectation is that the variance of the most important
+feature will follow variance of the underlying model.
+Both random forests and xGBoost are used and both factual and
+counterfactual explanations are evaluated. The probability estimate of
+each of the models was computed on the same test set, as comparison
+to the robustness results. Furthermore, the probability estimates from
+each model calibrated using VA was also computed on the same test
+set for comparison.
+The two state-of-the-art (sota) techniques LIME6and SHAP7were
+also evaluated in the same way and using the same instances and
+models. These two techniques were selected as the two obvious sota
+techniques based on their accessibility (through e.g., pip installation)
+and their large user base. No obvious sota technique for counterfactuals
+were identified, as all the proposed algorithms, like e.g., LORE or
+MACE, seem to lack in either accessibility, user base, or both.
+25binary classification problems were used, publicly available from
+either the UCI repository ( Dua & Graff , 2017 ) or the PROMISE Software
+Engineering Repository ( Sayyad Shirabad & Menzies , 2005 ). The data
+set’s characteristics are presented in Table 1, where #inst. is the number
+of instances and #attrib. is the number of input attributes. Attributes
+with less than 10unique values were treated as categorical attributes.
+6The LIME version used is 0.2.0.1. The LimeTabularExplainer class
+is used in the experiments.
+7The SHAP version used is 0.44.0. The Explainer class is used in the
+experiments.Table 1
+Data set characteristics.
+Name #inst. #attrib. Name #inst. #attrib.
+colic 357 60 kc2 369 22
+creditA 690 43 kc3 325 40
+diabetes 768 9 liver 341 7
+german 955 28 pc1req 104 9
+haberman 283 4 pc4 1343 38
+heartC 302 23 sonar 208 61
+heartH 293 21 spect 218 23
+Hearts 270 14 spectf 267 45
+hepati 155 20 transfusion 502 5
+iono 350 34 tictactoe 958 28
+je4042 270 9 vote 517 17
+je4243 363 9 wbc 463 10
+kc1 1192 22
+The code used to run the experiments are located in the
+evaluation folder in the repository together with supplementary
+material. The experiment files for this paper are named
+Classification_[..]_sota .
+In addition to the two experiments described above, an additional
+experiment have been carried out to evaluate how CE and CCE is
+affected by the calibration size and the number of percentiles sampled
+for numerical features. It is using a similar setup as the two experiments
+described above, but with the following changes:
+•The calibration size is varied between 10%, 20% and 40% of the
+data not used for testing. Only one model was trained using the
+remaining 60% of the data not used for testing, making the size
+of the calibration set the only thing affecting the results.
+•The number of percentiles sampled for numerical features is
+varied between 1, 2, 3 (default), 4, and 9. The set of percentiles
+used are: [50], [33, 67], [25, 50, 75], [20, 40, 60, 80], [10, 20,
+30, 40, 50, 60, 70, 80, 90]. The same model is used as for the
+calibration sizes.
+•Test size is fixed to 10% of the data.
+•Only one repetition per percentile and calibration size is used.
+•Only CE and CCE are evaluated.
+See the Classification_[..]_Ablation for details on the ex-
+periment. The tabulated results are the mean variance of the ablation
+measured per calibration size or percentile sampling. The variance is
+measured per instance and computed over the runs having the same
+calibration size/percentile sampling on the feature importance weight
+of the most influential feature, defined as the feature most often having
+highest absolute feature importance weight. The average variance is
+computed over the entire test set. The most influential feature is used
+since it is the feature that is most likely to be used in a decision but
+--- Page 9 ---
+Expert Systems With Applications 246 (2024) 123154
+9H. Löfström et al.
+Table 2
+Stability.
+Dataset xGB RF
+CE CCE 𝐿𝐶 𝑆𝐶 𝐿𝑈 𝑆𝑈 CE CCE 𝐿𝐶 𝑆𝐶 𝐿𝑈 𝑆𝑈
+colic 0e+0 0e+0 1e −08 3e −33 4e −05 1e −04 3e −32 3e −32 1e −08 1e −33 5e −06 8e −06
+creditA 0e+0 2e −34 1e −61 0e+0 4e −05 1e −04 1e −32 1e −32 7e −61 0e+0 8e −06 1e −05
+diabetes 2e −34 2e −33 4e −11 0e+0 9e −05 3e −33 1e −33 4e −33 2e −11 3e −36 3e −05 1e −33
+german 4e −35 2e −35 6e −11 9e −33 8e −05 8e −05 2e −33 2e −33 6e −11 5e −33 3e −05 4e −05
+haberman 4e −34 5e −34 1e −63 0e+0 1e −04 3e −33 1e −33 9e −34 9e −64 0e+0 4e −05 1e −33
+heartC 8e −34 0e+0 2e −10 1e −32 7e −05 1e −04 4e −33 3e −33 2e −10 5e −33 1e −05 5e −06
+heartH 6e −37 6e −37 2e −10 0e+0 5e −05 9e −05 5e −33 5e −33 2e −10 2e −32 8e −06 8e −06
+heartS 2e −34 2e −33 7e −11 6e −33 6e −05 5e −05 4e −33 5e −33 7e −11 1e −32 1e −05 3e −06
+hepati 6e −34 0e+0 7e −05 5e −33 3e −05 6e −05 4e −33 4e −33 8e −05 0e+0 1e −05 2e −06
+iono 2e −33 2e −33 3e −05 1e −32 9e −05 1e −04 3e −33 5e −33 4e −05 7e −33 3e −05 6e −06
+je4042 2e −33 2e −34 2e −06 1e −32 1e −04 5e −33 3e −33 8e −33 5e −06 1e −32 2e −05 1e −33
+je4243 7e −34 6e −34 5e −06 2e −34 9e −05 2e −33 2e −33 3e −33 1e −05 2e −34 1e −05 8e −34
+kc1 7e −34 3e −34 1e −05 0e+0 1e −04 8e −05 1e −33 2e −33 2e −05 0e+0 4e −06 2e −05
+kc2 7e −34 1e −33 4e −64 0e+0 7e −05 2e −04 1e −33 2e −33 1e −63 0e+0 5e −06 2e −05
+kc3 4e −35 4e −35 4e −06 0e+0 3e −05 9e −05 4e −34 6e −34 4e −06 0e+0 1e −05 5e −06
+liver 2e −33 4e −33 1e −63 0e+0 1e −04 6e −33 5e −33 9e −33 1e −63 0e+0 3e −05 2e −33
+pc1req 2e −34 8e −35 1e −11 3e −33 8e −05 5e −33 2e −33 1e −33 2e −11 2e −33 4e −05 2e −33
+pc4 1e −33 2e −34 9e −63 0e+0 4e −05 2e −04 1e −33 3e −33 2e −62 0e+0 5e −06 1e −05
+sonar 4e −34 2e −34 8e −07 8e −35 9e −05 1e −04 1e −33 2e −33 1e −08 3e −37 9e −06 3e −06
+spect 0e+0 0e+0 3e −12 1e −32 1e −05 3e −05 6e −34 6e −34 4e −12 1e −32 3e −06 7e −06
+spectf 1e −34 2e −34 7e −66 0e+0 3e −05 1e −04 1e −33 6e −34 1e −65 0e+0 7e −06 3e −06
+transfusion 9e −34 5e −34 7e −64 0e+0 7e −05 3e −33 2e −33 4e −33 7e −64 0e+0 3e −05 1e −33
+ttt 0e+0 0e+0 2e −10 6e −33 8e −05 3e −04 2e −32 2e −32 2e −10 2e −32 8e −06 2e −05
+vote 0e+0 0e+0 3e −11 4e −33 6e −05 8e −05 8e −33 8e −33 3e −11 0e+0 1e −05 2e −05
+wbc 2e −33 2e −34 3e −05 0e+0 1e −04 2e −33 1e −33 5e −33 3e −05 0e+0 4e −05 8e −34
+Average 6e −34 5e −34 6e −06 3e −33 7e −05 8e −05 5e −33 6e −33 8e −06 4e −33 2e −05 8e-06
+also the feature with the greatest expected variation (as a consequence
+of the weights having the highest absolute values).
+5.2. Results
+The results in Table 2 are the mean variance of the stability mea-
+sured over the 30 runs and 20 instances. The variance is measured
+per instance and computed over the 30 runs on the feature weight of
+the most influential feature, defined as the feature most often having
+highest absolute feature weight. The average variance is computed over
+the 20 instances. The most influential feature is used since it is the
+feature that is most likely to be used in a decision but also the feature
+with the greatest expected variation (as a consequence of the weights
+having the highest absolute values). LIME (L) and SHAP (S) are run
+both on the uncalibrated model (U) and on the VA calibrated model
+(C). Both factual CE (CE) and counterfactual CE (CCE) are only run on
+the uncalibrated model, as VA is used internally.
+As can be seen Table 2, the stability is practically 0for both factual
+CE (CE) and counterfactual CE (CCE), illustrating that the method is
+stable by definition. The minuscule variations stem from the different
+random seeds, having a negligible impact. LIME is clearly less stable
+regardless of whether a calibrated or uncalibrated model is used. For
+SHAP, on the other hand, stability is practically 0when explaining
+calibrated models but similar to LIME for uncalibrated models.
+The results in Table 3 are the mean variance of the robustness
+measured over the 30 runs and 20 instances. Results are calculated
+in the same way as for stability, but with the difference that each
+run is from a retrained model using a different sampling for training
+and calibration sets. The mean variance of the underlying model’s
+probability estimate for the robustness experiment before and after
+calibration is tabulated as U(ncalibrated) and C(alibrated).
+Here, the picture is somewhat different, as CE and CCE have higher
+variability in their feature weights compared to LIME and SHAP. While
+these results could be interpreted as indicating low robustness, we
+argue that the experiment shows that the method updates its most
+important feature weights in accordance with how much the under-
+lying model is changing its predictions. A similar pattern could be
+seen when comparing LIME and SHAP explanations from calibratedvs uncalibrated models, with low variability for the explanations of
+calibrated models having themselves lower variability and vice versa.
+However, the most important feature weights of LIME and SHAP are
+clearly less affected by models being retrained on new data.
+Tables 4 and 5 summarizes the results from the ablation exper-
+iment. Only the mean variance and runtime is shown. Detailed re-
+sults per dataset can be found in Classification_Analysis_
+Ablation.ipynb in the evaluation folder at the github repository.
+The tabulated runtimes are the average time in seconds per instance.8
+The most interesting observation from the results in Table 4 is that
+differences in mean variance is fairly low between the different calibra-
+tion sizes. This indicates that the calibration size does not have a large
+impact on the feature importance weights. In fact, a smaller calibration
+set even tend to have a lower mean variance. Furthermore, the runtime
+increases with the calibration size, even if the difference in runtime is
+fairly small. This is expected, as the computational complexity is only
+affected log-linearly with the calibration size.
+There is very little difference in variance for different percentile
+samplings, as seen in Table 5. Furthermore, the runtime increases
+almost linearly with the number of percentiles sampled for numerical
+features. Again, this is to be expected, as the number of percentiles to
+sample has a linear impact on computational complexity.
+6. Discussion
+6.1. Characteristics of calibrated explanations
+One of the most important characteristics of a good explanation
+method is that it must be reliable . When it comes to XAI methods,
+reliability most often refers to its fidelity to the model being explained.
+However, if the model in itself is not reliable, i.e., if it is poorly
+calibrated and thus misrepresents reality, high fidelity is more likely
+to convey harm than benefit. Consequently, to create reliable expla-
+nations, the explanation must have high fidelity to a model which is
+well-calibrated. In addition, there is yet another layer to reliability
+8The experiments where run on a HP Z-book with 32GB of RAM.
+--- Page 10 ---
+Expert Systems With Applications 246 (2024) 123154
+10H. Löfström et al.
+Table 3
+Robustness.
+Dataset xGB RF
+CE CCE 𝐿𝐶 𝑆𝐶 C 𝐿𝑈 𝑆𝑈 U CE CCE 𝐿𝐶 𝑆𝐶 C 𝐿𝑈 𝑆𝑈 U
+colic .017 .017 .001 .000 .000 .006 .002 .015 .017 .017 .001 .000 .000 .001 .000 .009
+creditA .023 .022 .000 .000 .000 .002 .003 .010 .015 .015 .000 .000 .000 .000 .001 .009
+diabetes .017 .009 .000 .000 .001 .004 .005 .014 .015 .007 .000 .000 .001 .001 .001 .012
+german .003 .003 .006 .002 .001 .006 .006 .014 .005 .004 .002 .001 .001 .001 .001 .014
+haberman .011 .009 .000 .000 .002 .008 .011 .016 .011 .009 .000 .000 .003 .004 .004 .016
+heartC .014 .014 .001 .001 .003 .006 .004 .017 .012 .011 .001 .001 .002 .001 .001 .016
+heartH .016 .015 .171 .002 .002 .006 .004 .017 .011 .011 .186 .001 .002 .001 .001 .016
+heartS .020 .020 .001 .001 .002 .005 .003 .017 .017 .015 .002 .001 .002 .002 .001 .017
+hepati .021 .018 .000 .001 .002 .011 .006 .018 .014 .014 .000 .001 .002 .003 .001 .017
+iono .026 .010 .025 .005 .003 .015 .004 .016 .013 .007 .035 .005 .003 .002 .001 .016
+je4042 .019 .014 .004 .001 .003 .013 .010 .017 .015 .009 .003 .001 .003 .002 .001 .016
+je4243 .011 .009 .003 .000 .003 .005 .008 .017 .010 .007 .002 .000 .003 .001 .001 .017
+kc1 .011 .006 .002 .000 .003 .002 .003 .017 .009 .004 .003 .000 .003 .000 .000 .017
+kc2 .019 .010 .000 .000 .003 .011 .009 .017 .007 .005 .000 .000 .003 .000 .001 .017
+kc3 .006 .005 .013 .000 .003 .003 .001 .017 .005 .005 .012 .000 .004 .001 .000 .016
+liver .026 .013 .000 .000 .004 .003 .006 .017 .030 .014 .000 .000 .004 .001 .002 .017
+pc1req .013 .012 .009 .004 .004 .017 .011 .017 .014 .013 .009 .004 .004 .004 .004 .017
+pc4 .009 .008 .000 .000 .004 .002 .002 .017 .007 .005 .000 .000 .004 .000 .000 .017
+sonar .017 .008 .001 .001 .004 .006 .004 .017 .009 .005 .000 .000 .004 .000 .000 .017
+spect .007 .007 .003 .001 .004 .003 .002 .016 .006 .006 .004 .002 .004 .001 .000 .016
+spectf .006 .004 .000 .000 .004 .001 .002 .016 .005 .004 .000 .000 .003 .000 .000 .016
+transfusion .008 .006 .000 .000 .004 .004 .008 .017 .008 .006 .000 .000 .004 .003 .003 .017
+ttt .014 .014 .000 .003 .004 .001 .002 .016 .025 .025 .000 .003 .004 .000 .000 .016
+vote .014 .014 .001 .001 .003 .002 .002 .016 .011 .011 .001 .001 .003 .001 .001 .016
+wbc .020 .012 .001 .000 .003 .008 .003 .016 .018 .009 .001 .000 .003 .003 .001 .016
+Average .015 .011 .010 .001 .003 .006 .005 .016 .012 .010 .010 .001 .003 .001 .001 .016
+Table 4
+Summary of the impact of using differently sized calibration sets.
+xGB
+CE CCE
+Calibration size 0.1 0.2 0.4 0.1 0.2 0.4
+Mean variance .00023 .00029 .00028 .00023 .00029 .00028
+Mean runtime 0.34 0.35 0.36 0.40 0.41 0.43
+RF
+CE CCE
+Calibration size 0.1 0.2 0.4 0.1 0.2 0.4
+Mean variance .00012 .00019 .00018 .00012 .00019 .00018
+Mean runtime 0.84 0.85 0.86 1.00 1.01 1.03
+which relates to uncertainty. For an explanation to be truly reliable,
+the explanation must be able to convey insights into when the model
+is making a prediction in which it has high confidence contra when it
+has low confidence. This goes beyond the model having high or low
+probability estimates, since the probability estimate may be high, but
+the model may not have seen many similar cases and thus have low
+confidence in the prediction, and vice versa. The main strength of the
+proposed method is that it provides high reliability with regard to all
+three layers of reliability.
+•The model is calibrated to ensure an accurate reflection of reality.
+This includes uncertainty quantification of the model’s probability
+estimates.
+•The explanations have high fidelity with feature weights exactly
+defined in relation to the calibrated probability estimates of the
+model. The feature weights are also calibrated to ensure fidelity.
+•The method produces uncertainty quantification of the feature
+weights that provide insights about the degree of confidence
+to put in each weight. For the counterfactual explanations, the
+method instead provide uncertainty quantification about the esti-
+mated probability interval.
+Stability is, as mentioned earlier, a critical aspect of an explanation
+method and something that primarily LIME has been criticized forlacking (see, e.g., Rahnama & Boström, 2019). The method is stable
+by design, which is clearly shown in the experiments. The explanation
+generated for an instance using CE or CCE is stable as long as the same
+calibration set and model are used.
+Another important characteristic is robustness to change. The expla-
+nations are robust by design, i.e., consistent, as long as the feature rules
+cover perturbations in the input values and the model prediction is
+not affected more than marginally. Obviously, if the model prediction
+is affected a lot by a perturbation, it cannot be considered a small
+perturbation in this context, as it has a great impact on the model
+and thus should also have a great impact on the explanation for the
+method to be reliable. The reliance on the calibration set from the same
+distribution as the test object will contribute to robust explanations as
+they will always be smoothed by the underlying distribution shared
+between test and calibration data. The experiment, evaluating how the
+method is affected by changes to calibration and model predictions,
+shows that the method updates its feature weights in accordance with
+how much the underlying model is changing its predictions.
+6.2. Calibrated Explanations vs. SOTA methods
+The method presented in this paper generates well-calibrated local
+explanations with uncertainty quantification of both the probability
+estimate of the model and of the feature weights. As seen in Table 6, it
+is only BayesSHAP and BayesLIME that share the possibilities of getting
+calibrated explanations and uncertainty quantification. These methods
+are instantiations of a Bayesian framework into SHAP and LIME rather
+than new methods.
+None of the SOTA methods could generate both factual and counter-
+factual explanations (see Table 6), further highlighting the all-inclusive
+nature of CE. It is worth pointing out that none of the counterfac-
+tual methods were generating neither well-calibrated explanations nor
+uncertainty quantification.
+7. Conclusion
+This paper introduces Calibrated Explanations (CE), a novel expla-
+nation method that not only calibrates the underlying model but also
+--- Page 11 ---
+Expert Systems With Applications 246 (2024) 123154
+11H. Löfström et al.
+Table 5
+Summary of impact of using different percentiles for sampling numeric features.
+xGB
+CE CCE
+Number of percentiles 1 2 3 4 9 1 2 3 4 9
+Mean variance .0056 .0052 .005 .0049 .0048 .0056 .0052 .005 .0049 .0048
+Mean runtime 0.15 0.22 0.29 0.36 0.71 0.17 0.26 0.35 0.43 0.85
+RF
+CE CCE
+Number of percentiles 1 2 3 4 9 1 2 3 4 9
+Mean variance .0043 .0041 .004 .0039 .0039 .0043 .0041 .004 .0039 .0039
+Mean runtime 0.36 0.54 0.71 0.89 1.75 0.40 0.63 0.83 1.05 2.14
+Table 6
+Characteristics of CE vs factual and counterfactual SOTA Explanation Methods (Guidotti,
+Monreale, Ruggieri, Pedreschi et al., 2018; Karimi et al., 2020; Lundberg & Lee, 2017;
+Plumb et al., 2018; Ribeiro et al., 2016, 2018; Slack et al., 2021).
+Method Local Global Factual Cnter Calibr. Model Uncert.
+factual agnost. quant.
+CE X – X X X X X
+LIME X – X – – X –
+SHAP X X X – – X –
+MAPLE X – X – – X –
+BayesLIME X – X – X X X
+BayesSHAP X X X – X X X
+ANCHOR X – X – – X –
+MACE X – – X – X –
+LORE X – – X – X –
+provides uncertainty information in the explanations. Each feature’s
+weight is defined by its contribution to the calibrated probability esti-
+mate for the positive class, and the explanations are conveyed through
+straightforward conditional rules.
+CE does not stop at factual explanations; it inherently enables the
+creation of counterfactual rules, offering insights into the uncertainty
+of each counterfactual outcome. The method is available as an open-
+source package, installable via pip orconda , supporting the plotting
+of both factual and counterfactual explanations.
+Two experiments evaluating the method’s robustness and stability
+were conducted on 25 benchmarking datasets. In the evaluations, CE
+demonstrated its stability and robustness.
+CE generates both factual and counterfactual explanations, which is
+rather unique compared to other SOTA methods. None of the methods
+studied in the paper could offer such a wide range of characteristics
+like CE: either they focus on factual or counterfactual explanations.
+Apart from CE, only one approach (with two instantiations) included
+uncertainty information and calibrated explanations.
+Looking ahead, future work includes real-world scenario evalua-
+tions for user perception and support for image and text data. The
+evolution of the currently available plots and the introduction of ad-
+ditional visualization methods to enhance rule insights are also key
+priorities.
+CRediT authorship contribution statement
+Helena Löfström: Conceptualization, Formal analysis, Investiga-
+tion, Methodology, Resources, Software, Validation, Visualization,
+Writing – original draft, Writing – review & editing. Tuwe
+Löfström: Conceptualization, Data curation, Funding acquisition,
+Project administration, Software, Validation, Visualization, Writing
+– original draft, Writing – review & editing. Ulf Johansson:
+Conceptualization, Funding acquisition, Supervision, Validation,
+Visualization, Writing – original draft. Cecilia Sönströd: Funding
+acquisition, Validation, Writing – original draft.Declaration of competing interest
+The authors declare the following financial interests/personal
+relationships which may be considered as potential competing
+interests: Helena reports financial support was provided by
+Knowledge Foundation.
+Data availability
+Benchmarking datasets from UCI etc have been used.
+Declaration of Generative AI and AI-assisted technologies in the
+writing process
+During the preparation of this work the author(s) used ChatGPT,
+Bard and Bing Chat in order to get suggestions on how to improve and
+simplify descriptions and sentences. After using these tools/services,
+the author(s) reviewed and edited the content as needed and take(s)
+full responsibility for the content of the publication.
+Acknowledgements
+Helena Löfström was a Ph.D. student in the Industrial Graduate
+School in Digital Retailing (INSiDR) at the University of Borås, funded
+by the Swedish Knowledge Foundation, grant no. 20160035. The au-
+thors acknowledge the Swedish Knowledge Foundation and the indus-
+trial partners for financially supporting the research and education
+environment on Knowledge Intensive Product Realization SPARK at
+Jönköping University, Sweden. Projects: AFAIR grant no. 20200223
+and PREMACOP grant no. 20220187.
+References
+Adadi, A., & Berrada, M. (2018). Peeking inside the black-box: A survey on explainable
+artificial intelligence (XAI). IEEE Access ,6, 52138–52160.
+Agarwal, C., Saxena, E., Krishna, S., Pawelczyk, M., Johnson, N., Puri, I., et al. (2022).
+OpenXAI: Towards a transparent evaluation of model explanations. Advances in
+Neural Information Processing Systems ,35, 15784–15799.
+Alvarado-Valencia, J. A., & Barrero, L. H. (2014). Reliance, trust and heuristics in
+judgmental forecasting. Computers in Human Behavior ,36, 102–113.
+Alvarez-Melis, D., & Jaakkola, T. S. (2018). On the robustness of interpretability
+methods. arXiv preprint arXiv:1806.08049.
+Antorán, J., Bhatt, U., Adel, T., Weller, A., & Hernández-Lobato, J. M. (2020).
+Getting a clue: A method for explaining uncertainty estimates. arXiv preprint
+arXiv:2006.06848.
+Arrieta, A. B., Díaz-Rodríguez, N., Del Ser, J., Bennetot, A., Tabik, S., Barbado, A.,
+et al. (2020). Explainable artificial intelligence (XAI): Concepts, taxonomies,
+opportunities and challenges toward responsible AI. Information Fusion ,58, 82–115.
+Bhatt, U., Antorán, J., Zhang, Y., Liao, Q. V., Sattigeri, P., Fogliato, R., et al. (2021).
+Uncertainty as a form of transparency: Measuring, communicating, and using
+uncertainty. In Proceedings of the 2021 AAAI/ACM conference on ai, ethics, and society
+(pp. 401–413).
+Buçinca, Z., Lin, P., Gajos, K. Z., & Glassman, E. L. (2020). Proxy tasks and subjective
+measures can be misleading in evaluating explainable AI systems. In Proceedings of
+the 25th international conference on intelligent user interfaces (pp. 454–464).
+--- Page 12 ---
+Expert Systems With Applications 246 (2024) 123154
+12H. Löfström et al.
+Carvalho, D. V., Pereira, E. M., & Cardoso, J. S. (2019a). Machine learning interpretabil-
+ity: A survey on methods and metrics. Electronics ,8, 832. http://dx.doi.org/10.
+3390/electronics8080832.
+Chromik, M., & Schuessler, M. (2020). A taxonomy for human subject evaluation of
+black-box explanations in xai. In ExSS-ATEC@ IUI .
+Das, A., & Rad, P. (2020). Opportunities and challenges in explainable artificial
+intelligence (xai): A survey. arXiv preprint arXiv:2006.11371.
+Dimanov, B., Bhatt, U., Jamnik, M., & Weller, A. (2020). You shouldn’t trust me:
+Learning models which conceal unfairness from multiple explanation methods. In
+Frontiers in artificial intelligence and applications: ECAI 2020 . IOS Press.
+Doshi-Velez, F., & Kim, B. (2017). Towards a rigorous science of interpretable machine
+learning. arXiv preprint arXiv:1702.08608.
+Dua, D., & Graff, C. (2017). UCI machine learning repository. University of California,
+Irvine, School of Information and Computer Sciences, URL http://archive.ics.uci.
+edu/ml.
+Grushka-Cockayne, Y., Jose, V. R. R., & Lichtendahl, K. C., Jr. (2017). Ensembles of
+overfit and overconfident forecasts. Management Science ,63(4), 1110–1130.
+Guidotti, R. (2022). Counterfactual explanations and how to find them: Literature
+review and benchmarking. Data Mining and Knowledge Discovery , 1–55.
+Guidotti, R., Monreale, A., Ruggieri, S., Pedreschi, D., Turini, F., & Giannotti, F. (2018).
+Local rule-based explanations of black box decision systems. arXiv:1805.10820.
+Guidotti, R., Monreale, A., Ruggieri, S., Turini, F., Giannotti, F., & Pedreschi, D. (2018).
+A survey of methods for explaining black box models. ACM Computing Surveys
+(CSUR) ,51(5), 1–42.
+Gunning, D. (2017). Explainable artificial intelligence no. november. DARPA URL
+https://www.darpa.mil/attachments/XAIProgramUpdate.pdf.
+Hoffman, R. R., Mueller, S. T., Klein, G., & Litman, J. (2018). Metrics for explainable
+AI: Challenges and prospects. arXiv preprint arXiv:1812.04608.
+Karimi, A.-H., Barthe, G., Balle, B., & Valera, I. (2020). Model-agnostic counterfactual
+explanations for consequential decisions. In International conference on artificial
+intelligence and statistics (pp. 895–905). PMLR.
+Lambrou, A., Nouretdinov, I., & Papadopoulos, H. (2015). Inductive venn prediction.
+Annals of Mathematics and Artificial Intelligence ,74(1), 181–201.
+Löfström, H., Hammar, K., & Johansson, U. (2022). A meta survey of quality evaluation
+criteria in explanation methods. In J. De Weerdt, & A. Polyvyanyy (Eds.), Intelligent
+information systems (pp. 55–63). Cham: Springer International Publishing.
+Lundberg, S. M., & Lee, S.-I. (2017). A unified approach to interpreting model
+predictions. In Proceedings of the 31st international conference on neural information
+processing systems (pp. 4768–4777).
+Martens, D., & Foster, P. (2014). Explaining data-driven document classifications. MIS
+Quaterly ,38(1), 73–100.
+Marx, C., Park, Y., Hasson, H., Wang, Y., Ermon, S., & Huan, L. (2023). But are you
+sure? an uncertainty-aware perspective on explainable ai. In International conference
+on artificial intelligence and statistics (pp. 7375–7391). PMLR.
+Molnar, C. (2022). Interpretable machine learning (2nd ed.). Leanpub, Lulu.com, URL
+https://christophm.github.io/interpretable-ml-book.
+Moradi, M., & Samwald, M. (2021). Post-hoc explanation of black-box classifiers using
+confident itemsets. Expert Systems with Applications ,165, Article 113941.
+Mothilal, R. K., Sharma, A., & Tan, C. (2020). Explaining machine learning classifiers
+through diverse counterfactual explanations. In Proceedings of the 2020 conference
+on fairness, accountability, and transparency (pp. 607–617).
+Mueller, S. T., Hoffman, R. R., Clancey, W., Emrey, A., & Klein, G. (2019). Expla-
+nation in human-AI systems: A literature meta-review, synopsis of key ideas and
+publications, and bibliography for explainable AI. arXiv preprint arXiv:1902.01876.Murdoch, W. J., Singh, C., Kumbier, K., Abbasi-Asl, R., & Yu, B. (2019). Definitions,
+methods, and applications in interpretable machine learning. Proceedings of the
+National Academy of Sciences ,116(44), 22071–22080.
+Parmigiani, G. (2002). Measuring uncertainty in complex decision analysis models.
+Statistical Methods in Medical Research ,11(6), 513–537.
+Petej, I. (2018). Small and large scale probabilistic classifiers with guarantees of validity
+(Ph.D. thesis), Royal Holloway, University of London.
+Phillips-Wren, G., & Adya, M. (2020). Decision making under stress: The role of in-
+formation overload, time pressure, complexity, and uncertainty. Journal of Decision
+Systems ,29(sup1), 213–225.
+Plumb, G., Molitor, D., & Talwalkar, A. S. (2018). Model agnostic supervised local
+explanations. In Advances in neural information processing systems :vol.31 .
+Rahnama, A. H. A., & Boström, H. (2019). A study of data and label shift in the LIME
+framework. arXiv preprint arXiv:1910.14421.
+Ribeiro, M. T., Singh, S., & Guestrin, C. (2016). ’’Why should I trust you?’’: Explaining
+the predictions of any classifier. In Proceedings of the 22nd ACM SIGKDD inter-
+national conference on knowledge discovery and data mining (pp. 1135–1144). New
+York, NY, USA: Association for Computing Machinery, http://dx.doi.org/10.1145/
+2939672.2939778.
+Ribeiro, M. T., Singh, S., & Guestrin, C. (2018). Anchors: High-precision model-agnostic
+explanations. In Proceedings of the AAAI conference on artificial intelligence. Vol. 32,
+no. 1 .
+Sayyad Shirabad, J., & Menzies, T. (2005). PROMISE repository of software engineering
+databases . Canada: School of Information Technology and Engineering, University
+of Ottawa.
+Slack, D., Hilgard, A., Singh, S., & Lakkaraju, H. (2021). Reliable post hoc explanations:
+Modeling uncertainty in explainability. vol.34 , In Advances in neural information
+processing systems (pp. 9391–9404).
+Van Calster, B., McLernon, D. J., Van Smeden, M., Wynants, L., & Steyerberg, E. W.
+(2019). Calibration: The achilles heel of predictive analytics. BMC Medicine ,17(1),
+1–7.
+Vovk, V., Gammerman, A., & Shafer, G. (2005). 29,Algorithmic learning in a random
+world . Berlin, Heidelberg: Springer-Verlag.
+Vovk, V., & Petej, I. (2014). Venn-Abers predictors. arXiv:1211.0025.
+Vovk, V., Petej, I., & Fedorova, V. (2015). Large-scale probabilistic predictors with and
+without guarantees of validity. Advances in Neural Information Processing Systems ,
+28.
+Vovk, V., Shafer, G., & Nouretdinov, I. (2003). Self-calibrating probability forecasting.
+16, InAdvances in neural information processing systems (pp. 1133–1140).
+Wachter, S., Mittelstadt, B., & Russell, C. (2017). Counterfactual explanations without
+opening the black box: Automated decisions and the GDPR. Harvard Journal of Law
+& Technology ,31, 841.
+Wang, D., Yang, Q., Abdul, A., & Lim, B. Y. (2019). Designing theory-driven user-
+centric explainable AI. In Proceedings of the 2019 CHI Conference on human factors
+in computing systems (pp. 1–15). New York, NY, USA: Association for Computing
+Machinery, http://dx.doi.org/10.1145/3290605.3300831.
+Zadrozny, B., & Elkan, C. (2001). Obtaining calibrated probability estimates from
+decision trees and naive Bayesian classifiers. In Proc. 18th international conference
+on machine learning (pp. 609–616).
+Zhou, J., Gandomi, A. H., Chen, F., & Holzinger, A. (2021). Evaluating the quality
+of machine learning explanations: A survey on methods and metrics. Electronics ,
+10(5), 593.
+Zhou, Z., Hooker, G., & Wang, F. (2021). S-lime: Stabilized-lime for model explanation.
+InProceedings of the 27th ACM SIGKDD conference on knowledge discovery & data
+mining (pp. 2429–2438).

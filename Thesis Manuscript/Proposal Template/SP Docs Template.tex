@@ -1,0 +1,114 @@
+\documentclass[12pt,a4paper,titlepage]{article}
+
+\usepackage[top=1in, bottom=1in, left=1.5in, right=1in]{geometry}
+\usepackage{setspace}
+\usepackage{authoraftertitle}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{listings}
+\doublespacing
+
+\usepackage{tocloft} 
+\setlength{\cftsecnumwidth}{1.2cm}
+\setlength{\cftsubsecindent}{1.2cm}
+\renewcommand{\refname}{Bibliography}
+\renewcommand\thesection{\Roman{section}.}
+\renewcommand\thesubsection{\Alph{subsection}.}
+
+\newcommand{\Keywords}[1]{\par\noindent 
+{\small{\em Keywords\/}: #1}}
+
+\usepackage{graphicx}
+\usepackage[colorlinks=true, urlcolor=blue, pdfborder={0 0 0}]{hyperref}
+
+\title{SP Title}
+\author{Juan Dela Cruz}
+\date{June 2025}
+
+% allows for separate page section by changing the behavior of \section
+\let\stdsection\section
+\renewcommand\section{\newpage\stdsection}
+\input{acceptancesheet.tex}
+
+% **********************************************************************************************************
+% Update the following to your SP details
+%\defsptitle{Your SP Title Here}
+%\defauthor{Authors Name}
+\defadviserblank{6.5cm}
+\defadviser{Richard Bryann L. Chua, M.Sc.}
+%\defadviser{Marbert John C. Marasigan, M.Sc.}
+\defchair{Marie Josephine M. De Luna, Ph.D.}
+\defdeanblank{6.5cm}
+\defdean{Ma. Teresa G. De Guzman, Ph.D.}
+% **********************************************************************************************************
+
+\begin{document}
+%\maketitle
+\input{./titlepage.tex}
+\pagenumbering{roman}
+
+\addcontentsline{toc}{section}{Acceptance Sheet}
+\acceptancesheet
+
+\doublespacing
+
+\abstract{
+\addcontentsline{toc}{section}{Abstract}
+\setcounter{page}{2}
+A paragraph describing the problem, related material and your proposed approach. It is usually key sentences and phrases taken from the other sections.
+
+\Keywords{Keywords}
+}
+\newpage
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+
+\doublespacing
+
+\input{./chapter1.tex}
+\input{./chapter2.tex}
+\input{./chapter3.tex}
+\input{./chapter4.tex}
+\input{./chapter5.tex}
+\input{./chapter6.tex}
+\input{./chapter7.tex}
+\input{./chapter8.tex}
+
+\newpage
+%\addcontentsline{toc}{section}{References}
+\bibliographystyle{ieeetr}
+\bibliography{biblio}
+
+\section{Appendix}
+\subsection{Code Listing} 
+\singlespacing
+\tiny
+
+% One way of including the source code where the codes are typed here.
+\begin{lstlisting}
+
+#include <iostream>
+
+using namespace std;
+
+int main{
+	cout << "Hello world!" << endl;
+	return 0;
+}
+\end{lstlisting}
+
+% Another method where the source files are just linked with this document. 
+
+\lstinputlisting{source-code/Node.java}
+
+\subsection{Appendix B} % Add additional appendices as needed
+
+\section{Acknowledgment}
+\doublespacing
+\normalsize
+Acknowledgment here.
+\end{document}
+
+

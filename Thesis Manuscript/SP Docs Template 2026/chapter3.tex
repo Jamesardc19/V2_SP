@@ -1,0 +1,251 @@
+\section{Theoretical Framework}
+
+This chapter establishes the theoretical foundations underlying the development of a machine learning-based diabetes risk prediction system with explainable artificial intelligence. The framework is organized into five key areas: diabetes and prediabetes fundamentals, machine learning and binary classification, neural networks and optimization strategies, explainable artificial intelligence and model interpretability, and model performance evaluation metrics.
+
+\subsection{Diabetes and Prediabetes}
+
+Diabetes mellitus is a chronic metabolic disorder characterized by elevated blood glucose levels resulting from defects in insulin production, insulin action, or both. Insulin, a hormone produced by pancreatic beta cells, plays a crucial role in regulating blood glucose by facilitating cellular glucose uptake and utilization for energy. When this regulatory mechanism fails, hyperglycemia occurs, leading to both acute and chronic complications affecting multiple organ systems.
+
+The two primary types of diabetes are Type 1 and Type 2 diabetes. Type 1 diabetes is an autoimmune condition in which the immune system destroys insulin-producing beta cells in the pancreas, resulting in absolute insulin deficiency. This form typically manifests in childhood or adolescence and requires lifelong insulin therapy. Type 2 diabetes, which accounts for approximately 90-95\% of all diabetes cases, is characterized by insulin resistance and relative insulin deficiency. In this condition, cells fail to respond adequately to insulin, and the pancreas eventually cannot produce sufficient insulin to overcome this resistance.
+
+Prediabetes represents an intermediate metabolic state where blood glucose levels are elevated above normal but below the diagnostic threshold for diabetes. According to the American Diabetes Association, prediabetes is defined by fasting plasma glucose levels of 100-125 mg/dL, or HbA1c levels of 5.7-6.4\%. Individuals with prediabetes face significantly increased risk of progressing to Type 2 diabetes, with annual conversion rates of 5-10\%. However, prediabetes is reversible through lifestyle interventions, including dietary modifications, increased physical activity, and weight management, making early detection critical for diabetes prevention.
+
+The pathophysiology of Type 2 diabetes involves complex interactions between genetic predisposition and environmental factors. Key risk factors include obesity (particularly central adiposity), physical inactivity, family history of diabetes, age over 45 years, hypertension, dyslipidemia, and certain ethnicities with higher genetic susceptibility. The progression from normal glucose tolerance to prediabetes and eventually to Type 2 diabetes follows a continuum of deteriorating beta-cell function and worsening insulin resistance.
+
+Untreated diabetes leads to serious complications affecting multiple organ systems. Microvascular complications include diabetic retinopathy (leading cause of blindness in working-age adults), diabetic nephropathy (leading cause of end-stage renal disease), and diabetic neuropathy (causing pain, sensory loss, and increased risk of foot ulcers and amputations). Macrovascular complications include accelerated atherosclerosis, increasing risk of coronary artery disease, stroke, and peripheral arterial disease. These complications underscore the critical importance of early detection and intervention to prevent or delay disease progression.
+
+\subsection{Machine Learning and Binary Classification}
+
+Machine learning is a subfield of artificial intelligence that focuses on developing algorithms capable of learning patterns from data and making predictions or decisions without being explicitly programmed for specific tasks. Machine learning algorithms improve their performance through experience, iteratively refining their models as they process more data. This capability makes machine learning particularly valuable for complex prediction tasks where traditional rule-based approaches are insufficient.
+
+Machine learning paradigms are categorized into three main types based on the learning approach: supervised learning, unsupervised learning, and reinforcement learning. Supervised learning, the focus of this study, involves training models on labeled datasets where both input features and corresponding output labels are provided. The model learns the mapping function from inputs to outputs, enabling it to make predictions on new, unseen data. Unsupervised learning, in contrast, works with unlabeled data to discover hidden patterns or structures, such as clustering similar instances. Reinforcement learning involves agents learning optimal behaviors through trial-and-error interactions with an environment, receiving rewards or penalties based on their actions.
+
+Within supervised learning, tasks are further divided into classification and regression. Classification tasks involve predicting discrete categorical labels, while regression tasks predict continuous numerical values. Diabetes risk prediction is formulated as a binary classification problem, where the goal is to categorize individuals into one of two classes: diabetic (positive class) or non-diabetic (negative class). This binary outcome aligns with clinical decision-making, where individuals are classified based on whether their blood glucose levels exceed diagnostic thresholds.
+
+\subsubsection{Traditional Machine Learning Algorithms}
+
+Several traditional machine learning algorithms are commonly employed for binary classification tasks in healthcare:
+
+\textbf{Naive Bayes} is a probabilistic classifier based on Bayes' theorem, which calculates the probability of a class given the input features. The "naive" assumption is that all features are conditionally independent given the class label, simplifying computation. Despite this strong assumption, which is often violated in real-world data, Naive Bayes performs surprisingly well in many applications due to its simplicity and computational efficiency. For diabetes prediction, Naive Bayes calculates the probability of diabetes given clinical and demographic features, assigning the class with the highest posterior probability.
+
+\textbf{Logistic Regression} is a linear model for binary classification that estimates the probability of class membership using the logistic (sigmoid) function. Unlike linear regression, which predicts continuous values, logistic regression outputs probabilities constrained between 0 and 1. The model learns a set of weights for each feature, and the weighted sum of features is transformed through the sigmoid function to produce a probability. A decision threshold (typically 0.5) is applied to convert probabilities to binary predictions. Logistic regression is interpretable, as the learned weights indicate the direction and magnitude of each feature's influence on the outcome.
+
+% TODO: Add Figure 1 - Logistic Regression Model diagram
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{figures/logistic_regression.png}
+%     \caption{Logistic Regression Model}
+%     \label{fig:logistic_regression}
+% \end{figure}
+
+\textbf{Support Vector Machines (SVM)} find an optimal hyperplane that maximally separates instances of different classes in a high-dimensional feature space. The hyperplane is positioned to maximize the margin—the distance between the hyperplane and the nearest data points from each class, called support vectors. SVM can handle non-linear decision boundaries through the kernel trick, which implicitly maps data to higher-dimensional spaces where linear separation becomes possible. Common kernels include linear, polynomial, and radial basis function (RBF). SVM is effective for high-dimensional data but can be computationally expensive for large datasets.
+
+% TODO: Add Figure 2 - Support Vectors and Hyperplane diagram
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{figures/svm_hyperplane.png}
+%     \caption{Support Vectors and Hyperplane}
+%     \label{fig:svm_hyperplane}
+% \end{figure}
+
+\textbf{Random Forest} is an ensemble learning method that constructs multiple decision trees during training and outputs the mode of the classes (for classification) or mean prediction (for regression) of individual trees. Each tree is trained on a bootstrap sample of the data, and at each node, a random subset of features is considered for splitting. This randomness reduces overfitting and improves generalization. Random Forest provides feature importance scores based on how much each feature decreases impurity across all trees, aiding interpretability. The algorithm handles non-linear relationships, missing values, and mixed data types effectively.
+
+% TODO: Add Figure 3 - Random Forest Model diagram
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{figures/random_forest.png}
+%     \caption{Random Forest Model}
+%     \label{fig:random_forest}
+% \end{figure}
+
+\textbf{K-Nearest Neighbors (k-NN)} is a non-parametric, instance-based learning algorithm that classifies instances based on the majority class among their k nearest neighbors in the feature space. The algorithm stores the entire training dataset and, for each prediction, calculates distances (typically Euclidean) between the query instance and all training instances. The k nearest instances are identified, and the most frequent class among them is assigned as the prediction. The choice of k is critical: small k values lead to complex decision boundaries susceptible to noise, while large k values produce smoother boundaries but may overlook local patterns. k-NN requires feature scaling to prevent features with larger ranges from dominating distance calculations.
+
+% TODO: Add Figure 4 - k-NN Classification Example diagram
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.7\textwidth]{figures/knn_classification.png}
+%     \caption{An Example of k-NN Classification}
+%     \label{fig:knn_classification}
+% \end{figure}
+
+\textbf{Gradient Boosting Machines (XGBoost, LightGBM, CatBoost)} are ensemble methods that build models sequentially, where each new model corrects errors made by previous models. XGBoost (Extreme Gradient Boosting) uses gradient descent to minimize a loss function, incorporating regularization to prevent overfitting. LightGBM employs a histogram-based approach and grows trees leaf-wise rather than level-wise, improving efficiency. CatBoost handles categorical features natively and uses ordered boosting to reduce overfitting. These algorithms consistently achieve state-of-the-art performance on tabular data and provide feature importance rankings.
+
+\subsubsection{Handling Class Imbalance}
+
+Class imbalance occurs when one class significantly outnumbers the other in the training dataset. In diabetes prediction, non-diabetic cases typically far exceed diabetic cases, creating imbalance. Standard machine learning algorithms trained on imbalanced data tend to be biased toward the majority class, achieving high overall accuracy while failing to detect minority class instances—a critical failure in medical screening where missing positive cases (false negatives) has serious consequences.
+
+Several techniques address class imbalance:
+
+\textbf{Resampling Methods} modify the training dataset to balance class distributions. Oversampling increases minority class instances by duplicating existing samples or generating synthetic samples. The Synthetic Minority Over-sampling Technique (SMOTE) creates synthetic instances by interpolating between minority class instances and their nearest neighbors. Undersampling reduces majority class instances, but risks losing valuable information. Hybrid methods like SMOTE-ENN combine oversampling with edited nearest neighbors to remove noisy instances.
+
+\textbf{Cost-Sensitive Learning} assigns different misclassification costs to different classes, penalizing false negatives more heavily than false positives. Many algorithms support class weights, allowing users to specify the relative importance of each class during training.
+
+\textbf{Threshold Adjustment} modifies the decision threshold for converting predicted probabilities to class labels. Lowering the threshold increases sensitivity (recall) at the cost of precision, which is appropriate for screening applications where detecting all positive cases is prioritized.
+
+\subsection{Neural Networks and Optimization Strategies}
+
+Neural networks are computational models inspired by the structure and function of biological neural networks in the human brain. They consist of interconnected layers of artificial neurons (nodes) that process information through weighted connections. Each neuron receives inputs, applies a weighted sum, adds a bias term, and passes the result through an activation function to produce an output. Neural networks learn by adjusting weights and biases to minimize a loss function that quantifies prediction errors.
+
+A typical neural network architecture consists of an input layer (receiving features), one or more hidden layers (performing transformations), and an output layer (producing predictions). Deep neural networks contain multiple hidden layers, enabling them to learn hierarchical representations of increasing complexity. Activation functions introduce non-linearity, allowing networks to model complex relationships. Common activation functions include ReLU (Rectified Linear Unit), sigmoid, and tanh.
+
+\subsubsection{TabNet Architecture}
+
+TabNet is a deep learning architecture specifically designed for tabular data, addressing limitations of traditional neural networks on structured datasets. Unlike standard fully-connected networks that process all features equally, TabNet employs a sequential attention mechanism to select relevant features at each decision step, mimicking human decision-making processes.
+
+The TabNet encoder consists of several key components:
+
+\textbf{Feature Transformer} processes selected features through fully-connected layers with batch normalization and GLU (Gated Linear Unit) activations, extracting meaningful representations.
+
+\textbf{Attentive Transformer} generates feature selection masks using a sparsemax activation function, which produces sparse outputs where most features have zero weight. This sparsity enhances interpretability by clearly indicating which features influenced each decision step.
+
+\textbf{Feature Masking} applies the selection masks to the input features, allowing only selected features to influence subsequent processing. Masks are updated at each step based on previously selected features, preventing redundant feature selection.
+
+\textbf{Split Block} divides the processed representation into two parts: one for the attentive transformer in the next step, and one contributing to the final output.
+
+TabNet's sequential attention mechanism provides both instance-wise and global interpretability. Instance-wise interpretability is achieved through visualization of feature selection masks for individual predictions, showing which features were most important. Global interpretability is obtained by aggregating masks across all instances to derive feature importance rankings. This interpretability is crucial for clinical applications where understanding model decisions builds trust and enables validation against medical knowledge.
+
+% TODO: Add Figure 5 - TabNet Encoder Architecture diagram
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{figures/tabnet_architecture.png}
+%     \caption{TabNet Encoder Architecture}
+%     \label{fig:tabnet_architecture}
+% \end{figure}
+
+\subsubsection{Bayesian Optimization for Hyperparameter Tuning}
+
+Hyperparameters are configuration settings that control the learning process but are not learned from data (e.g., learning rate, number of layers, regularization strength). Selecting optimal hyperparameters significantly impacts model performance, but the search space is often large and high-dimensional, making exhaustive search infeasible.
+
+Bayesian Optimization is an efficient strategy for hyperparameter tuning that models the objective function (e.g., validation performance) as a probabilistic surrogate model, typically a Gaussian Process. The surrogate model provides a posterior distribution over the objective function, quantifying uncertainty about performance at untested hyperparameter configurations.
+
+An acquisition function guides the search by balancing exploration (testing uncertain regions) and exploitation (testing regions likely to yield good performance). Common acquisition functions include Expected Improvement (EI), which selects configurations expected to improve over the current best, and Upper Confidence Bound (UCB), which trades off mean performance and uncertainty.
+
+Bayesian Optimization iteratively:
+\begin{enumerate}
+    \item Evaluates the objective function at a selected hyperparameter configuration
+    \item Updates the surrogate model with the new observation
+    \item Uses the acquisition function to select the next configuration to evaluate
+\end{enumerate}
+
+This approach is particularly effective when objective function evaluations are expensive (as in training deep neural networks), as it requires fewer evaluations than grid search or random search to find near-optimal configurations.
+
+\subsection{Explainable Artificial Intelligence and Model Interpretability}
+
+Explainable Artificial Intelligence (XAI) refers to methods and techniques that make machine learning model predictions understandable to humans. As models become more complex—particularly deep neural networks—they often function as "black boxes," producing accurate predictions without transparent reasoning. This opacity is problematic in high-stakes domains like healthcare, where clinicians need to understand and validate model decisions before acting on them.
+
+Model interpretability serves several critical functions: (1) building trust by revealing how models make decisions, (2) enabling clinical validation by allowing experts to verify that models use medically sound reasoning, (3) identifying biases or errors in model logic, (4) facilitating regulatory compliance in domains requiring explainable decisions, and (5) providing actionable insights for interventions by identifying modifiable risk factors.
+
+XAI techniques are categorized along several dimensions:
+
+\textbf{Scope:} Global explanations describe overall model behavior across all instances, while local explanations focus on individual predictions.
+
+\textbf{Model-specificity:} Model-specific techniques are designed for particular algorithms (e.g., decision tree visualization), while model-agnostic techniques can explain any model.
+
+\textbf{Complexity:} Intrinsically interpretable models (e.g., linear regression, decision trees) are transparent by design, while post-hoc explanations are applied to complex models after training.
+
+\subsubsection{SHAP (SHapley Additive exPlanations)}
+
+SHAP is a unified framework for interpreting model predictions based on Shapley values from cooperative game theory. Shapley values fairly distribute a total payout among players based on their marginal contributions to all possible coalitions. In the context of machine learning, features are "players," and the "payout" is the prediction for a specific instance.
+
+The SHAP value for a feature quantifies its contribution to the prediction by computing the average marginal contribution of that feature across all possible subsets of features. Mathematically, for feature $i$ and instance $x$:
+
+$$\phi_i = \sum_{S \subseteq F \setminus \{i\}} \frac{|S|!(|F|-|S|-1)!}{|F|!} [f(S \cup \{i\}) - f(S)]$$
+
+where $F$ is the set of all features, $S$ is a subset of features, and $f(S)$ is the model's prediction using only features in $S$.
+
+SHAP values have desirable properties: (1) local accuracy—SHAP values sum to the difference between the prediction and the expected value, (2) missingness—features not used in the model have zero SHAP value, (3) consistency—if a model changes so a feature has a larger impact, its SHAP value increases.
+
+SHAP provides multiple visualization types:
+
+\textbf{Force plots} show how each feature pushes the prediction away from the base value (average prediction) toward the final prediction for a single instance.
+
+\textbf{Summary plots} display SHAP values for all features across all instances, revealing global feature importance and the distribution of impacts.
+
+\textbf{Dependence plots} show the relationship between feature values and SHAP values, revealing non-linear effects and interactions.
+
+TreeExplainer is an optimized SHAP implementation for tree-based models that computes exact SHAP values efficiently. For other models, KernelExplainer approximates SHAP values through sampling.
+
+% TODO: Add Figure 6 - SHAP Explanation Example diagram
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{figures/shap_example.png}
+%     \caption{SHAP Explaining Individual Predictions}
+%     \label{fig:shap_example}
+% \end{figure}
+
+\subsubsection{LIME (Local Interpretable Model-agnostic Explanations)}
+
+LIME explains individual predictions by approximating the complex model's behavior locally with a simple, interpretable surrogate model. The key insight is that while a model may be globally complex, its behavior in the vicinity of a specific instance may be approximated by a linear model.
+
+LIME's algorithm:
+\begin{enumerate}
+    \item Generates a dataset of perturbed instances around the instance to be explained
+    \item Obtains predictions from the complex model for these perturbed instances
+    \item Weights instances by their proximity to the original instance
+    \item Trains a simple interpretable model (e.g., linear regression) on the weighted dataset
+    \item Uses the interpretable model's coefficients as the explanation
+\end{enumerate}
+
+For tabular data, LIME perturbs instances by randomly sampling from the training distribution for each feature. For text and images, perturbations involve removing words or image segments.
+
+LIME's explanations are local—they describe model behavior for a specific instance and may not generalize to other instances. This locality is both a strength (providing personalized explanations) and a limitation (not revealing global model behavior). LIME is also subject to instability, where small changes in the instance or perturbation process can yield different explanations.
+
+% TODO: Add Figure 7 - LIME Explanation Example diagram
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{figures/lime_example.png}
+%     \caption{LIME Explaining Individual Predictions}
+%     \label{fig:lime_example}
+% \end{figure}
+
+\subsection{Probability Calibration Methods}
+
+Probability calibration is the process of adjusting predicted probabilities from a machine learning model to better reflect true likelihoods of outcomes. Many classification algorithms, particularly complex models like neural networks and ensemble methods, produce miscalibrated probability estimates—predictions that do not accurately represent the true probability of class membership. For instance, when a model predicts a 70\% probability of diabetes, ideally 70\% of such cases should actually be diabetic. Miscalibration can lead to inappropriate clinical decisions, as healthcare providers rely on these probabilities to determine intervention strategies.
+
+Calibration is distinct from discrimination (the ability to rank instances correctly). A model can have excellent discrimination (high AUC-ROC) while being poorly calibrated. Calibration ensures that predicted probabilities are reliable and can be used directly for decision-making, which is critical in medical applications where probability estimates guide treatment decisions.
+
+\subsubsection{Platt Scaling}
+
+Platt Scaling, also known as logistic calibration, is a parametric calibration method that fits a logistic regression model to map uncalibrated scores to calibrated probabilities. The method was originally developed for Support Vector Machines but is applicable to any classifier that produces continuous scores.
+
+Given uncalibrated scores $f(x)$ from a classifier, Platt Scaling learns parameters $A$ and $B$ such that the calibrated probability is:
+
+$$P(y=1|x) = \frac{1}{1 + \exp(A \cdot f(x) + B)}$$
+
+The parameters $A$ and $B$ are estimated by maximizing the likelihood on a held-out calibration set (separate from the training set used to train the original classifier). This calibration set should be representative of the target population to ensure the calibrated probabilities generalize well.
+
+Platt Scaling is particularly effective when the miscalibration follows a sigmoid pattern—when uncalibrated scores have a monotonic but non-linear relationship with true probabilities. The method is computationally efficient, requiring only the fitting of two parameters, and works well even with relatively small calibration sets. However, Platt Scaling assumes a specific functional form (sigmoid), which may not capture all types of miscalibration patterns.
+
+\subsubsection{Isotonic Regression}
+
+Isotonic Regression is a non-parametric calibration method that fits a piecewise-constant, monotonically increasing function to map uncalibrated scores to calibrated probabilities. Unlike Platt Scaling, Isotonic Regression makes no assumptions about the functional form of the calibration mapping, making it more flexible.
+
+The method works by:
+\begin{enumerate}
+    \item Sorting instances by their uncalibrated scores
+    \item Grouping instances into bins
+    \item Computing the empirical probability (fraction of positive instances) in each bin
+    \item Enforcing monotonicity by merging adjacent bins that violate the monotonicity constraint
+\end{enumerate}
+
+The resulting calibration function is a step function that maps score ranges to calibrated probabilities. For a new instance with score $f(x)$, the calibrated probability is the empirical probability of the bin containing $f(x)$.
+
+Isotonic Regression is more flexible than Platt Scaling and can capture complex miscalibration patterns, including non-sigmoid relationships. However, this flexibility comes at a cost: Isotonic Regression is more prone to overfitting, especially with small calibration sets, and may produce less smooth calibration curves. The method also requires more data than Platt Scaling to reliably estimate the piecewise-constant function.
+
+\subsubsection{Calibration Assessment}
+
+Calibration quality is assessed through several metrics and visualizations:
+
+\textbf{Calibration Plots (Reliability Diagrams)} plot predicted probabilities against observed frequencies. Instances are grouped into bins based on predicted probability, and for each bin, the mean predicted probability is plotted against the fraction of positive instances. A perfectly calibrated model produces points along the diagonal line $y=x$.
+
+\textbf{Brier Score} measures the mean squared difference between predicted probabilities and actual outcomes:
+$$\mathrm{Brier\ Score} = \frac{1}{N} \sum_{i=1}^{N} (p_i - y_i)^2$$
+
+where $p_i$ is the predicted probability and $y_i$ is the actual outcome (0 or 1). Lower Brier scores indicate better calibration and discrimination. The Brier score ranges from 0 (perfect) to 1 (worst).
+
+\textbf{Expected Calibration Error (ECE)} divides predictions into bins and computes the weighted average of the absolute difference between confidence and accuracy in each bin:
+$$\mathrm{ECE} = \sum_{m=1}^{M} \frac{|B_m|}{N} |\mathrm{acc}(B_m) - \mathrm{conf}(B_m)|$$
+
+where $B_m$ is the set of instances in bin $m$, $\mathrm{acc}(B_m)$ is the accuracy in that bin, and $\mathrm{conf}(B_m)$ is the average predicted probability in that bin. Lower ECE indicates better calibration.
+
+In this study, both Platt Scaling and Isotonic Regression are applied to calibrate the predictions from machine learning models, with Platt Scaling typically preferred due to its robustness and lower risk of overfitting on the available calibration data.

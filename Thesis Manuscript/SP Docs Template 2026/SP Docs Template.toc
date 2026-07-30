@@ -1,0 +1,120 @@
+\contentsline {section}{Acceptance Sheet}{i}{Doc-Start}%
+\contentsline {section}{Abstract}{ii}{Doc-Start}%
+\contentsline {section}{List of Figures}{viii}{section*.1}%
+\contentsline {section}{List of Tables}{ix}{section*.2}%
+\contentsline {section}{\numberline {I.}Introduction}{1}{section.1}%
+\contentsline {subsection}{\numberline {A.}Background of the Study}{1}{subsection.1.1}%
+\contentsline {subsection}{\numberline {B.}Statement of the Problem}{2}{subsection.1.2}%
+\contentsline {subsection}{\numberline {C.}Objectives of the Study}{3}{subsection.1.3}%
+\contentsline {subsection}{\numberline {D.}Significance of the Project}{5}{subsection.1.4}%
+\contentsline {subsection}{\numberline {E.}Scope and Limitations}{5}{subsection.1.5}%
+\contentsline {subsection}{\numberline {F.}Assumptions}{7}{subsection.1.6}%
+\contentsline {section}{\numberline {II.}Review of Related Literature}{9}{section.2}%
+\contentsline {subsection}{\numberline {A.}Burden of Diabetes in the Philippines}{9}{subsection.2.1}%
+\contentsline {subsection}{\numberline {B.}Philippine Datasets for Diabetes Risk Prediction}{11}{subsection.2.2}%
+\contentsline {subsection}{\numberline {C.}Machine Learning Models for Diabetes Prediction}{12}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {C..1}Random Forest}{12}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {C..2}K-Nearest Neighbors (KNN)}{13}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {C..3}XGBoost}{13}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {C..4}Bayesian Optimized TabNet}{14}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {C..5}Ensemble Methods}{15}{subsubsection.2.3.5}%
+\contentsline {subsection}{\numberline {D.}Explainable Artificial Intelligence (XAI) Methods}{16}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {D..1}SHAP (SHapley Additive exPlanations)}{16}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {D..2}LIME (Local Interpretable Model-agnostic Explanations)}{17}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {D..3}Integration of Calibration with XAI}{17}{subsubsection.2.4.3}%
+\contentsline {subsection}{\numberline {E.}Calibrated Explanations}{18}{subsection.2.5}%
+\contentsline {subsubsection}{\numberline {E..1}Foundations of Calibrated Explanations}{18}{subsubsection.2.5.1}%
+\contentsline {subsubsection}{\numberline {E..2}Key Features of Calibrated Explanations}{18}{subsubsection.2.5.2}%
+\contentsline {subsubsection}{\numberline {E..3}Extensions and Applications}{19}{subsubsection.2.5.3}%
+\contentsline {subsubsection}{\numberline {E..4}Comparison with Traditional XAI Methods}{20}{subsubsection.2.5.4}%
+\contentsline {subsection}{\numberline {F.}Probability Calibration Techniques}{20}{subsection.2.6}%
+\contentsline {subsubsection}{\numberline {F..1}Importance of Calibration in Clinical Settings}{20}{subsubsection.2.6.1}%
+\contentsline {subsubsection}{\numberline {F..2}Calibration Metrics}{21}{subsubsection.2.6.2}%
+\contentsline {subsubsection}{\numberline {F..3}Platt Scaling}{22}{subsubsection.2.6.3}%
+\contentsline {subsubsection}{\numberline {F..4}Isotonic Regression}{22}{subsubsection.2.6.4}%
+\contentsline {subsubsection}{\numberline {F..5}Venn-Abers Calibration}{22}{subsubsection.2.6.5}%
+\contentsline {subsection}{\numberline {G.}Evaluation Metrics for Imbalanced Datasets}{22}{subsection.2.7}%
+\contentsline {subsubsection}{\numberline {G..1}Limitations of Accuracy}{23}{subsubsection.2.7.1}%
+\contentsline {subsubsection}{\numberline {G..2}Recall (Sensitivity)}{23}{subsubsection.2.7.2}%
+\contentsline {subsubsection}{\numberline {G..3}Precision}{23}{subsubsection.2.7.3}%
+\contentsline {subsubsection}{\numberline {G..4}F1-Score and F2-Score}{24}{subsubsection.2.7.4}%
+\contentsline {subsubsection}{\numberline {G..5}Area Under the Precision-Recall Curve (AUPRC)}{24}{subsubsection.2.7.5}%
+\contentsline {subsubsection}{\numberline {G..6}G-means}{24}{subsubsection.2.7.6}%
+\contentsline {section}{\numberline {III.}Theoretical Framework}{25}{section.3}%
+\contentsline {subsection}{\numberline {A.}Diabetes and Prediabetes}{25}{subsection.3.1}%
+\contentsline {subsection}{\numberline {B.}Machine Learning and Binary Classification}{26}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {B..1}Traditional Machine Learning Algorithms}{27}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {B..2}Handling Class Imbalance}{29}{subsubsection.3.2.2}%
+\contentsline {subsection}{\numberline {C.}Neural Networks and Optimization Strategies}{30}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {C..1}TabNet Architecture}{31}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {C..2}Bayesian Optimization for Hyperparameter Tuning}{32}{subsubsection.3.3.2}%
+\contentsline {subsection}{\numberline {D.}Explainable Artificial Intelligence and Model Interpretability}{33}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {D..1}SHAP (SHapley Additive exPlanations)}{33}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {D..2}LIME (Local Interpretable Model-agnostic Explanations)}{34}{subsubsection.3.4.2}%
+\contentsline {subsection}{\numberline {E.}Probability Calibration Methods}{35}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {E..1}Platt Scaling}{36}{subsubsection.3.5.1}%
+\contentsline {subsubsection}{\numberline {E..2}Isotonic Regression}{36}{subsubsection.3.5.2}%
+\contentsline {subsubsection}{\numberline {E..3}Calibration Assessment}{37}{subsubsection.3.5.3}%
+\contentsline {section}{\numberline {IV.}Design and Implementation}{39}{section.4}%
+\contentsline {subsection}{\numberline {A.}Conceptual Framework}{39}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {A..1}Input Stage}{39}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {A..2}Preprocessing Stage}{40}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {A..3}Processing Stage}{41}{subsubsection.4.1.3}%
+\contentsline {subsubsection}{\numberline {A..4}Output Stage}{42}{subsubsection.4.1.4}%
+\contentsline {subsection}{\numberline {B.}DOST-FNRI 2013 National Nutrition Survey Dataset}{42}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {B..1}Clinical and Health Component Dataset}{43}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {B..2}Biochemical Component Dataset}{43}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {B..3}Anthropometric Component Dataset}{43}{subsubsection.4.2.3}%
+\contentsline {subsubsection}{\numberline {B..4}Dietary Component Dataset}{44}{subsubsection.4.2.4}%
+\contentsline {subsection}{\numberline {C.}Preprocessing Techniques}{44}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {C..1}Dataset Merging}{44}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {C..2}Data Filtering}{45}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {C..3}Missing Value Handling}{45}{subsubsection.4.3.3}%
+\contentsline {subsubsection}{\numberline {C..4}Target Variable Conversion}{46}{subsubsection.4.3.4}%
+\contentsline {subsubsection}{\numberline {C..5}Feature Scaling}{47}{subsubsection.4.3.5}%
+\contentsline {subsubsection}{\numberline {C..6}Feature Selection}{47}{subsubsection.4.3.6}%
+\contentsline {subsubsection}{\numberline {C..7}Handling Class Imbalance}{48}{subsubsection.4.3.7}%
+\contentsline {subsection}{\numberline {D.}Machine Learning Models}{49}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {D..1}Naive Bayes}{49}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {D..2}K-Nearest Neighbors}{49}{subsubsection.4.4.2}%
+\contentsline {subsubsection}{\numberline {D..3}Random Forest}{49}{subsubsection.4.4.3}%
+\contentsline {subsubsection}{\numberline {D..4}Gradient Boosting Models}{50}{subsubsection.4.4.4}%
+\contentsline {subsubsection}{\numberline {D..5}AdaBoost}{50}{subsubsection.4.4.5}%
+\contentsline {subsubsection}{\numberline {D..6}TabNet}{51}{subsubsection.4.4.6}%
+\contentsline {subsubsection}{\numberline {D..7}Ensemble Methods}{52}{subsubsection.4.4.7}%
+\contentsline {subsection}{\numberline {E.}Probability Calibration}{52}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {E..1}Platt Scaling}{52}{subsubsection.4.5.1}%
+\contentsline {subsubsection}{\numberline {E..2}Isotonic Regression}{52}{subsubsection.4.5.2}%
+\contentsline {subsubsection}{\numberline {E..3}Calibration Evaluation}{53}{subsubsection.4.5.3}%
+\contentsline {subsection}{\numberline {F.}Explainable Artificial Intelligence Techniques}{53}{subsection.4.6}%
+\contentsline {subsubsection}{\numberline {F..1}SHAP (SHapley Additive exPlanations)}{53}{subsubsection.4.6.1}%
+\contentsline {subsubsection}{\numberline {F..2}Calibrated Explanations}{54}{subsubsection.4.6.2}%
+\contentsline {subsection}{\numberline {G.}Performance Evaluation Metrics}{54}{subsection.4.7}%
+\contentsline {subsubsection}{\numberline {G..1}Confusion Matrix}{54}{subsubsection.4.7.1}%
+\contentsline {subsubsection}{\numberline {G..2}Precision, Recall, and F-Scores}{55}{subsubsection.4.7.2}%
+\contentsline {subsubsection}{\numberline {G..3}Specificity and Accuracy}{56}{subsubsection.4.7.3}%
+\contentsline {subsubsection}{\numberline {G..4}ROC Curve and AUC}{56}{subsubsection.4.7.4}%
+\contentsline {subsubsection}{\numberline {G..5}Precision-Recall Curve and AUPRC}{56}{subsubsection.4.7.5}%
+\contentsline {subsubsection}{\numberline {G..6}Calibration Metrics}{57}{subsubsection.4.7.6}%
+\contentsline {section}{\numberline {V.}Results}{58}{section.5}%
+\contentsline {subsection}{\numberline {A.}Performance of Machine Learning Models}{59}{subsection.5.1}%
+\contentsline {subsection}{\numberline {B.}Comparison of Models}{60}{subsection.5.2}%
+\contentsline {subsection}{\numberline {C.}Probability Calibration Results}{61}{subsection.5.3}%
+\contentsline {subsection}{\numberline {D.}Explainable Artificial Intelligence Analysis}{61}{subsection.5.4}%
+\contentsline {subsection}{\numberline {E.}Feature Importance Consistency}{62}{subsection.5.5}%
+\contentsline {subsection}{\numberline {F.}Model Performance by Threshold}{63}{subsection.5.6}%
+\contentsline {section}{\numberline {VI.}Discussion}{65}{section.6}%
+\contentsline {subsection}{\numberline {A.}Model Selection and Performance}{65}{subsection.6.1}%
+\contentsline {subsection}{\numberline {B.}Feature Importance and Clinical Validity}{66}{subsection.6.2}%
+\contentsline {subsection}{\numberline {C.}Probability Calibration and Clinical Utility}{68}{subsection.6.3}%
+\contentsline {subsection}{\numberline {D.}Integration of Explainable Artificial Intelligence}{68}{subsection.6.4}%
+\contentsline {subsection}{\numberline {E.}Comparison with Reference Study}{69}{subsection.6.5}%
+\contentsline {subsection}{\numberline {F.}Challenges and Limitations}{70}{subsection.6.6}%
+\contentsline {subsection}{\numberline {G.}Main Contributions}{71}{subsection.6.7}%
+\contentsline {section}{\numberline {VII.}Conclusions}{73}{section.7}%
+\contentsline {section}{\numberline {VIII.}Recommendations}{74}{section.8}%
+\contentsline {section}{\numberline {IX.}Bibliography}{75}{section.9}%
+\contentsline {section}{\numberline {X.}Appendix}{76}{section.10}%
+\contentsline {subsection}{\numberline {A.}Code Listing}{76}{subsection.10.1}%
+\contentsline {subsection}{\numberline {B.}Appendix B}{76}{subsection.10.2}%
+\contentsline {section}{\numberline {XI.}Acknowledgment}{77}{section.11}%
