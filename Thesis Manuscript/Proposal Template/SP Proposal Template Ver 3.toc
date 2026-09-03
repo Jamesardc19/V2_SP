@@ -1,0 +1,97 @@
+\contentsline {section}{\numberline {1}Introduction}{1}{}%
+\contentsline {subsection}{\numberline {1.1}Background of the Study}{1}{}%
+\contentsline {subsection}{\numberline {1.2}Statement of the Problem}{2}{}%
+\contentsline {subsection}{\numberline {1.3}Research Questions}{2}{}%
+\contentsline {subsection}{\numberline {1.4}Objectives of the Study}{3}{}%
+\contentsline {subsection}{\numberline {1.5}Significance of the Project}{5}{}%
+\contentsline {subsection}{\numberline {1.6}Scope and Limitations}{5}{}%
+\contentsline {subsection}{\numberline {1.7}Assumptions}{6}{}%
+\contentsline {section}{\numberline {2}Review of Related Literature}{8}{}%
+\contentsline {subsection}{\numberline {2.1}Burden of Diabetes in the Philippines}{8}{}%
+\contentsline {subsection}{\numberline {2.2}Philippine Datasets for Diabetes Risk Prediction}{9}{}%
+\contentsline {subsection}{\numberline {2.3}Machine Learning Models for Diabetes Prediction}{11}{}%
+\contentsline {subsubsection}{\numberline {2.3.1}Random Forest}{11}{}%
+\contentsline {subsubsection}{\numberline {2.3.2}K-Nearest Neighbors (KNN)}{11}{}%
+\contentsline {subsubsection}{\numberline {2.3.3}XGBoost}{12}{}%
+\contentsline {subsubsection}{\numberline {2.3.4}Bayesian Optimized TabNet}{13}{}%
+\contentsline {subsubsection}{\numberline {2.3.5}Ensemble Methods}{13}{}%
+\contentsline {subsection}{\numberline {2.4}Explainable Artificial Intelligence (XAI) Methods}{14}{}%
+\contentsline {subsubsection}{\numberline {2.4.1}SHAP (SHapley Additive exPlanations)}{14}{}%
+\contentsline {subsubsection}{\numberline {2.4.2}LIME (Local Interpretable Model-agnostic Explanations)}{15}{}%
+\contentsline {subsubsection}{\numberline {2.4.3}Integration of Calibration with XAI}{15}{}%
+\contentsline {subsection}{\numberline {2.5}Calibrated Explanations}{15}{}%
+\contentsline {subsubsection}{\numberline {2.5.1}Foundations of Calibrated Explanations}{16}{}%
+\contentsline {subsubsection}{\numberline {2.5.2}Key Features of Calibrated Explanations}{16}{}%
+\contentsline {subsubsection}{\numberline {2.5.3}Extensions and Applications}{17}{}%
+\contentsline {subsubsection}{\numberline {2.5.4}Comparison with Traditional XAI Methods}{17}{}%
+\contentsline {subsection}{\numberline {2.6}Probability Calibration Techniques}{17}{}%
+\contentsline {subsubsection}{\numberline {2.6.1}Importance of Calibration in Clinical Settings}{18}{}%
+\contentsline {subsubsection}{\numberline {2.6.2}Calibration Metrics}{18}{}%
+\contentsline {subsubsection}{\numberline {2.6.3}Platt Scaling}{19}{}%
+\contentsline {subsubsection}{\numberline {2.6.4}Isotonic Regression}{19}{}%
+\contentsline {subsubsection}{\numberline {2.6.5}Venn-Abers Calibration}{19}{}%
+\contentsline {subsection}{\numberline {2.7}Evaluation Metrics for Imbalanced Datasets}{20}{}%
+\contentsline {subsubsection}{\numberline {2.7.1}Limitations of Accuracy}{20}{}%
+\contentsline {subsubsection}{\numberline {2.7.2}Recall (Sensitivity)}{20}{}%
+\contentsline {subsubsection}{\numberline {2.7.3}Precision}{20}{}%
+\contentsline {subsubsection}{\numberline {2.7.4}F1-Score and F2-Score}{21}{}%
+\contentsline {subsubsection}{\numberline {2.7.5}Area Under the Precision-Recall Curve (AUPRC)}{21}{}%
+\contentsline {subsubsection}{\numberline {2.7.6}G-means}{21}{}%
+\contentsline {section}{\numberline {3}Theoretical Framework}{22}{}%
+\contentsline {subsection}{\numberline {3.1}Diabetes and Prediabetes}{22}{}%
+\contentsline {subsection}{\numberline {3.2}Machine Learning and Binary Classification}{23}{}%
+\contentsline {subsubsection}{\numberline {3.2.1}Traditional Machine Learning Algorithms}{24}{}%
+\contentsline {subsubsection}{\numberline {3.2.2}Handling Class Imbalance}{25}{}%
+\contentsline {subsection}{\numberline {3.3}Neural Networks and Optimization Strategies}{26}{}%
+\contentsline {subsubsection}{\numberline {3.3.1}TabNet Architecture}{26}{}%
+\contentsline {subsubsection}{\numberline {3.3.2}Bayesian Optimization for Hyperparameter Tuning}{27}{}%
+\contentsline {subsection}{\numberline {3.4}Explainable Artificial Intelligence and Model Interpretability}{28}{}%
+\contentsline {subsubsection}{\numberline {3.4.1}SHAP (SHapley Additive exPlanations)}{29}{}%
+\contentsline {subsubsection}{\numberline {3.4.2}LIME (Local Interpretable Model-agnostic Explanations)}{30}{}%
+\contentsline {subsection}{\numberline {3.5}Probability Calibration Methods}{30}{}%
+\contentsline {subsubsection}{\numberline {3.5.1}Platt Scaling}{31}{}%
+\contentsline {subsubsection}{\numberline {3.5.2}Isotonic Regression}{31}{}%
+\contentsline {subsubsection}{\numberline {3.5.3}Calibration Assessment}{32}{}%
+\contentsline {section}{\numberline {4}Design and Implementation}{34}{}%
+\contentsline {subsection}{\numberline {4.1}Conceptual Framework}{34}{}%
+\contentsline {subsubsection}{\numberline {4.1.1}Input Stage}{34}{}%
+\contentsline {subsubsection}{\numberline {4.1.2}Preprocessing Stage}{35}{}%
+\contentsline {subsubsection}{\numberline {4.1.3}Processing Stage}{35}{}%
+\contentsline {subsubsection}{\numberline {4.1.4}Output Stage}{37}{}%
+\contentsline {subsection}{\numberline {4.2}DOST-FNRI 2013 National Nutrition Survey Dataset}{37}{}%
+\contentsline {subsubsection}{\numberline {4.2.1}Clinical and Health Component Dataset}{37}{}%
+\contentsline {subsubsection}{\numberline {4.2.2}Biochemical Component Dataset}{38}{}%
+\contentsline {subsubsection}{\numberline {4.2.3}Anthropometric Component Dataset}{38}{}%
+\contentsline {subsubsection}{\numberline {4.2.4}Dietary Component Dataset}{38}{}%
+\contentsline {subsection}{\numberline {4.3}Preprocessing Techniques}{38}{}%
+\contentsline {subsubsection}{\numberline {4.3.1}Dataset Merging}{39}{}%
+\contentsline {subsubsection}{\numberline {4.3.2}Data Filtering}{39}{}%
+\contentsline {subsubsection}{\numberline {4.3.3}Missing Value Handling}{40}{}%
+\contentsline {subsubsection}{\numberline {4.3.4}Target Variable Conversion}{40}{}%
+\contentsline {subsubsection}{\numberline {4.3.5}Feature Scaling}{41}{}%
+\contentsline {subsubsection}{\numberline {4.3.6}Feature Selection}{41}{}%
+\contentsline {subsubsection}{\numberline {4.3.7}Handling Class Imbalance}{42}{}%
+\contentsline {subsection}{\numberline {4.4}Machine Learning Models}{43}{}%
+\contentsline {subsubsection}{\numberline {4.4.1}Naive Bayes}{43}{}%
+\contentsline {subsubsection}{\numberline {4.4.2}K-Nearest Neighbors}{43}{}%
+\contentsline {subsubsection}{\numberline {4.4.3}Random Forest}{43}{}%
+\contentsline {subsubsection}{\numberline {4.4.4}Gradient Boosting Models}{44}{}%
+\contentsline {subsubsection}{\numberline {4.4.5}AdaBoost}{44}{}%
+\contentsline {subsubsection}{\numberline {4.4.6}TabNet}{44}{}%
+\contentsline {subsubsection}{\numberline {4.4.7}Ensemble Methods}{45}{}%
+\contentsline {subsection}{\numberline {4.5}Probability Calibration}{46}{}%
+\contentsline {subsubsection}{\numberline {4.5.1}Platt Scaling}{46}{}%
+\contentsline {subsubsection}{\numberline {4.5.2}Isotonic Regression}{46}{}%
+\contentsline {subsubsection}{\numberline {4.5.3}Calibration Evaluation}{46}{}%
+\contentsline {subsection}{\numberline {4.6}Explainable Artificial Intelligence Techniques}{46}{}%
+\contentsline {subsubsection}{\numberline {4.6.1}SHAP (SHapley Additive exPlanations)}{47}{}%
+\contentsline {subsubsection}{\numberline {4.6.2}Calibrated Explanations}{47}{}%
+\contentsline {subsection}{\numberline {4.7}Performance Evaluation Metrics}{47}{}%
+\contentsline {subsubsection}{\numberline {4.7.1}Confusion Matrix}{48}{}%
+\contentsline {subsubsection}{\numberline {4.7.2}Precision, Recall, and F-Scores}{48}{}%
+\contentsline {subsubsection}{\numberline {4.7.3}Specificity and Accuracy}{49}{}%
+\contentsline {subsubsection}{\numberline {4.7.4}ROC Curve and AUC}{49}{}%
+\contentsline {subsubsection}{\numberline {4.7.5}Precision-Recall Curve and AUPRC}{49}{}%
+\contentsline {subsubsection}{\numberline {4.7.6}Calibration Metrics}{50}{}%
+\contentsline {section}{\numberline {5}Expected Output/Timeline}{51}{}%
+\contentsline {section}{References}{51}{}%

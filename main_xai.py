@@ -48,6 +48,10 @@ class Config:
     lime_num_features    = 15
     lime_num_samples     = 500
 
+    # LIME targets: tree models to explain locally (stacking skipped — too large)
+    lime_tree_models     = ['xgboost', 'lightgbm', 'catboost']
+    skip_lime_stacking   = True   # set False to run LIME on 883 MB stacking model
+
     random_state = 42
 
 
@@ -254,82 +258,112 @@ def run_shap_tree(name, model, X_train, X_test, y_test, features, config):
     top_n    = min(20, len(features))
 
     # Global bar
-    fig, ax = plt.subplots(figsize=(9, 7))
-    bars = ax.barh(range(top_n), mean_abs[order[:top_n]][::-1],
-                   color='#2980b9', alpha=0.85)
-    ax.set_yticks(range(top_n))
-    ax.set_yticklabels([features[i] for i in order[:top_n]][::-1], fontsize=9)
-    ax.set_xlabel('Mean |SHAP value|', fontsize=10)
-    ax.set_title(f'{name.replace("_"," ").title()} — Global Feature Importance (SHAP)',
-                 fontsize=11, fontweight='bold')
-    ax.grid(axis='x', alpha=0.3)
-    for bar in bars:
-        ax.text(bar.get_width() + 0.0005, bar.get_y() + bar.get_height()/2,
-                f'{bar.get_width():.4f}', va='center', fontsize=7)
-    plt.tight_layout()
-    plt.savefig(out / 'shap_bar_global.png', dpi=150, bbox_inches='tight')
-    plt.close()
-    print(f"    Saved: shap_bar_global.png")
+    try:
+        fig, ax = plt.subplots(figsize=(9, 7))
+        bars = ax.barh(range(top_n), mean_abs[order[:top_n]][::-1],
+                       color='#2980b9', alpha=0.85)
+        ax.set_yticks(range(top_n))
+        ax.set_yticklabels([features[i] for i in order[:top_n]][::-1], fontsize=9)
+        ax.set_xlabel('Mean |SHAP value|', fontsize=10)
+        ax.set_title(f'{name.replace("_"," ").title()} — Global Feature Importance (SHAP)',
+                     fontsize=11, fontweight='bold')
+        ax.grid(axis='x', alpha=0.3)
+        for bar in bars:
+            ax.text(bar.get_width() + 0.0005, bar.get_y() + bar.get_height()/2,
+                    f'{bar.get_width():.4f}', va='center', fontsize=7)
+        plt.tight_layout()
+        plt.savefig(out / 'shap_bar_global.png', dpi=150, bbox_inches='tight')
+        plt.close()
+        print(f"    Saved: shap_bar_global.png")
+    except Exception as e:
+        print(f"    [warn] bar plot failed: {e}")
+        plt.close('all')
 
     # Beeswarm
-    fig, ax = plt.subplots(figsize=(10, 8))
-    shap.summary_plot(sv, X_sample, feature_names=features,
-                      show=False, max_display=20, plot_size=None)
-    plt.title(f'{name.replace("_"," ").title()} — SHAP Beeswarm (At-Risk class)',
-              fontsize=11, fontweight='bold', pad=12)
-    plt.tight_layout()
-    plt.savefig(out / 'shap_beeswarm.png', dpi=150, bbox_inches='tight')
-    plt.close()
-    print(f"    Saved: shap_beeswarm.png")
-
-    # Dependency plots — top 5
-    for feat_i in order[:5]:
-        feat_name = features[feat_i]
-        fig, ax = plt.subplots(figsize=(7, 5))
-        shap.dependence_plot(feat_i, sv, X_sample, feature_names=features,
-                             ax=ax, show=False, alpha=0.4)
-        ax.set_title(f'{name.replace("_"," ").title()} — SHAP Dependency: {feat_name}',
-                     fontsize=10, fontweight='bold')
+    try:
+        fig, ax = plt.subplots(figsize=(10, 8))
+        shap.summary_plot(sv, X_sample, feature_names=features,
+                          show=False, max_display=20)
+        plt.title(f'{name.replace("_"," ").title()} — SHAP Beeswarm (At-Risk class)',
+                  fontsize=11, fontweight='bold', pad=12)
         plt.tight_layout()
-        safe = feat_name.replace('/', '_').replace(' ', '_')
-        plt.savefig(out / f'shap_dep_{safe}.png', dpi=150, bbox_inches='tight')
+        plt.savefig(out / 'shap_beeswarm.png', dpi=150, bbox_inches='tight')
         plt.close()
-    print(f"    Saved: dependency plots (top-5 features)")
+        print(f"    Saved: shap_beeswarm.png")
+    except Exception as e:
+        print(f"    [warn] beeswarm failed: {e}")
+        plt.close('all')
+
+    # Dependency plots — top 5  (manual scatter; shap.dependence_plot removed in 0.41+)
+    try:
+        for feat_i in order[:5]:
+            feat_name  = features[feat_i]
+            feat_vals  = X_sample[:, feat_i]
+            shap_col   = sv[:, feat_i]
+            # colour by top interacting feature (highest |correlation| with shap_col)
+            corr = np.array([abs(np.corrcoef(X_sample[:, j], shap_col)[0, 1])
+                             if j != feat_i else -1
+                             for j in range(X_sample.shape[1])])
+            interact_i = int(np.argmax(corr))
+            interact_vals = X_sample[:, interact_i]
+
+            fig, ax = plt.subplots(figsize=(7, 5))
+            sc = ax.scatter(feat_vals, shap_col, c=interact_vals,
+                            cmap='coolwarm', alpha=0.4, s=10)
+            plt.colorbar(sc, ax=ax, label=features[interact_i])
+            ax.axhline(0, color='black', linewidth=0.6, linestyle='--')
+            ax.set_xlabel(feat_name, fontsize=10)
+            ax.set_ylabel('SHAP value', fontsize=10)
+            ax.set_title(
+                f'{name.replace("_"," ").title()} — SHAP Dependency: {feat_name}',
+                fontsize=10, fontweight='bold')
+            plt.tight_layout()
+            safe = feat_name.replace('/', '_').replace(' ', '_')
+            plt.savefig(out / f'shap_dep_{safe}.png', dpi=150, bbox_inches='tight')
+            plt.close()
+        print(f"    Saved: dependency plots (top-5 features)")
+    except Exception as e:
+        print(f"    [warn] dependency plots failed: {e}")
+        plt.close('all')
 
     # Waterfall — 1 at-risk + 1 normal
-    risk_idx, norm_idx = pick_samples(X_test, y_test, n=1,
-                                      random_state=config.random_state)
-    for label, idx_arr in [('at_risk', risk_idx), ('normal', norm_idx)]:
-        i = int(idx_arr[0])
-        if is_xgb:
-            import xgboost as xgb
-            dmat_i    = xgb.DMatrix(X_test[i:i+1])
-            contrib_i = model.get_booster().predict(dmat_i, pred_contribs=True)
-            sv_vals   = contrib_i[0, :-1]
-            base_v    = float(contrib_i[0, -1])
-        else:
-            single_sv = explainer.shap_values(X_test[i:i+1])
-            if isinstance(single_sv, list):
-                sv_vals = single_sv[1][0]
-            elif single_sv.ndim == 3:
-                sv_vals = single_sv[0, :, 1]
-            elif single_sv.ndim == 2 and single_sv.shape[1] == 2:
-                sv_vals = single_sv[:, 1]
+    try:
+        risk_idx, norm_idx = pick_samples(X_test, y_test, n=1,
+                                          random_state=config.random_state)
+        for label, idx_arr in [('at_risk', risk_idx), ('normal', norm_idx)]:
+            i = int(idx_arr[0])
+            if is_xgb:
+                import xgboost as xgb
+                dmat_i    = xgb.DMatrix(X_test[i:i+1])
+                contrib_i = model.get_booster().predict(dmat_i, pred_contribs=True)
+                sv_vals   = contrib_i[0, :-1]
+                base_v    = float(contrib_i[0, -1])
             else:
-                sv_vals = single_sv[0]
-            base_v = base_contrib
+                single_sv = explainer.shap_values(X_test[i:i+1])
+                if isinstance(single_sv, list):
+                    sv_vals = single_sv[1][0]
+                elif single_sv.ndim == 3:
+                    sv_vals = single_sv[0, :, 1]
+                elif single_sv.ndim == 2 and single_sv.shape[1] == 2:
+                    sv_vals = single_sv[:, 1]
+                else:
+                    sv_vals = single_sv[0]
+                base_v = base_contrib
 
-        exp_obj = shap.Explanation(values=sv_vals, base_values=base_v,
-                                   data=X_test[i], feature_names=features)
-        fig, ax = plt.subplots(figsize=(9, 7))
-        shap.waterfall_plot(exp_obj, max_display=15, show=False)
-        plt.title(
-            f'{name.replace("_"," ").title()} — Waterfall ({label.replace("_"," ").title()})',
-            fontsize=10, fontweight='bold', pad=10)
-        plt.tight_layout()
-        plt.savefig(out / f'shap_waterfall_{label}.png', dpi=150, bbox_inches='tight')
-        plt.close()
-    print(f"    Saved: waterfall plots (at-risk + normal)")
+            exp_obj = shap.Explanation(values=sv_vals, base_values=base_v,
+                                       data=X_test[i], feature_names=features)
+            fig, ax = plt.subplots(figsize=(9, 7))
+            shap.waterfall_plot(exp_obj, max_display=15, show=False)
+            plt.title(
+                f'{name.replace("_"," ").title()} — Waterfall ({label.replace("_"," ").title()})',
+                fontsize=10, fontweight='bold', pad=10)
+            plt.tight_layout()
+            plt.savefig(out / f'shap_waterfall_{label}.png', dpi=150, bbox_inches='tight')
+            plt.close()
+        print(f"    Saved: waterfall plots (at-risk + normal)")
+    except Exception as e:
+        print(f"    [warn] waterfall plots failed: {e}")
+        plt.close('all')
 
     return mean_abs, order
 
@@ -488,16 +522,40 @@ def main():
     if tab_model is not None:
         def tab_predict_proba(X):
             return tab_model.predict_proba(X.astype(np.float32))
-        run_lime('botabnet', tab_predict_proba, X_train, X_test, y_test, features, config)
+        try:
+            run_lime('botabnet', tab_predict_proba, X_train, X_test, y_test, features, config)
+        except Exception as e:
+            print(f"  [warn] LIME botabnet failed: {e}")
 
-    # ── LIME — STACKING ENSEMBLE (secondary) ─────────────────────────────
+    # ── LIME — TREE MODELS ────────────────────────────────────────────────
+    print("\n" + "="*70)
+    print("LIME — TREE MODELS")
+    print("="*70)
+
+    for lime_name in config.lime_tree_models:
+        if lime_name not in tree_models:
+            print(f"  [skip] {lime_name}: not loaded")
+            continue
+        print(f"\n  [{lime_name}] LIME")
+        try:
+            run_lime(lime_name, tree_models[lime_name].predict_proba,
+                     X_train, X_test, y_test, features, config)
+        except Exception as e:
+            print(f"  [warn] LIME {lime_name} failed: {e}")
+
+    # ── LIME — STACKING ENSEMBLE (optional — large model) ─────────────────
     stacking_path = config.models_dir / 'stacking.joblib'
-    if stacking_path.exists():
+    if not config.skip_lime_stacking and stacking_path.exists():
         stacking = joblib.load(stacking_path)
         print("\n" + "="*70)
         print("LIME — STACKING ENSEMBLE  (best ROC-AUC model)")
         print("="*70)
-        run_lime('stacking', stacking.predict_proba, X_train, X_test, y_test, features, config)
+        try:
+            run_lime('stacking', stacking.predict_proba, X_train, X_test, y_test, features, config)
+        except Exception as e:
+            print(f"  [warn] LIME stacking failed: {e}")
+    elif config.skip_lime_stacking:
+        print("\n  [skip] LIME stacking — skipped (skip_lime_stacking=True; set False to enable)")
 
     elapsed = (time.time() - start) / 60
     print(f"\n[TIME] {elapsed:.1f} minutes")

@@ -57,7 +57,8 @@ class Config:
     n_jobs        = -1
     cv_folds      = 5
     n_iter        = 30   # RandomizedSearch + Optuna BO trials
-    skip_tabnet   = True  # Set True to skip TabNet (loads prior metrics from CSV instead)
+    skip_tabnet   = False  # Set True to skip TabNet (loads prior metrics from CSV instead)
+    tabnet_only   = True   # Set True to train ONLY TabNet (loads prior ML metrics from CSV)
 
     # Primary metric: F2 (recall-weighted, beta=2)
     f2_scorer           = make_scorer(fbeta_score, beta=2, zero_division=0)
@@ -431,24 +432,22 @@ def main():
 
     all_metrics, all_models = [], {}
 
-    # 1. BO-TabNet
-    if config.skip_tabnet:
+    # ── MODE: tabnet_only — train only BO-TabNet, load prior ML metrics ────────
+    if config.tabnet_only:
         print("\n" + "="*80)
-        print("[1/11] BO-TABNET  (skipped — loading prior metrics from CSV)")
+        print("MODE: TABNET-ONLY  (traditional ML loaded from prior CSV)")
         print("="*80)
+        # Load prior traditional ML metrics
         prior_csv = config.output_dir / 'model_results.csv'
         if prior_csv.exists():
             prior = pd.read_csv(prior_csv)
-            tab_rows = prior[prior['model'].str.contains('TabNet', case=False)]
-            if not tab_rows.empty:
-                tab_m = tab_rows.iloc[0].to_dict()
-                all_metrics.append(tab_m)
-                print(f"  Loaded prior TabNet metrics (F2={tab_m.get('f2', 'N/A'):.4f})")
-            else:
-                print("  No prior TabNet row found in CSV — skipping entirely.")
+            ml_rows = prior[~prior['model'].str.contains('TabNet', case=False)]
+            for _, row in ml_rows.iterrows():
+                all_metrics.append(row.to_dict())
+            print(f"  Loaded {len(ml_rows)} prior traditional ML rows from CSV")
         else:
-            print("  No prior results CSV found — skipping entirely.")
-    else:
+            print("  [warn] No prior results CSV — traditional ML rows will be missing")
+        # Train BO-TabNet
         tab_model, tab_m = train_botabnet(
             X_train, y_train, X_val, y_val, X_test, y_test, feature_names, config)
         all_metrics.append(tab_m)
@@ -456,28 +455,54 @@ def main():
         tab_model.save_model(tab_path)
         print(f"  BO-TabNet saved: {tab_path}.zip")
 
-    # 2–10. Traditional ML models
-    nb_model,  nb_m  = train_naive_bayes(X_train, y_train, X_test, y_test, config)
-    knn_model, knn_m = train_knn(X_train, y_train, X_test, y_test, config)
-    ada_model, ada_m = train_adaboost(X_train, y_train, X_test, y_test, config)
-    xgb_model, xgb_m = train_xgboost(X_train, y_train, X_test, y_test, class_weights, config)
-    rf_model,  rf_m  = train_random_forest(X_train, y_train, X_test, y_test, config)
-    cat_model, cat_m = train_catboost(X_train, y_train, X_test, y_test, class_weights, config)
-    lgbm_model, lgbm_m = train_lightgbm(X_train, y_train, X_test, y_test, class_weights, config)
-    stack_model, stack_m = train_stacking(
-        rf_model, xgb_model, lgbm_model, X_train, y_train, X_test, y_test, config)
-    vote_model, vote_m = train_voting(
-        rf_model, xgb_model, lgbm_model, X_train, y_train, X_test, y_test, config)
+    else:
+        # ── 1. BO-TabNet (normal mode) ────────────────────────────────────────
+        if config.skip_tabnet:
+            print("\n" + "="*80)
+            print("[1/11] BO-TABNET  (skipped — loading prior metrics from CSV)")
+            print("="*80)
+            prior_csv = config.output_dir / 'model_results.csv'
+            if prior_csv.exists():
+                prior = pd.read_csv(prior_csv)
+                tab_rows = prior[prior['model'].str.contains('TabNet', case=False)]
+                if not tab_rows.empty:
+                    tab_m = tab_rows.iloc[0].to_dict()
+                    all_metrics.append(tab_m)
+                    print(f"  Loaded prior TabNet metrics (F2={tab_m.get('f2', 'N/A'):.4f})")
+                else:
+                    print("  No prior TabNet row found in CSV — skipping entirely.")
+            else:
+                print("  No prior results CSV found — skipping entirely.")
+        else:
+            tab_model, tab_m = train_botabnet(
+                X_train, y_train, X_val, y_val, X_test, y_test, feature_names, config)
+            all_metrics.append(tab_m)
+            tab_path = str(config.models_dir / 'botabnet')
+            tab_model.save_model(tab_path)
+            print(f"  BO-TabNet saved: {tab_path}.zip")
 
-    for m in [nb_m, knn_m, ada_m, xgb_m, rf_m, cat_m, lgbm_m, stack_m, vote_m]:
-        all_metrics.append(m)
-    for name, model in [('naive_bayes', nb_model), ('knn', knn_model),
-                        ('adaboost', ada_model), ('xgboost', xgb_model),
-                        ('random_forest', rf_model), ('catboost', cat_model),
-                        ('lightgbm', lgbm_model), ('stacking', stack_model),
-                        ('voting', vote_model)]:
-        joblib.dump(model, config.models_dir / f'{name}.joblib')
-        all_models[name] = model
+        # ── 2–10. Traditional ML models ───────────────────────────────────────
+        nb_model,  nb_m  = train_naive_bayes(X_train, y_train, X_test, y_test, config)
+        knn_model, knn_m = train_knn(X_train, y_train, X_test, y_test, config)
+        ada_model, ada_m = train_adaboost(X_train, y_train, X_test, y_test, config)
+        xgb_model, xgb_m = train_xgboost(X_train, y_train, X_test, y_test, class_weights, config)
+        rf_model,  rf_m  = train_random_forest(X_train, y_train, X_test, y_test, config)
+        cat_model, cat_m = train_catboost(X_train, y_train, X_test, y_test, class_weights, config)
+        lgbm_model, lgbm_m = train_lightgbm(X_train, y_train, X_test, y_test, class_weights, config)
+        stack_model, stack_m = train_stacking(
+            rf_model, xgb_model, lgbm_model, X_train, y_train, X_test, y_test, config)
+        vote_model, vote_m = train_voting(
+            rf_model, xgb_model, lgbm_model, X_train, y_train, X_test, y_test, config)
+
+        for m in [nb_m, knn_m, ada_m, xgb_m, rf_m, cat_m, lgbm_m, stack_m, vote_m]:
+            all_metrics.append(m)
+        for name, model in [('naive_bayes', nb_model), ('knn', knn_model),
+                            ('adaboost', ada_model), ('xgboost', xgb_model),
+                            ('random_forest', rf_model), ('catboost', cat_model),
+                            ('lightgbm', lgbm_model), ('stacking', stack_model),
+                            ('voting', vote_model)]:
+            joblib.dump(model, config.models_dir / f'{name}.joblib')
+            all_models[name] = model
 
     # Results summary — sorted by F2 (primary metric)
     results_df = pd.DataFrame(all_metrics).sort_values('f2', ascending=False)

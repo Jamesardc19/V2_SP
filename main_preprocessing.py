@@ -3,7 +3,7 @@ Main Preprocessing Pipeline (2018-2021 ENNS Dataset)
 
 Key design decisions:
   1. No population filter  (all age groups included — children, pregnant, lactating)
-  2. No feature engineering (raw features only)
+  2. Selective feature engineering (bmi, tri_hdl_ratio, ldl_hdl_ratio, bmi_tri_interact)
   3. Correlation threshold = 0.80
   4. SMOTE applied to the FULL preprocessed dataset BEFORE re-splitting 70/15/15
   5. Socio dataset integrated: age and sex included as features
@@ -43,6 +43,52 @@ from preprocessing_pipeline_v7 import (
 
 
 # =============================================================================
+# SELECTIVE FEATURE ENGINEERING  (diabetes risk scope)
+# =============================================================================
+
+def engineer_features_selective(df):
+    """
+    Compute only the engineered features clinically relevant to diabetes risk:
+      - bmi            : weight / (height/100)²    drops weight & height
+      - tri_hdl_ratio  : tri / (hdl + eps)          insulin resistance proxy
+      - ldl_hdl_ratio  : ldl / hdl                  dyslipidaemia pattern
+      - bmi_tri_interact: bmi * tri / 100           obesity × triglyceride risk
+
+    tri, hdl, ldl are KEPT alongside their derived ratios.
+    The correlation filter (0.80) will remove any that become redundant.
+    """
+    print("\n" + "="*70)
+    print("SELECTIVE FEATURE ENGINEERING (diabetes risk scope)")
+    print("="*70)
+    created, dropped = [], []
+    eps = 1e-6
+
+    if 'weight' in df.columns and 'height' in df.columns:
+        df['bmi'] = df['weight'] / ((df['height'] / 100) ** 2)
+        df = df.drop(columns=['weight', 'height'])
+        created.append('bmi')
+        dropped.extend(['weight', 'height'])
+
+    if 'tri' in df.columns and 'hdl' in df.columns:
+        df['tri_hdl_ratio'] = df['tri'] / (df['hdl'] + eps)
+        created.append('tri_hdl_ratio')
+
+    if 'ldl' in df.columns and 'hdl' in df.columns:
+        df['ldl_hdl_ratio'] = df['ldl'] / df['hdl']
+        created.append('ldl_hdl_ratio')
+
+    if 'bmi' in df.columns and 'tri' in df.columns:
+        df['bmi_tri_interact'] = df['bmi'] * df['tri'] / 100
+        created.append('bmi_tri_interact')
+
+    print(f"  Created : {created}")
+    print(f"  Dropped : {dropped}  (replaced by bmi)")
+    print(f"  Retained: tri, hdl, ldl  (kept alongside derived ratios)")
+    print(f"  Shape   : {df.shape}")
+    return df
+
+
+# =============================================================================
 # CONFIG
 # =============================================================================
 
@@ -57,6 +103,11 @@ class Config(ConfigV7):
     CATEGORICAL_FEATURES = ConfigV7.CATEGORICAL_FEATURES + ['anthro_group', 'sex']
 
     # No feature engineering (controlled via the main() flow)
+
+    # Explicitly drop before correlation filter
+    # chol (total cholesterol) dropped in favour of ldl (LDL — bad cholesterol);
+    # ldl + hdl + tri give the full standard lipid panel
+    drop_before_corr = ['chol']
 
     # More aggressive correlation pruning (align with 2013)
     correlation_threshold = 0.80
@@ -401,7 +452,7 @@ def main():
 
     print("\n" + "="*70)
     print("MAIN PREPROCESSING PIPELINE  (2018-2021 ENNS)")
-    print("SMOTE before split | no population filter | no feature engineering")
+    print("SMOTE before split | no population filter | selective feature engineering")
     print("Correlation threshold: 0.80  |  SMOTE strategy: 1.0 (full balance)")
     print("Socio dataset: age + sex included as features")
     print("="*70)
@@ -425,8 +476,7 @@ def main():
     df = df.drop(columns=['mos_lactation', 'mos_preg'], errors='ignore')
     print("  Dropped admin columns: mos_lactation, mos_preg (near-all-NaN)")
 
-    # engineer_features: SKIPPED — raw features only
-    print("  Feature engineering skipped — using raw features")
+    df = engineer_features_selective(df)    # bmi, tri_hdl_ratio, ldl_hdl_ratio, bmi_tri_interact
 
     # ── EDA: re-attach geo columns using index alignment (survives FBS row drops)
     df_eda = df.copy()
@@ -450,6 +500,15 @@ def main():
         X_train, X_val, X_test, cont_cols, config)
     X_train, X_val, X_test, scaler = scale_features(
         X_train, X_val, X_test, cont_cols, config)
+
+    # Explicitly drop features before correlation filter (e.g. chol -> keep ldl instead)
+    pre_drop = getattr(config, 'drop_before_corr', [])
+    if pre_drop:
+        X_train = X_train.drop(columns=pre_drop, errors='ignore')
+        X_val   = X_val.drop(columns=pre_drop,   errors='ignore')
+        X_test  = X_test.drop(columns=pre_drop,  errors='ignore')
+        print(f"  [Config] Pre-dropped before corr filter: {pre_drop}")
+
     X_train, X_val, X_test, corr_dropped = drop_correlated_features(
         X_train, X_val, X_test, config)
 
