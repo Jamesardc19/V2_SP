@@ -1,4 +1,4 @@
-# Early Detection of the Risk of Diabetes Using Calibrations on Explainable Artificial Intelligence (XAI) with Philippine Data
+# Early Detection of the Risk of Diabetes Using Calibrated Explanations and Explainable AI (XAI) with Philippine Data
 
 This repository contains the full machine learning pipeline for early diabetes risk detection using the 2018–2021 Philippine Expanded National Nutrition Survey (ENNS) dataset.
 
@@ -8,8 +8,20 @@ This study develops, evaluates, and explains machine learning models for diabete
 
 1. Multi-dataset preprocessing with selective feature engineering
 2. Hyperparameter-tuned training of 10 ML/DL models
-3. Explainability via SHAP and LIME (XAI)
+3. Explainability via SHAP and LIME (XAI) — global feature importance
 4. Probability calibration (Platt Scaling, Isotonic Regression, Temperature Scaling)
+5. **Calibrated Explanations (CE)** — local uncertainty-aware explanations + counterfactuals + health equity
+
+## Hybrid Methodology (V2 + CE)
+
+| Analysis Layer | Script | Purpose |
+|---|---|---|
+| Global feature importance | `main_xai.py` (SHAP) | Theoretically grounded global ranking via Shapley values |
+| CE uncertainty per feature | `main_ce.py` | How *consistently* each feature drives predictions (uncertainty width) |
+| Local explanation per patient | `main_ce.py` (factual CE) | Uncertainty-aware individual explanation with confidence intervals |
+| Counterfactuals | `main_ce.py` (CCE + Ensured) | Actionable "what-if" with reliability filter |
+| Probability calibration | `main_calibration.py` | Platt / Isotonic / Temperature comparison |
+| Health equity | `main_ce.py` (Mondrian CE) | Sex-stratified Venn-Abers uncertainty comparison |
 
 **Best model by F2-score**: kNN (Tuned) — F2=0.827, Recall=87.2%  
 **Best model by discrimination**: Stacking Ensemble — ROC-AUC=0.857, AUPRC=0.870
@@ -35,12 +47,20 @@ This study develops, evaluates, and explains machine learning models for diabete
 │   ├── SHAP/                               # SHAP plots and global_importance.csv
 │   └── LIME/                               # LIME local explanation plots
 ├── MAIN_CALIBRATION/                       # Calibration plots and comparison CSV
+├── MAIN_CE_OUTPUT/                         # Step 5 — Calibrated Explanations output
+│   ├── factual/                            # Per-model: CE plots + _narrative.txt
+│   │   └── <model_key>/
+│   ├── counterfactual/                     # Per-model: CCE + Ensured CCE plots
+│   │   └── <model_key>/
+│   ├── global/                             # global_ce_importance.csv/png, heatmap
+│   └── mondrian/                           # Sex-stratified uncertainty comparison
 │
 ├── preprocessing_pipeline_v7.py            # Core preprocessing utilities
-├── main_preprocessing.py                   # Pipeline entry point (preprocessing)
-├── main_train.py                           # Pipeline entry point (training)
-├── main_xai.py                             # Pipeline entry point (XAI)
-└── main_calibration.py                     # Pipeline entry point (calibration)
+├── main_preprocessing.py                   # Step 1 — preprocessing
+├── main_train.py                           # Step 2 — training
+├── main_xai.py                             # Step 3 — SHAP + LIME
+├── main_calibration.py                     # Step 4 — Platt / Isotonic / Temperature
+└── main_ce.py                              # Step 5 — Calibrated Explanations (CE)
 ```
 
 ---
@@ -50,12 +70,13 @@ This study develops, evaluates, and explains machine learning models for diabete
 ```
 pandas numpy scikit-learn matplotlib seaborn imbalanced-learn
 xgboost lightgbm catboost pytorch-tabnet torch optuna shap lime joblib
+calibrated-explanations
 ```
 
 Install all at once:
 
 ```bash
-pip install pandas numpy scikit-learn matplotlib seaborn imbalanced-learn xgboost lightgbm catboost pytorch-tabnet optuna shap lime joblib
+pip install pandas numpy scikit-learn matplotlib seaborn imbalanced-learn xgboost lightgbm catboost pytorch-tabnet optuna shap lime joblib calibrated-explanations
 ```
 
 ---
@@ -148,6 +169,37 @@ Applies three calibration methods per model:
 Evaluates using Brier score and log-loss. Saves calibrated models and comparison CSV.
 
 **Outputs** → `MAIN_CALIBRATION/`
+
+### Step 5 — Calibrated Explanations (CE) *(Hybrid Addition)*
+
+```bash
+python main_ce.py
+```
+
+> **Run after** Steps 1–2 (models must exist). Steps 3 and 4 can run independently.
+> Loads **uncalibrated** models from `MAIN_TRAINED_MODELS/` — CE applies Venn-Abers
+> calibration internally. Do **not** load from `MAIN_TRAINED_MODELS_CALIB/`.
+
+For each of the 10 models, produces:
+
+| Output | Description | Files |
+|--------|-------------|-------|
+| **Factual CE** | Feature weights with confidence intervals per patient + narrative text | `factual/<model>/ce_factual_*.png` + `_narrative.txt` |
+| **CCE** | Counterfactual "what-if" with uncertainty | `counterfactual/<model>/cce_*.png` |
+| **Ensured CCE** | Filtered CCE — only reliable alternatives (Lofstrom et al., 2024) | `counterfactual/<model>/cce_ensured_*.png` |
+| **Global CE** | Mean \|weight\| + uncertainty width aggregated across all models | `global/global_ce_importance.csv/png` |
+| **Mondrian CE** | Sex-stratified Venn-Abers: uncertainty width by sex group | `mondrian/mondrian_pred_interval_summary.csv` |
+
+**Hybrid interpretation guide:**
+
+| Question | Where to look |
+|----------|---------------|
+| Which features matter most globally? | `MAIN_XAI/SHAP/global_importance.csv` (Step 3) |
+| How consistently does each feature matter? | `MAIN_CE_OUTPUT/global/global_ce_importance.csv` (uncertainty_width column) |
+| Why is *this patient* at risk? | `MAIN_CE_OUTPUT/factual/<model>/` plots + narratives |
+| What could change *this patient's* outcome? | `MAIN_CE_OUTPUT/counterfactual/<model>/cce_ensured_*.png` |
+| Does uncertainty differ between sexes? | `MAIN_CE_OUTPUT/mondrian/mondrian_pred_interval_summary.csv` |
+| What are the calibrated probabilities? | `MAIN_CALIBRATION/` (Step 4) |
 
 ---
 
