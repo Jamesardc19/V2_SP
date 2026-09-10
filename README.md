@@ -60,7 +60,11 @@ This study develops, evaluates, and explains machine learning models for diabete
 ├── main_train.py                           # Step 2 — training
 ├── main_xai.py                             # Step 3 — SHAP + LIME
 ├── main_calibration.py                     # Step 4 — Platt / Isotonic / Temperature
-└── main_ce.py                              # Step 5 — Calibrated Explanations (CE)
+├── ce_utils.py                             # Step 5 shared utilities (imported by all ce_*.py)
+├── ce_factual.py                           # Step 5a — factual CE plots + narratives
+├── ce_cce.py                               # Step 5b — CCE + Ensured CCE plots
+├── ce_global.py                            # Step 5c — global CE importance (crash-safe, n=150)
+└── ce_mondrian.py                          # Step 5d — Mondrian sex-stratified CE
 ```
 
 ---
@@ -172,13 +176,21 @@ Evaluates using Brier score and log-loss. Saves calibrated models and comparison
 
 ### Step 5 — Calibrated Explanations (CE) *(Hybrid Addition)*
 
+Step 5 is split into 4 independent scripts for reliability. Run them in order:
+
 ```bash
-python main_ce.py
+python ce_factual.py    # 5a — factual CE plots + narratives  (~20-30 min)
+python ce_cce.py        # 5b — CCE + Ensured CCE plots        (~25-40 min)
+python ce_global.py     # 5c — global CE importance (n=150)   (~30-90 min, crash-safe)
+python ce_mondrian.py   # 5d — sex-stratified Mondrian CE     (~30-60 min)
 ```
 
 > **Run after** Steps 1–2 (models must exist). Steps 3 and 4 can run independently.
 > Loads **uncalibrated** models from `MAIN_TRAINED_MODELS/` — CE applies Venn-Abers
 > calibration internally. Do **not** load from `MAIN_TRAINED_MODELS_CALIB/`.
+>
+> **`ce_global.py` is crash-safe** — saves a checkpoint per model (`ckpt_*.csv`).
+> If it crashes or is interrupted, rerun it and already-completed models are skipped.
 
 For each of the 10 models, produces:
 

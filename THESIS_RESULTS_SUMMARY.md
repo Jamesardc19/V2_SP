@@ -1,5 +1,5 @@
 # Early Detection of the Risk of Diabetes Using ML on Philippine ENNS Data
-## Comprehensive Results Summary — Final Pipeline (V2)
+## Comprehensive Results Summary — Final Pipeline (V2 Hybrid)
 
 ---
 
@@ -18,6 +18,7 @@ This study developed and evaluated machine learning models for early diabetes ri
 - ✅ Achieved 87.2% recall (kNN) and 77.0% accuracy (Stacking) for diabetes risk detection
 - ✅ Implemented SHAP + LIME explainability across all models
 - ✅ Calibrated probabilities — Stacking achieves log-loss of 0.470 (isotonic)
+- ✅ **Hybrid Step 5**: Calibrated Explanations (CE) with Venn-Abers on 9 models — factual CE, CCE, global uncertainty widths, and Mondrian sex-equity analysis
 
 ---
 
@@ -239,7 +240,10 @@ When a calibrated Stacking model outputs "70% risk":
 | **Administrative Codes** | Included (provhuc, regcode) ⚠️ | Removed ✅ |
 | **Outlier Handling** | None documented | IQR capping ✅ |
 | **Calibration** | Not applied | Sigmoid, Isotonic, Temperature ✅ |
-| **Explainability** | Limited | SHAP + LIME across all models ✅ |
+| **Explainability** | Limited | SHAP + LIME + Calibrated Explanations (CE) ✅ |
+| **Local Uncertainty** | Not applied | CE Venn-Abers per-instance intervals ✅ |
+| **Counterfactuals** | Not applied | CCE + Ensured CCE for all 9 CE models ✅ |
+| **Health Equity** | Not applied | Mondrian CE sex-stratified analysis ✅ |
 | **Models Tested** | ~5 | 10 |
 
 ### 6.2 Performance Comparison
@@ -279,6 +283,12 @@ Our V2 pipeline **surpasses Rivera (2024) on all metrics** with no data leakage,
    - TreeExplainer (tree models) + KernelExplainer (TabNet)
    - SHAP cross-model consensus on age, waist, Ave_SBP as dominant predictors
 
+6. **Hybrid Calibrated Explanations (CE) layer** *(novel addition)*
+   - Factual CE: per-instance feature weights with Venn-Abers uncertainty bounds
+   - Counterfactual CE (CCE + Ensured CCE): clinically actionable "what-if" alternatives
+   - Global CE uncertainty widths: identifies features with variable vs. stable influence across patients
+   - Mondrian CE: sex-stratified calibration quality (Group B shows ~6.3% wider prediction intervals)
+
 ### 7.2 Clinical Contributions
 
 1. **High-recall screening option (kNN, 87.2%)**
@@ -295,6 +305,14 @@ Our V2 pipeline **surpasses Rivera (2024) on all metrics** with no data leakage,
 
 4. **Generalizable across Philippine regions**
    - No administrative codes; applicable nationally
+
+5. **Per-patient uncertainty communication**
+   - CE provides each prediction with a Venn-Abers confidence interval — clinician sees not just "70% risk" but the uncertainty band around that estimate
+   - Ensured CCE gives actionable "if BMI decreases by X, your risk drops below threshold" — directly motivating lifestyle interventions
+
+6. **Sex-equity validation via Mondrian CE**
+   - Group B prediction intervals are ~6.3% wider (mean 0.00809 vs 0.00760) with higher variance
+   - Flags a subset of Group B patients who may require additional clinical review due to higher model uncertainty
 
 ---
 
@@ -324,6 +342,8 @@ Our V2 pipeline **surpasses Rivera (2024) on all metrics** with no data leakage,
 2. **External Validation** — test on independent Philippine or Southeast Asian datasets
 3. **Cost-Sensitive Learning** — assign clinical misclassification costs to optimize decision threshold per patient risk tier
 4. **Threshold Optimization** — post-calibration threshold tuning to recover kNN-level recall in Stacking
+5. **CE Ethnic/Regional Stratification** — extend Mondrian CE beyond sex to age groups, regions, or socioeconomic tiers for broader health equity analysis
+6. **CE Web Interface** — expose factual CE and CCE explanations in the web-based risk calculator so patients and clinicians see uncertainty bands alongside predictions
 
 ---
 
@@ -334,8 +354,8 @@ Our V2 pipeline **surpasses Rivera (2024) on all metrics** with no data leakage,
 | Chapter 1: Introduction | Executive Summary, Section 7 (Contributions) |
 | Chapter 2: Literature Review | Section 6 (Comparison with Rivera) |
 | Chapter 3: Methodology | Sections 1 (Preprocessing), 2 (Model Development) |
-| Chapter 4: Results | Section 3 (Model Performance), Section 4 (XAI), Section 5 (Calibration) |
-| Chapter 5: Discussion | Sections 3.2 (Discussion), 6 (Rivera Comparison), 8 (Limitations) |
+| Chapter 4: Results | Section 3 (Model Performance), Section 4 (XAI), Section 5 (Calibration), Section 11 (CE) |
+| Chapter 5: Discussion | Sections 3.2 (Discussion), 6 (Rivera Comparison), 8 (Limitations), 11 (CE findings) |
 | Chapter 6: Conclusion | Section 7 (Contributions), Section 8.2 (Future Work) |
 
 ---
@@ -347,6 +367,7 @@ Our V2 pipeline **surpasses Rivera (2024) on all metrics** with no data leakage,
 2. `main_train.py` — model training (flags: `skip_tabnet`, `tabnet_only`)
 3. `main_xai.py` — SHAP + LIME explainability
 4. `main_calibration.py` — probability calibration
+5. `ce_factual.py` → `ce_cce.py` → `ce_global.py` → `ce_mondrian.py` — Calibrated Explanations (9 models, BO-TabNet excluded)
 
 **Settings:**
 - Random seed: `42`
@@ -354,10 +375,91 @@ Our V2 pipeline **surpasses Rivera (2024) on all metrics** with no data leakage,
 - All transformers fitted on training partition only
 - Results in `MAIN_MODEL_RESULTS/model_results.csv`
 - Calibration in `MAIN_CALIBRATION/calibration_comparison.csv`
+- CE outputs in `MAIN_CE_OUTPUT/` (factual/, counterfactual/, global/, mondrian/)
 
 ---
 
-## 11. Final Recommendation
+## 11. Calibrated Explanations (CE) Results *(Hybrid Addition — Step 5)*
+
+### Overview
+
+CE was applied to 9 models (BO-TabNet excluded — incompatible with CE's sklearn interface).
+CE uses **Venn-Abers calibration internally** and produces per-instance uncertainty-quantified
+feature attributions. This complements the SHAP global analysis (Step 3) with local
+uncertainty bounds and counterfactual "what-if" alternatives.
+
+- **Factual CE**: 6 plots per model (3 at-risk, 3 normal) → `MAIN_CE_OUTPUT/factual/`
+- **CCE + Ensured CCE**: 6 plots per model → `MAIN_CE_OUTPUT/counterfactual/`
+- **Global CE aggregation**: 150 test instances × 9 models → `MAIN_CE_OUTPUT/global/`
+- **Mondrian CE**: 50 test instances × 2 sex groups × 9 models → `MAIN_CE_OUTPUT/mondrian/`
+
+---
+
+### 11a. Global CE Feature Importance (n=150 instances per model, 9 models)
+
+Aggregated mean |CE weight| across all models and instances. **Uncertainty width** = std of
+CE weight bounds, measuring how consistently the feature drives predictions across patients.
+Use SHAP for authoritative global ranking; CE uncertainty width is the novel contribution.
+
+| Rank | Feature | Global CE Importance | Uncertainty Width | Models |
+|------|---------|---------------------|-------------------|--------|
+| 1 | **age** | 0.2450 | 0.1269 | 9/9 |
+| 2 | **waist** | 0.1688 | 0.1073 | 9/9 |
+| 3 | **anthro_group** | 0.1336 | 0.0926 | 8/9 |
+| 4 | **Ave_SBP** | 0.1297 | 0.0860 | 9/9 |
+| 5 | **tri** | 0.0825 | 0.0737 | 9/9 |
+| 6 | currentsmoking | 0.0768 | 0.0523 | 8/9 |
+| 7 | pa_met | 0.0748 | 0.0683 | 8/9 |
+| 8 | binge_drink | 0.0683 | 0.0637 | 8/9 |
+| 9 | ever_smk | 0.0677 | 0.0480 | 8/9 |
+| 10 | drnk_30d_num | 0.0671 | 0.0587 | 9/9 |
+| 11 | smoke_status | 0.0660 | 0.0503 | 8/9 |
+| 12 | sex | 0.0648 | 0.0532 | 8/9 |
+| 13 | hemoglobin | 0.0644 | 0.0618 | 9/9 |
+| 14 | Ave_DBP | 0.0611 | 0.0575 | 9/9 |
+| 15 | alcohol | 0.0557 | 0.0497 | 8/9 |
+| 16 | con_alcohol | 0.0551 | 0.0471 | 8/9 |
+| 17 | drnk_30days | 0.0547 | 0.0453 | 8/9 |
+| 18 | vita | 0.0540 | 0.0529 | 9/9 |
+| 19 | uic | 0.0528 | 0.0483 | 9/9 |
+| 20 | ldl_hdl_ratio | 0.0524 | 0.0493 | 9/9 |
+| 21 | hdl | 0.0479 | 0.0450 | 9/9 |
+| 22 | ldl | 0.0451 | 0.0448 | 9/9 |
+
+**Key finding**: Age, waist circumference, and systolic blood pressure are the most
+consistently impactful features across all 9 models — consistent with SHAP rankings.
+Age has the highest uncertainty width (0.127), meaning its influence varies most across
+individual patients (some are strongly driven by age, others are not).
+
+---
+
+### 11b. Mondrian CE — Sex-Stratified Calibration Quality
+
+Sex groups split by median of sex column (col 20, threshold = 2.0):
+- **Group A** (lower sex value, n_cal=6,979, n_test≈6,999)
+- **Group B** (higher sex value, n_cal=8,146, n_test≈8,127)
+
+| Sex Group | Mean Prediction Interval Width | Std | n Instances |
+|-----------|-------------------------------|-----|-------------|
+| **Group A** | 0.00760 | 0.01097 | 450 |
+| **Group B** | 0.00809 | 0.01498 | 448 |
+
+**Interpretation**: Group B has **~6.3% wider** mean prediction intervals (0.00809 vs 0.00760),
+indicating slightly less model certainty for that sex group. The higher std for Group B
+(0.01498 vs 0.01097) also shows more variability in uncertainty — some Group B patients
+receive much wider intervals than others.
+
+**Clinical implication**: The difference is small in absolute terms, suggesting reasonable
+sex-equity in model calibration. However, the larger variance for Group B warrants attention
+in deployment — a subset of Group B patients may receive substantially less certain
+predictions, potentially requiring additional clinical review.
+
+> Source: `MAIN_CE_OUTPUT/mondrian/mondrian_pred_interval_summary.csv`  
+> Chart: `MAIN_CE_OUTPUT/mondrian/mondrian_feature_uncertainty_by_sex.png`
+
+---
+
+## 12. Final Recommendation
 
 **Deploy Stacking Ensemble with Isotonic Calibration** (`stacking_isotonic.joblib`):
 
@@ -375,6 +477,6 @@ When higher recall is prioritized (mass screening context), augment with kNN (Tu
 
 ---
 
-**Document Version**: 2.0  
-**Last Updated**: August 3, 2026  
-**Pipeline**: V2 — 2018–2021 ENNS | Selective Feature Engineering | 10 Models | SHAP + LIME | 3-Method Calibration
+**Document Version**: 3.0  
+**Last Updated**: September 10, 2026  
+**Pipeline**: V2 Hybrid — 2018–2021 ENNS | Selective Feature Engineering | 10 Models | SHAP + LIME | 3-Method Calibration | Calibrated Explanations (CE) with Venn-Abers | Mondrian Sex-Stratified Analysis
