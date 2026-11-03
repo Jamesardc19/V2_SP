@@ -1,0 +1,32 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.552
+Prediction Interval: [0.551, 0.553]
+
+Alternatives to increase the calibrated probability for class 1:
+- If waist > -0.39        then 0.712 [0.710, 0.717]
+- If tri > 2.05           then 0.665 [0.664, 0.667]
+- If binge_drink > 0.01   then 0.633 [0.631, 0.635]
+- If drnk_30d_num < -0.03 then 0.587 [0.586, 0.589]
+- If ever_smk > 0.07      then 0.565 [0.564, 0.566]
+- If hemoglobin > -0.38   then 0.565 [0.564, 0.566]
+- If ldl > -0.37          then 0.565 [0.564, 0.566]
+- If Ave_DBP < 0.93       then 0.561 [0.560, 0.562]
+- If hdl > 1.72           then 0.555 [0.551, 0.560]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If age < 0.14           then 0.438 [0.437, 0.439]
+- If Ave_SBP < 0.76       then 0.461 [0.461, 0.462]
+- If anthro_group > 5.94  then 0.492 [0.491, 0.492]
+- If waist < -0.83        then 0.502 [0.500, 0.505]
+- If vita < 0.52          then 0.536 [0.535, 0.537]
+- If tri < -0.07          then 0.538 [0.536, 0.540]
+- If Ave_DBP > 1.59       then 0.541 [0.538, 0.545]
+- If pa_met < 1.00        then 0.548 [0.545, 0.551]
+- If age > 1.92           then 0.549 [0.547, 0.552]

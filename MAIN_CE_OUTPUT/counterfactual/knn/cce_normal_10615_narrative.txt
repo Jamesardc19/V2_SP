@@ -1,0 +1,30 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated probability: 0.376
+Prediction Interval: [0.376, 0.376]
+
+Alternatives to increase the calibrated probability for class 1:
+- If alcohol > 0.00      then 0.831 [0.831, 0.831]
+- If con_alcohol < 1.00  then 0.831 [0.831, 0.831]
+- If age > -1.23         then 0.528 [0.527, 0.528]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If Ave_DBP > -1.98     then 0.097 [0.096, 0.097]
+- If anthro_group < 5.94 then 0.097 [0.096, 0.097]
+- If uic < -0.79         then 0.131 [0.130, 0.131]
+- If tri < -0.21         then 0.148 [0.146, 0.148]
+- If vita < 0.31         then 0.156 [0.154, 0.156]
+- If drnk_30d_num < 1.17 then 0.195 [0.190, 0.197]
+- If ever_smk > 0.07     then 0.198 [0.198, 0.198]
+- If pa_met > 0.00       then 0.198 [0.198, 0.198]
+- If hemoglobin < -0.85  then 0.221 [0.215, 0.223]
+- If Ave_SBP > -1.48     then 0.233 [0.225, 0.237]
+- If waist > -1.45       then 0.308 [0.307, 0.308]
+- If hdl > 0.31          then 0.334 [0.332, 0.334]
+- If smoke_status > 0.19 then 0.346 [0.340, 0.349]

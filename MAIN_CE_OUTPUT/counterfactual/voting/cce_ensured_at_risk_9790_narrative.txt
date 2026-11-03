@@ -1,0 +1,22 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.870
+Prediction Interval: [0.869, 0.872]
+
+Alternatives to increase the calibrated probability for class 1:
+- If pa_met < 0.06       then 0.634 [0.634, 0.635]
+- If pa_met > 1.00       then 0.670 [0.670, 0.672]
+- If age < 0.14          then 0.711 [0.711, 0.713]
+- If drnk_30d_num > 1.17 then 0.774 [0.774, 0.775]
+- If sex > 2.00          then 0.774 [0.774, 0.775]
+- If drnk_30d_num < 0.93 then 0.774 [0.774, 0.775]
+- If anthro_group > 5.75 then 0.814 [0.814, 0.815]
+- If anthro_group < 3.73 then 0.814 [0.814, 0.815]
+
+Alternatives to decrease the calibrated probability for class 1:

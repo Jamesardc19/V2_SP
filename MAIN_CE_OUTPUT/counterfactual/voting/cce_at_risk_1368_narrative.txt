@@ -1,0 +1,41 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.706
+Prediction Interval: [0.705, 0.708]
+
+Alternatives to increase the calibrated probability for class 1:
+- If age > -0.19          then 0.851 [0.851, 0.853]
+- If waist > 0.54         then 0.779 [0.779, 0.780]
+- If vita < 0.27          then 0.766 [0.766, 0.767]
+- If Ave_DBP < 0.63       then 0.749 [0.749, 0.750]
+- If alcohol < 1.00       then 0.749 [0.749, 0.750]
+- If binge_drink > 0.01   then 0.749 [0.749, 0.750]
+- If con_alcohol > 0.00   then 0.749 [0.749, 0.750]
+- If sex > 1.00           then 0.749 [0.749, 0.750]
+- If tri > 2.05           then 0.749 [0.749, 0.750]
+- If uic < 0.10           then 0.749 [0.749, 0.750]
+- If ldl > 1.66           then 0.720 [0.719, 0.722]
+- If hemoglobin < -0.38   then 0.709 [0.708, 0.712]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If age < -0.47          then 0.397 [0.397, 0.398]
+- If waist < 0.15         then 0.480 [0.478, 0.482]
+- If drnk_30d_num > 0.93  then 0.507 [0.505, 0.508]
+- If Ave_SBP < 0.72       then 0.629 [0.628, 0.631]
+- If tri < -0.16          then 0.631 [0.628, 0.636]
+- If anthro_group > 5.75  then 0.634 [0.634, 0.635]
+- If drnk_30d_num < -0.03 then 0.645 [0.644, 0.646]
+- If ldl < 0.28           then 0.664 [0.663, 0.665]
+- If Ave_DBP > 1.52       then 0.670 [0.670, 0.672]
+- If pa_met > 0.00        then 0.670 [0.670, 0.672]
+- If ldl_hdl_ratio < 1.83 then 0.675 [0.674, 0.677]
+- If anthro_group < 3.73  then 0.679 [0.670, 0.700]
+- If hdl < -1.34          then 0.682 [0.681, 0.684]
+- If hdl > -0.31          then 0.682 [0.681, 0.684]
+- If ever_smk > 0.07      then 0.688 [0.687, 0.690]

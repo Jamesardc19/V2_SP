@@ -1,0 +1,40 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated probability: 0.383
+Prediction Interval: [0.380, 0.384]
+
+Alternatives to increase the calibrated probability for class 1:
+- If age > 0.14            then 0.544 [0.543, 0.546]
+- If Ave_SBP > 0.05        then 0.459 [0.457, 0.459]
+- If hdl < -1.36           then 0.459 [0.457, 0.459]
+- If ldl_hdl_ratio > -0.39 then 0.459 [0.457, 0.459]
+- If ldl < -1.56           then 0.418 [0.416, 0.419]
+- If hemoglobin > -1.12    then 0.415 [0.409, 0.419]
+- If Ave_DBP > -1.72       then 0.415 [0.412, 0.417]
+- If vita > -1.81          then 0.411 [0.409, 0.413]
+- If uic < -0.84           then 0.403 [0.401, 0.404]
+- If waist > 1.47          then 0.403 [0.401, 0.404]
+- If sex < 2.00            then 0.403 [0.401, 0.404]
+- If smoke_status > 0.19   then 0.393 [0.391, 0.394]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If age < -0.24           then 0.241 [0.239, 0.242]
+- If waist < 0.51          then 0.252 [0.249, 0.253]
+- If tri < 2.07            then 0.287 [0.287, 0.288]
+- If uic > 0.10            then 0.291 [0.289, 0.292]
+- If anthro_group < 3.93   then 0.293 [0.290, 0.295]
+- If con_alcohol > 0.00    then 0.338 [0.333, 0.341]
+- If drnk_30d_num < 1.17   then 0.350 [0.342, 0.353]
+- If anthro_group > 4.18   then 0.358 [0.354, 0.360]
+- If binge_drink > 0.01    then 0.358 [0.354, 0.360]
+- If currentsmoking > 0.01 then 0.358 [0.354, 0.360]
+- If hdl > -0.31           then 0.374 [0.372, 0.376]
+- If ldl > -0.43           then 0.374 [0.372, 0.376]
+- If Ave_SBP < -0.40       then 0.375 [0.372, 0.376]
+- If hemoglobin < -1.12    then 0.381 [0.379, 0.382]

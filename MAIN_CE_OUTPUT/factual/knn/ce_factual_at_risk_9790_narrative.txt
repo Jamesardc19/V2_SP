@@ -1,0 +1,35 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated Probability: 0.803
+Prediction Interval: [0.802, 0.810]
+
+Factors impacting the calibrated probability for class 1 positively:
+currentsmoking (3.0) > 0.95   - weight ~ 0.707 [0.707, 0.707]
+uic (-1.24) <= 0.26           - weight ~ 0.660 [0.659, 0.662]
+vita (1.89) > -0.16           - weight ~ 0.631 [0.630, 0.635]
+Ave_DBP (-1.06) <= -0.32      - weight ~ 0.472 [0.470, 0.476]
+age (0.74) > -0.55            - weight ~ 0.457 [0.456, 0.460]
+ldl (-0.55) <= -0.03          - weight ~ 0.428 [0.427, 0.428]
+ldl_hdl_ratio (-0.7) <= -0.08 - weight ~ 0.428 [0.427, 0.428]
+con_alcohol (0.0) <= 1.00     - weight ~ 0.428 [0.427, 0.428]
+drnk_30days (1.0) > 0.01      - weight ~ 0.428 [0.427, 0.428]
+ever_smk (0.0) <= 2.00        - weight ~ 0.428 [0.427, 0.428]
+sex (1.6) <= 2.00             - weight ~ 0.428 [0.427, 0.428]
+hdl (0.42) > 0.32             - weight ~ 0.414 [0.403, 0.428]
+drnk_30d_num (1.07) > 0.21    - weight ~ 0.342 [0.338, 0.343]
+hemoglobin (0.39) > -0.92     - weight ~ 0.342 [0.338, 0.343]
+waist (-0.29) > -0.29         - weight ~ 0.342 [0.338, 0.343]
+Ave_SBP (-1.66) <= -0.36      - weight ~ 0.276 [0.276, 0.276]
+alcohol (1.0) > 0.00          - weight ~ 0.170 [0.161, 0.175]
+anthro_group (4.0) > 3.02     - weight ~ 0.170 [0.161, 0.175]
+binge_drink (0.0) <= 0.01     - weight ~ 0.170 [0.161, 0.175]
+smoke_status (1.0) <= 1.12    - weight ~ 0.170 [0.161, 0.175]
+
+Factors impacting the calibrated probability for class 1 negatively:
+tri (0.99) > -0.45            - weight ~ -0.027 [-0.028, -0.027]

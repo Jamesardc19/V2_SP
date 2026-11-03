@@ -1,0 +1,25 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated Probability: 0.097
+Prediction Interval: [0.096, 0.097]
+
+Factors impacting the calibrated probability for class 1 positively:
+age (-0.94) <= -0.55         - weight ~ -0.734 [-0.734, -0.734]
+currentsmoking (0.0) <= 0.95 - weight ~ -0.734 [-0.734, -0.734]
+sex (2.0) > 2.00             - weight ~ -0.279 [-0.279, -0.279]
+waist (-0.47) <= -0.29       - weight ~ -0.220 [-0.220, -0.220]
+drnk_30days (1.0) > 0.01     - weight ~ -0.102 [-0.102, -0.101]
+vita (-0.55) <= -0.16        - weight ~ -0.093 [-0.093, -0.093]
+drnk_30d_num (1.17) > 0.21   - weight ~ -0.091 [-0.093, -0.083]
+ldl_hdl_ratio (0.15) > -0.08 - weight ~ -0.068 [-0.068, -0.067]
+hdl (-0.34) <= 0.32          - weight ~ -0.061 [-0.061, -0.059]
+pa_met (1.0) > 0.00          - weight ~ -0.043 [-0.046, -0.026]
+tri (-0.13) > -0.45          - weight ~ -0.027 [-0.027, -0.026]
+
+Factors impacting the calibrated probability for class 1 negatively:

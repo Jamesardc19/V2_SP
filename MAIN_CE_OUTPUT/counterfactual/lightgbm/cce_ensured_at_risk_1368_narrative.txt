@@ -1,0 +1,20 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.803
+Prediction Interval: [0.802, 0.805]
+
+Alternatives to increase the calibrated probability for class 1:
+- If age < -0.48          then 0.463 [0.462, 0.464]
+- If drnk_30d_num < -0.98 then 0.687 [0.687, 0.688]
+- If anthro_group > 5.94  then 0.716 [0.716, 0.717]
+- If ldl > 1.66           then 0.803 [0.802, 0.805]
+- If uic < 0.10           then 0.803 [0.802, 0.805]
+- If vita < 0.27          then 0.803 [0.802, 0.805]
+
+Alternatives to decrease the calibrated probability for class 1:

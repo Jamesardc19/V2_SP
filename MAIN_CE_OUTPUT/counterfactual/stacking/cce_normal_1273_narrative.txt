@@ -1,0 +1,44 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated probability: 0.187
+Prediction Interval: [0.183, 0.188]
+
+Alternatives to increase the calibrated probability for class 1:
+- If Ave_SBP > 0.28        then 0.331 [0.330, 0.331]
+- If waist > -0.39         then 0.309 [0.307, 0.310]
+- If age > -0.89           then 0.298 [0.294, 0.300]
+- If tri > 2.08            then 0.295 [0.294, 0.296]
+- If drnk_30d_num < 1.17   then 0.291 [0.289, 0.292]
+- If anthro_group < 3.05   then 0.262 [0.261, 0.262]
+- If smoke_status > 0.04   then 0.231 [0.230, 0.231]
+- If ldl > -0.04           then 0.212 [0.203, 0.215]
+- If Ave_DBP > 0.75        then 0.199 [0.198, 0.199]
+- If ldl_hdl_ratio < 0.08  then 0.199 [0.198, 0.199]
+- If ldl_hdl_ratio > 0.26  then 0.199 [0.198, 0.199]
+- If alcohol > 0.00        then 0.199 [0.198, 0.199]
+- If anthro_group > 4.18   then 0.199 [0.198, 0.199]
+- If sex < 2.00            then 0.199 [0.198, 0.199]
+- If waist < -0.83         then 0.195 [0.193, 0.196]
+- If ldl < -0.43           then 0.188 [0.180, 0.189]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If age < -1.37           then 0.088 [0.086, 0.088]
+- If hemoglobin < -0.32    then 0.107 [0.102, 0.108]
+- If tri < -0.16           then 0.114 [0.111, 0.114]
+- If binge_drink > 0.01    then 0.122 [0.120, 0.123]
+- If drnk_30days < 1.00    then 0.122 [0.120, 0.123]
+- If Ave_DBP < -0.27       then 0.135 [0.131, 0.135]
+- If vita < -1.80          then 0.151 [0.148, 0.151]
+- If Ave_SBP < -0.36       then 0.157 [0.154, 0.157]
+- If hemoglobin > -0.32    then 0.157 [0.153, 0.158]
+- If uic < 2.33            then 0.164 [0.161, 0.165]
+- If currentsmoking > 0.01 then 0.167 [0.145, 0.171]
+- If hdl > -0.31           then 0.177 [0.167, 0.179]
+- If con_alcohol < 1.00    then 0.184 [0.179, 0.185]
+- If vita > -0.55          then 0.186 [0.182, 0.187]

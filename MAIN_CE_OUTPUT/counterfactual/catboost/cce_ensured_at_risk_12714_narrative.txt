@@ -1,0 +1,17 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.734
+Prediction Interval: [0.733, 0.735]
+
+Alternatives to increase the calibrated probability for class 1:
+- If drnk_30days < 1.00 then 0.693 [0.693, 0.694]
+- If ever_smk < 4.02    then 0.693 [0.693, 0.694]
+- If pa_met < 1.00      then 0.693 [0.693, 0.694]
+
+Alternatives to decrease the calibrated probability for class 1:

@@ -1,0 +1,28 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated probability: 0.055
+Prediction Interval: [0.053, 0.055]
+
+Alternatives to increase the calibrated probability for class 1:
+- If age > -0.85         then 0.245 [0.243, 0.245]
+- If tri > 2.05          then 0.130 [0.126, 0.130]
+- If Ave_SBP > -1.48     then 0.090 [0.088, 0.090]
+- If waist > -1.07       then 0.062 [0.060, 0.062]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If anthro_group < 5.94 then 0.023 [0.020, 0.023]
+- If drnk_30days < 1.00  then 0.023 [0.020, 0.023]
+- If vita < 0.27         then 0.024 [0.020, 0.024]
+- If Ave_DBP > -1.33     then 0.032 [0.020, 0.033]
+- If drnk_30d_num < 1.17 then 0.035 [0.031, 0.035]
+- If uic < -0.95         then 0.044 [0.020, 0.045]
+- If tri < -0.16         then 0.045 [0.030, 0.046]
+- If age < -1.26         then 0.054 [0.041, 0.054]
+- If hdl > 0.32          then 0.055 [0.052, 0.055]
+- If hemoglobin < -0.38  then 0.055 [0.052, 0.055]

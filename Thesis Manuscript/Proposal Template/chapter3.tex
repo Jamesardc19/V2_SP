@@ -4,246 +4,635 @@
 
 Diabetes mellitus is a chronic metabolic disorder characterized by elevated blood glucose levels resulting from defects in insulin production, insulin action, or both. Insulin, a hormone produced by pancreatic beta cells, plays a crucial role in regulating blood glucose by facilitating cellular glucose uptake and utilization for energy. When this regulatory mechanism fails, hyperglycemia occurs, leading to both acute and chronic complications affecting multiple organ systems.
 
-The two primary types of diabetes are Type 1 and Type 2 diabetes. Type 1 diabetes is an autoimmune condition in which the immune system destroys insulin-producing beta cells in the pancreas, resulting in absolute insulin deficiency. This form typically manifests in childhood or adolescence and requires lifelong insulin therapy. Type 2 diabetes, which accounts for approximately 90-95\% of all diabetes cases, is characterized by insulin resistance and relative insulin deficiency. In this condition, cells fail to respond adequately to insulin, and the pancreas eventually cannot produce sufficient insulin to overcome this resistance.
+Diabetes is generally classified into three main types: Type 1, Type 2, and gestational diabetes, with Type 1 and Type 2 representing the major forms relevant to diabetes risk assessment. Type 1 diabetes is believed to result from an autoimmune reaction that prevents the body from producing insulin, requiring affected individuals to take insulin daily for survival. Although it is commonly diagnosed among children and young adults, Type 1 diabetes can occur at any age. In contrast, Type 2 diabetes occurs when the body does not use insulin effectively and is unable to maintain normal blood glucose levels. It typically develops gradually over several years and is more commonly diagnosed in adults, although cases are increasingly observed among children, adolescents, and young adults. Type 2 diabetes accounts for approximately 90\% to 95\% of diagnosed diabetes cases, whereas Type 1 diabetes represents approximately 5\% to 10\% \cite{cdc_diabetes_basics_2026}.
 
-Prediabetes represents an intermediate metabolic state where blood glucose levels are elevated above normal but below the diagnostic threshold for diabetes. According to the American Diabetes Association, prediabetes is defined by fasting plasma glucose levels of 100-125 mg/dL, or HbA1c levels of 5.7-6.4\%. Individuals with prediabetes face significantly increased risk of progressing to Type 2 diabetes, with annual conversion rates of 5-10\%. However, prediabetes is reversible through lifestyle interventions, including dietary modifications, increased physical activity, and weight management, making early detection critical for diabetes prevention.
-
-The pathophysiology of Type 2 diabetes involves complex interactions between genetic predisposition and environmental factors. Key risk factors include obesity (particularly central adiposity), physical inactivity, family history of diabetes, age over 45 years, hypertension, dyslipidemia, and certain ethnicities with higher genetic susceptibility. The progression from normal glucose tolerance to prediabetes and eventually to Type 2 diabetes follows a continuum of deteriorating beta-cell function and worsening insulin resistance.
+Prediabetes represents an intermediate metabolic state where blood glucose levels are elevated above normal but below the diagnostic threshold for diabetes. According to the American Diabetes Association, prediabetes is defined by fasting plasma glucose levels of 100-125 mg/dL, or HbA1c levels of 5.7-6.4\%. Individuals with prediabetes face significantly increased risk of progressing to Type 2 diabetes, with annual conversion rates of 5-10\%. However, lifestyle interventions such as dietary modifications, increased physical activity, and weight management can reduce the risk of progression to type 2 diabetes and may support a return to normoglycemia in some individuals, making early detection critical for diabetes prevention \cite{ada_diabetes_diagnosis}.
 
 Untreated diabetes leads to serious complications affecting multiple organ systems. Microvascular complications include diabetic retinopathy (leading cause of blindness in working-age adults), diabetic nephropathy (leading cause of end-stage renal disease), and diabetic neuropathy (causing pain, sensory loss, and increased risk of foot ulcers and amputations). Macrovascular complications include accelerated atherosclerosis, increasing risk of coronary artery disease, stroke, and peripheral arterial disease. These complications underscore the critical importance of early detection and intervention to prevent or delay disease progression.
 
 \subsection{Machine Learning and Binary Classification}
 
-Machine learning is a subfield of artificial intelligence that focuses on developing algorithms capable of learning patterns from data and making predictions or decisions without being explicitly programmed for specific tasks. Machine learning algorithms improve their performance through experience, iteratively refining their models as they process more data. This capability makes machine learning particularly valuable for complex prediction tasks where traditional rule-based approaches are insufficient.
+Machine learning is a subset of artificial intelligence that enables algorithms to learn patterns from training data and apply those patterns to make predictions or decisions on new data without relying on explicitly hard-coded instructions. Its fundamental objective is generalization, where a model trained on representative data can produce useful predictions when applied to previously unseen instances. This data-driven approach is particularly suitable for complex predictive tasks in which manually specifying all relevant patterns and decision rules would be difficult.
 
-Machine learning paradigms are categorized into three main types based on the learning approach: supervised learning, unsupervised learning, and reinforcement learning. Supervised learning, the focus of this study, involves training models on labeled datasets where both input features and corresponding output labels are provided. The model learns the mapping function from inputs to outputs, enabling it to make predictions on new, unseen data. Unsupervised learning, in contrast, works with unlabeled data to discover hidden patterns or structures, such as clustering similar instances. Reinforcement learning involves agents learning optimal behaviors through trial-and-error interactions with an environment, receiving rewards or penalties based on their actions.
+Machine learning is commonly grouped into three learning paradigms: supervised learning, unsupervised learning, and reinforcement learning. Supervised learning trains models using a known ground truth, typically provided through labeled data, and is used for prediction tasks such as classification and regression. In contrast, unsupervised learning identifies intrinsic patterns, relationships, or groupings in data without predefined target labels, while reinforcement learning trains an agent to select actions based on rewards obtained through interaction with an environment \cite{ibm_machine_learning}.
 
-Within supervised learning, tasks are further divided into classification and regression. Classification tasks involve predicting discrete categorical labels, while regression tasks predict continuous numerical values. Diabetes risk prediction is formulated as a binary classification problem, where the goal is to categorize individuals into one of two classes: diabetic (positive class) or non-diabetic (negative class). This binary outcome aligns with clinical decision-making, where individuals are classified based on whether their blood glucose levels exceed diagnostic thresholds.
+This research adopts supervised learning because the prediction task requires assigning individuals to predefined outcome classes. Within supervised learning, classification predicts discrete classes, whereas regression predicts continuous numerical values. Accordingly, diabetes risk detection in this study is formulated as a binary classification task in which the machine learning models distinguish between individuals classified as at risk and those classified as not at risk based on the defined target variable.
 
 \subsubsection{Traditional Machine Learning Algorithms}
 
 Several traditional machine learning algorithms are commonly employed for binary classification tasks in healthcare:
 
-\textbf{Naive Bayes} is a probabilistic classifier based on Bayes' theorem, which calculates the probability of a class given the input features. The "naive" assumption is that all features are conditionally independent given the class label, simplifying computation. Despite this strong assumption, which is often violated in real-world data, Naive Bayes performs surprisingly well in many applications due to its simplicity and computational efficiency. For diabetes prediction, Naive Bayes calculates the probability of diabetes given clinical and demographic features, assigning the class with the highest posterior probability.
+\textbf{Naive Bayes} is a supervised probabilistic classifier based on Bayes' theorem. It estimates the posterior probability of a class using
 
-\textbf{Logistic Regression} is a linear model for binary classification that estimates the probability of class membership using the logistic (sigmoid) function. Unlike linear regression, which predicts continuous values, logistic regression outputs probabilities constrained between 0 and 1. The model learns a set of weights for each feature, and the weighted sum of features is transformed through the sigmoid function to produce a probability. A decision threshold (typically 0.5) is applied to convert probabilities to binary predictions. Logistic regression is interpretable, as the learned weights indicate the direction and magnitude of each feature's influence on the outcome.
+\begin{equation}
+P(Y \mid X) = \frac{P(X \mid Y)P(Y)}{P(X)}.
+\end{equation}
 
-% TODO: Add Figure 1 - Logistic Regression Model diagram
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{figures/logistic_regression.png}
-%     \caption{Logistic Regression Model}
-%     \label{fig:logistic_regression}
-% \end{figure}
-
-\textbf{Support Vector Machines (SVM)} find an optimal hyperplane that maximally separates instances of different classes in a high-dimensional feature space. The hyperplane is positioned to maximize the margin—the distance between the hyperplane and the nearest data points from each class, called support vectors. SVM can handle non-linear decision boundaries through the kernel trick, which implicitly maps data to higher-dimensional spaces where linear separation becomes possible. Common kernels include linear, polynomial, and radial basis function (RBF). SVM is effective for high-dimensional data but can be computationally expensive for large datasets.
-
-% TODO: Add Figure 2 - Support Vectors and Hyperplane diagram
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{figures/svm_hyperplane.png}
-%     \caption{Support Vectors and Hyperplane}
-%     \label{fig:svm_hyperplane}
-% \end{figure}
+The method assumes that input features are conditionally independent given the class label, which simplifies the computation of class probabilities. The class with the highest posterior probability is then selected as the prediction \cite{ibm_naive_bayes}. In this study, Naive Bayes is used to classify individuals into at-risk and not-at-risk groups based on their health-related features.
 
 \textbf{Random Forest} is an ensemble learning method that constructs multiple decision trees during training and outputs the mode of the classes (for classification) or mean prediction (for regression) of individual trees. Each tree is trained on a bootstrap sample of the data, and at each node, a random subset of features is considered for splitting. This randomness reduces overfitting and improves generalization. Random Forest provides feature importance scores based on how much each feature decreases impurity across all trees, aiding interpretability. The algorithm handles non-linear relationships, missing values, and mixed data types effectively.
 
-% TODO: Add Figure 3 - Random Forest Model diagram
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{figures/random_forest.png}
-%     \caption{Random Forest Model}
-%     \label{fig:random_forest}
-% \end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Diagrams/Random Forest}
+    \caption{Random Forest algorithm architecture. Source: IBM \cite{ibm_random_forest}.}
+    \label{fig:random_forest}
+\end{figure}
 
-\textbf{K-Nearest Neighbors (k-NN)} is a non-parametric, instance-based learning algorithm that classifies instances based on the majority class among their k nearest neighbors in the feature space. The algorithm stores the entire training dataset and, for each prediction, calculates distances (typically Euclidean) between the query instance and all training instances. The k nearest instances are identified, and the most frequent class among them is assigned as the prediction. The choice of k is critical: small k values lead to complex decision boundaries susceptible to noise, while large k values produce smoother boundaries but may overlook local patterns. k-NN requires feature scaling to prevent features with larger ranges from dominating distance calculations.
+\textbf{K-Nearest Neighbors (k-NN)} is a non-parametric, supervised learning algorithm that classifies a new instance based on the classes of its nearest neighboring data points. For classification, the predicted class is determined by the majority vote among the $k$ nearest neighbors \cite{ibm_knn}. The algorithm is considered a lazy or memory-based learner because it stores the training data and performs most computations only when a prediction is made.
 
-% TODO: Add Figure 4 - k-NN Classification Example diagram
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.7\textwidth]{figures/knn_classification.png}
-%     \caption{An Example of k-NN Classification}
-%     \label{fig:knn_classification}
-% \end{figure}
+The distance between instances is commonly measured using Euclidean distance, expressed as
 
-\textbf{Gradient Boosting Machines (XGBoost, LightGBM, CatBoost)} are ensemble methods that build models sequentially, where each new model corrects errors made by previous models. XGBoost (Extreme Gradient Boosting) uses gradient descent to minimize a loss function, incorporating regularization to prevent overfitting. LightGBM employs a histogram-based approach and grows trees leaf-wise rather than level-wise, improving efficiency. CatBoost handles categorical features natively and uses ordered boosting to reduce overfitting. These algorithms consistently achieve state-of-the-art performance on tabular data and provide feature importance rankings.
+\begin{equation}
+d(\mathbf{x},\mathbf{y}) =
+\sqrt{\sum_{i=1}^{n}(x_i-y_i)^2},
+\end{equation}
+
+where $x_i$ and $y_i$ represent the corresponding feature values of two instances. The value of $k$ influences model behavior, where smaller values may increase variance and sensitivity to noise, while larger values may produce smoother decision boundaries with higher bias. Cross-validation can be used to determine an appropriate value of $k$ for the dataset \cite{ibm_knn}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Diagrams/KNN}
+    \caption{Illustration of the K-Nearest Neighbors classification process. Source: IBM \cite{ibm_knn}.}
+    \label{fig:knn_classification}
+\end{figure}
+
+\textbf{Gradient Boosting Machines (XGBoost, LightGBM, and CatBoost)}
+are ensemble learning methods that build decision trees sequentially, where
+each new tree attempts to correct errors made by the preceding trees. Through
+this iterative process, the ensemble gradually improves its predictions
+\cite{ibm_xgboost}.
+
+\textbf{XGBoost (Extreme Gradient Boosting)} is an optimized implementation
+of gradient-boosted decision trees that sequentially adds trees to minimize
+prediction error. It incorporates regularization techniques to control model
+complexity and reduce overfitting \cite{ibm_xgboost}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Diagrams/xgboost_diagram.png}
+    \caption{Sequential boosting process used in gradient-boosted decision trees.
+    Source: IBM \cite{ibm_xgboost}.}
+    \label{fig:xgboost}
+\end{figure}
+
+\textbf{LightGBM (Light Gradient Boosting Machine)} is a high-performance
+gradient boosting framework designed for efficient training on large datasets.
+Most gradient boosting implementations grow trees level-wise, splitting all
+leaves at a given depth before proceeding deeper. LightGBM instead uses a
+leaf-wise (best-first) strategy, where at each step the single leaf with the
+greatest reduction in loss is selected for further splitting, regardless of
+its depth. This produces asymmetric trees and typically achieves lower loss
+than level-wise growth for the same number of iterations.
+LightGBM also uses histogram-based splitting, grouping continuous feature
+values into discrete bins to reduce memory usage and improve training speed
+\cite{lightgbm_docs}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Diagrams/lightgbm_diagram.png}
+    \caption{Leaf-wise tree growth in LightGBM. At each step, the leaf with
+    the greatest loss reduction is selected for further splitting, producing
+    an asymmetric tree that grows deeper on one branch rather than expanding
+    all leaves at the same depth.
+    Source: LightGBM Contributors \cite{lightgbm_docs}.}
+    \label{fig:lightgbm}
+\end{figure}
+
+\textbf{CatBoost (Categorical Boosting)} is a gradient boosting algorithm
+designed to effectively handle both numerical and categorical features.
+It can process categorical variables internally without requiring extensive
+manual encoding and uses ordered boosting to help reduce overfitting
+\cite{geeksforgeeks_catboost}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Diagrams/catboost_diagram.png}
+    \caption{Illustration of the CatBoost boosting process.
+    Source: GeeksforGeeks \cite{geeksforgeeks_catboost}.}
+    \label{fig:catboost}
+\end{figure}
+
+\subsubsection{Ensemble Learning}
+
+Ensemble learning combines predictions from multiple trained classifiers to
+produce a final output that is generally more robust than any individual
+model. By aggregating outputs from models that may differ in their error
+patterns, ensemble approaches can reduce prediction variability and improve
+generalization performance \cite{lu_uddin_stacking_2022, gollapalli_stacking_diabetes_2022}.
+
+This study evaluates two ensemble strategies. A \textbf{voting ensemble}
+averages the predicted probabilities from a set of base classifiers and
+assigns the class with the highest average probability as the final
+prediction. No additional training is required after the constituent models
+are fitted.
+
+A \textbf{stacking ensemble} (stacked generalization) trains a meta-learner
+on the predictions generated by a set of base models. The base models are
+trained using cross-validation so that the meta-learner is fitted on
+out-of-fold predictions, reducing the risk of the meta-learner overfitting
+to training data. This allows the meta-learner to weight the contributions
+of different base models based on their complementary strengths
+\cite{lu_uddin_stacking_2022, gollapalli_stacking_diabetes_2022}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Diagrams/stacking_ensemble.png}
+    \caption{Illustration of the stacking ensemble learning process, showing
+    base-model predictions used as inputs to a meta-learner.
+    Source: Zhang et al.~\cite{zhang_stacking_2024}.}
+    \label{fig:stacking}
+\end{figure}
 
 \subsubsection{Handling Class Imbalance}
 
-Class imbalance occurs when one class significantly outnumbers the other in the training dataset. In diabetes prediction, non-diabetic cases typically far exceed diabetic cases, creating imbalance. Standard machine learning algorithms trained on imbalanced data tend to be biased toward the majority class, achieving high overall accuracy while failing to detect minority class instances—a critical failure in medical screening where missing positive cases (false negatives) has serious consequences.
+\textbf{Class Imbalance} occurs when one class contains substantially fewer
+instances than another, causing the learning algorithm to favor the majority
+class. In medical classification, this can be problematic because a model may
+achieve high overall accuracy while performing poorly in identifying the
+minority class \cite{elreedy_smote_2023}.
 
-Several techniques address class imbalance:
+Two complementary strategies are used in this study to address class imbalance.
 
-\textbf{Resampling Methods} modify the training dataset to balance class distributions. Oversampling increases minority class instances by duplicating existing samples or generating synthetic samples. The Synthetic Minority Over-sampling Technique (SMOTE) creates synthetic instances by interpolating between minority class instances and their nearest neighbors. Undersampling reduces majority class instances, but risks losing valuable information. Hybrid methods like SMOTE-ENN combine oversampling with edited nearest neighbors to remove noisy instances.
+\textbf{Synthetic Minority Over-sampling Technique (SMOTE)} is an oversampling
+method that increases the representation of the minority class by generating
+synthetic samples rather than simply duplicating existing observations.
+For a selected minority instance, SMOTE identifies nearby minority-class
+neighbors and generates a new sample by interpolating between them
+\cite{smote_machine_failure_2023}. This approach helps provide the classifier
+with a more balanced representation of both classes during training.
 
-\textbf{Cost-Sensitive Learning} assigns different misclassification costs to different classes, penalizing false negatives more heavily than false positives. Many algorithms support class weights, allowing users to specify the relative importance of each class during training.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.70\linewidth]{Diagrams/smote_diagram.png}
+    \caption{Illustration of synthetic sample generation using the SMOTE algorithm.
+    Source: \cite{smote_machine_failure_2023}.}
+    \label{fig:smote}
+\end{figure}
 
-\textbf{Threshold Adjustment} modifies the decision threshold for converting predicted probabilities to class labels. Lowering the threshold increases sensitivity (recall) at the cost of precision, which is appropriate for screening applications where detecting all positive cases is prioritized.
+A synthetic sample can be represented as
+
+\begin{equation}
+x_{\text{new}} = x_i + \lambda(x_j - x_i),
+\end{equation}
+
+where $x_i$ is a minority-class instance, $x_j$ is one of its nearest
+minority-class neighbors, and $\lambda$ is a random value between 0 and 1.
+
+\textbf{Evaluation Metric Selection} addresses class imbalance at the model
+assessment stage. Because accuracy can be misleading when one class
+dominates the dataset, this study uses the F2-score as the primary model
+selection metric, which places greater weight on recall than precision.
+The rationale and formulation for this choice are provided in the Model
+Evaluation Metrics section of this framework.
 
 \subsection{Neural Networks and Optimization Strategies}
 
-Neural networks are computational models inspired by the structure and function of biological neural networks in the human brain. They consist of interconnected layers of artificial neurons (nodes) that process information through weighted connections. Each neuron receives inputs, applies a weighted sum, adds a bias term, and passes the result through an activation function to produce an output. Neural networks learn by adjusting weights and biases to minimize a loss function that quantifies prediction errors.
-
-A typical neural network architecture consists of an input layer (receiving features), one or more hidden layers (performing transformations), and an output layer (producing predictions). Deep neural networks contain multiple hidden layers, enabling them to learn hierarchical representations of increasing complexity. Activation functions introduce non-linearity, allowing networks to model complex relationships. Common activation functions include ReLU (Rectified Linear Unit), sigmoid, and tanh.
+Neural networks are computational models composed of interconnected layers
+of artificial neurons. A typical architecture consists of an input layer,
+one or more hidden layers, and an output layer. Each neuron computes a
+weighted combination of its inputs and applies a nonlinear activation
+function such as ReLU or sigmoid. During training, the network adjusts its
+weights and biases to minimize a loss function and improve its predictions
+\cite{ibm_neural_networks}.
 
 \subsubsection{TabNet Architecture}
 
-TabNet is a deep learning architecture specifically designed for tabular data, addressing limitations of traditional neural networks on structured datasets. Unlike standard fully-connected networks that process all features equally, TabNet employs a sequential attention mechanism to select relevant features at each decision step, mimicking human decision-making processes.
+TabNet is a deep learning architecture specifically designed for tabular
+data. Unlike conventional fully connected neural networks that process all
+features simultaneously, TabNet uses sequential attention to select the
+features that are most relevant at each decision step
+\cite{arik_pfister_tabnet_2021}. The feature-selection process is
+instance-wise, allowing different features to receive attention for
+different observations.
 
-The TabNet encoder consists of several key components:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.90\linewidth]{Diagrams/tabnet_encoder.png}
+    \caption{TabNet encoder architecture showing sequential attentive feature
+    selection across decision steps. Source: Arik and Pfister
+    \cite{arik_pfister_tabnet_2021}.}
+    \label{fig:tabnet_encoder}
+\end{figure}
 
-\textbf{Feature Transformer} processes selected features through fully-connected layers with batch normalization and GLU (Gated Linear Unit) activations, extracting meaningful representations.
+The attention masks generated at each decision step also provide
+interpretability by indicating which features contribute to individual
+predictions. These instance-level explanations can be aggregated to obtain
+global feature importance, enabling both local and global interpretation of
+the model \cite{arik_pfister_tabnet_2021}. This architecture has been
+applied to diabetes classification in combination with Bayesian
+hyperparameter optimization and post-hoc XAI methods
+\cite{joseph_tabnet_diabetes_2022}.
 
-\textbf{Attentive Transformer} generates feature selection masks using a sparsemax activation function, which produces sparse outputs where most features have zero weight. This sparsity enhances interpretability by clearly indicating which features influenced each decision step.
+\subsubsection{Bayesian Optimization with Optuna}
 
-\textbf{Feature Masking} applies the selection masks to the input features, allowing only selected features to influence subsequent processing. Masks are updated at each step based on previously selected features, preventing redundant feature selection.
+Hyperparameters are configuration values that influence model training but
+are not learned directly from the data. In TabNet, these include parameters
+that control the learning process, model capacity, and regularization.
+Selecting suitable hyperparameters is important because their configuration
+can substantially affect predictive performance.
 
-\textbf{Split Block} divides the processed representation into two parts: one for the attentive transformer in the next step, and one contributing to the final output.
+Bayesian Optimization is a sequential model-based approach for
+hyperparameter tuning that uses information from previously evaluated
+configurations to guide the selection of subsequent trials. Rather than
+evaluating configurations independently, the optimization process balances
+the exploration of uncertain regions of the search space with the
+exploitation of configurations that are expected to perform well
+\cite{bischl_hpo_2023}.
 
-TabNet's sequential attention mechanism provides both instance-wise and global interpretability. Instance-wise interpretability is achieved through visualization of feature selection masks for individual predictions, showing which features were most important. Global interpretability is obtained by aggregating masks across all instances to derive feature importance rankings. This interpretability is crucial for clinical applications where understanding model decisions builds trust and enables validation against medical knowledge.
+In this study, Optuna was used to optimize the hyperparameters of TabNet
+over a predefined search space. Optuna's Tree-structured Parzen Estimator
+(TPE) sampler models promising and less-promising regions of the search
+space using separate probability distributions and selects subsequent
+configurations based on their relative likelihood
+\cite{optuna_tpe}. The resulting optimized architecture is referred to in
+this study as BO-TabNet.
 
-% TODO: Add Figure 5 - TabNet Encoder Architecture diagram
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.8\textwidth]{figures/tabnet_architecture.png}
-%     \caption{TabNet Encoder Architecture}
-%     \label{fig:tabnet_architecture}
-% \end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\linewidth]{Diagrams/optuna_tpe_workflow.pdf}
+    \caption{Sequential TPE-based hyperparameter optimization workflow
+    used for BO-TabNet. Authors' illustration based on the Optuna
+    TPESampler documentation \cite{optuna_tpe}.}
+    \label{fig:optuna_tpe}
+\end{figure}
 
-\subsubsection{Bayesian Optimization for Hyperparameter Tuning}
+\subsection{Model Evaluation Metrics}
 
-Hyperparameters are configuration settings that control the learning process but are not learned from data (e.g., learning rate, number of layers, regularization strength). Selecting optimal hyperparameters significantly impacts model performance, but the search space is often large and high-dimensional, making exhaustive search infeasible.
+After the predictive models are trained and optimized, their performance
+must be evaluated according to the objectives of early diabetes-risk
+detection. Model evaluation determines how effectively each classifier
+identifies at-risk individuals, while probability calibration subsequently
+examines whether the confidence associated with those predictions is
+reliable. These two aspects address different properties of predictive
+performance and therefore form separate components of the proposed
+framework.
 
-Bayesian Optimization is an efficient strategy for hyperparameter tuning that models the objective function (e.g., validation performance) as a probabilistic surrogate model, typically a Gaussian Process. The surrogate model provides a posterior distribution over the objective function, quantifying uncertainty about performance at untested hyperparameter configurations.
+\subsubsection{Precision and Recall}
 
-An acquisition function guides the search by balancing exploration (testing uncertain regions) and exploitation (testing regions likely to yield good performance). Common acquisition functions include Expected Improvement (EI), which selects configurations expected to improve over the current best, and Upper Confidence Bound (UCB), which trades off mean performance and uncertainty.
+Precision and Recall are fundamental evaluation metrics for binary
+classification tasks, derived from the confusion matrix of true positives
+(TP), true negatives (TN), false positives (FP), and false negatives (FN).
 
-Bayesian Optimization iteratively:
-\begin{enumerate}
-    \item Evaluates the objective function at a selected hyperparameter configuration
-    \item Updates the surrogate model with the new observation
-    \item Uses the acquisition function to select the next configuration to evaluate
-\end{enumerate}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.62\linewidth]{Diagrams/confusion_matrix.pdf}
+    \caption{Confusion-matrix outcomes underlying precision and recall for
+    the positive at-risk class. Authors' illustration.}
+    \label{fig:confusion_matrix}
+\end{figure}
 
-This approach is particularly effective when objective function evaluations are expensive (as in training deep neural networks), as it requires fewer evaluations than grid search or random search to find near-optimal configurations.
+Precision measures the proportion of positive predictions that are correct:
 
-\subsection{Explainable Artificial Intelligence and Model Interpretability}
+\begin{equation}
+\text{Precision} = \frac{TP}{TP + FP}.
+\end{equation}
 
-Explainable Artificial Intelligence (XAI) refers to methods and techniques that make machine learning model predictions understandable to humans. As models become more complex—particularly deep neural networks—they often function as "black boxes," producing accurate predictions without transparent reasoning. This opacity is problematic in high-stakes domains like healthcare, where clinicians need to understand and validate model decisions before acting on them.
+Recall, also referred to as sensitivity, measures the proportion of actual
+positives that are correctly identified:
 
-Model interpretability serves several critical functions: (1) building trust by revealing how models make decisions, (2) enabling clinical validation by allowing experts to verify that models use medically sound reasoning, (3) identifying biases or errors in model logic, (4) facilitating regulatory compliance in domains requiring explainable decisions, and (5) providing actionable insights for interventions by identifying modifiable risk factors.
+\begin{equation}
+\text{Recall} = \frac{TP}{TP + FN}.
+\end{equation}
 
-XAI techniques are categorized along several dimensions:
+These two metrics often trade off against each other. In early disease
+detection, recall is particularly important because failing to identify an
+at-risk individual (a false negative) carries greater clinical consequence
+than incorrectly flagging a not-at-risk individual (a false positive).
 
-\textbf{Scope:} Global explanations describe overall model behavior across all instances, while local explanations focus on individual predictions.
+\subsubsection{F2-Score}
 
-\textbf{Model-specificity:} Model-specific techniques are designed for particular algorithms (e.g., decision tree visualization), while model-agnostic techniques can explain any model.
+The F-beta score generalizes the F1-score by allowing the relative emphasis
+placed on precision and recall to be adjusted through a parameter $\beta$:
 
-\textbf{Complexity:} Intrinsically interpretable models (e.g., linear regression, decision trees) are transparent by design, while post-hoc explanations are applied to complex models after training.
+\begin{equation}
+F_\beta =
+\frac{(1+\beta^2)\cdot\text{Precision}\cdot\text{Recall}}
+{\beta^2\cdot\text{Precision}+\text{Recall}}.
+\end{equation}
 
-\subsubsection{SHAP (SHapley Additive exPlanations)}
+The F2-score is obtained by setting $\beta = 2$ in the generalized
+$F_\beta$ measure, giving greater emphasis to recall than precision:
 
-SHAP is a unified framework for interpreting model predictions based on Shapley values from cooperative game theory. Shapley values fairly distribute a total payout among players based on their marginal contributions to all possible coalitions. In the context of machine learning, features are "players," and the "payout" is the prediction for a specific instance.
+\begin{equation}
+F_2 =
+\frac{5\cdot\text{Precision}\cdot\text{Recall}}
+{4\cdot\text{Precision}+\text{Recall}}.
+\end{equation}
 
-The SHAP value for a feature quantifies its contribution to the prediction by computing the average marginal contribution of that feature across all possible subsets of features. Mathematically, for feature $i$ and instance $x$:
+This weighting is appropriate for the study's early-risk screening
+objective, where failing to identify an at-risk individual is considered
+more consequential than generating an additional false-positive flag. In the
+context of diabetes-risk screening, this study uses the F2-score as the
+primary model selection metric.
 
-$$\phi_i = \sum_{S \subseteq F \setminus \{i\}} \frac{|S|!(|F|-|S|-1)!}{|F|!} [f(S \cup \{i\}) - f(S)]$$
+\subsubsection{Area Under the Precision-Recall Curve}
 
-where $F$ is the set of all features, $S$ is a subset of features, and $f(S)$ is the model's prediction using only features in $S$.
+The Precision-Recall Curve plots precision against recall as the
+classification threshold varies across all possible values. The Area Under
+the Precision-Recall Curve (AUPRC) summarizes this curve as a single value,
+where higher values indicate stronger performance across all thresholds.
 
-SHAP values have desirable properties: (1) local accuracy—SHAP values sum to the difference between the prediction and the expected value, (2) missingness—features not used in the model have zero SHAP value, (3) consistency—if a model changes so a feature has a larger impact, its SHAP value increases.
+AUPRC summarizes the trade-off between precision and recall across
+classification thresholds. In this study, it is particularly relevant
+because evaluation focuses on the model's ability to identify the positive
+at-risk class while controlling false-positive predictions. Unlike a fixed
+baseline such as 0.5 for AUROC, the expected AUPRC of a random classifier
+is related to the prevalence of the positive class
+\cite{mcdermott_auprc_2024}.
 
-SHAP provides multiple visualization types:
+\subsection{Probability Calibration}
 
-\textbf{Force plots} show how each feature pushes the prediction away from the base value (average prediction) toward the final prediction for a single instance.
+Probability calibration concerns the agreement between predicted
+probabilities and observed outcome frequencies. A well-calibrated model
+should produce probabilities that correspond to the empirical occurrence
+of the predicted outcome. For example, among individuals assigned an
+approximately 70\% probability of being at risk, approximately 70\% should
+belong to the at-risk class according to the study's outcome definition.
 
-\textbf{Summary plots} display SHAP values for all features across all instances, revealing global feature importance and the distribution of impacts.
+Calibration is distinct from discrimination. Discrimination describes a
+model's ability to distinguish or rank positive and negative instances,
+whereas calibration describes the reliability of the probabilities assigned
+to those predictions. Consequently, a model may discriminate effectively
+between at-risk and not-at-risk individuals while still producing poorly
+calibrated probability estimates.
 
-\textbf{Dependence plots} show the relationship between feature values and SHAP values, revealing non-linear effects and interactions.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\linewidth]{Diagrams/reliability_diagram.pdf}
+    \caption{Conceptual reliability diagram showing agreement between
+    predicted probabilities and observed positive-class frequencies.
+    Authors' illustration based on \cite{ojeda_calibration_2023}.}
+    \label{fig:reliability_diagram}
+\end{figure}
 
-TreeExplainer is an optimized SHAP implementation for tree-based models that computes exact SHAP values efficiently. For other models, KernelExplainer approximates SHAP values through sampling.
-
-% TODO: Add Figure 6 - SHAP Explanation Example diagram
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.8\textwidth]{figures/shap_example.png}
-%     \caption{SHAP Explaining Individual Predictions}
-%     \label{fig:shap_example}
-% \end{figure}
-
-\subsubsection{LIME (Local Interpretable Model-agnostic Explanations)}
-
-LIME explains individual predictions by approximating the complex model's behavior locally with a simple, interpretable surrogate model. The key insight is that while a model may be globally complex, its behavior in the vicinity of a specific instance may be approximated by a linear model.
-
-LIME's algorithm:
-\begin{enumerate}
-    \item Generates a dataset of perturbed instances around the instance to be explained
-    \item Obtains predictions from the complex model for these perturbed instances
-    \item Weights instances by their proximity to the original instance
-    \item Trains a simple interpretable model (e.g., linear regression) on the weighted dataset
-    \item Uses the interpretable model's coefficients as the explanation
-\end{enumerate}
-
-For tabular data, LIME perturbs instances by randomly sampling from the training distribution for each feature. For text and images, perturbations involve removing words or image segments.
-
-LIME's explanations are local—they describe model behavior for a specific instance and may not generalize to other instances. This locality is both a strength (providing personalized explanations) and a limitation (not revealing global model behavior). LIME is also subject to instability, where small changes in the instance or perturbation process can yield different explanations.
-
-% TODO: Add Figure 7 - LIME Explanation Example diagram
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.8\textwidth]{figures/lime_example.png}
-%     \caption{LIME Explaining Individual Predictions}
-%     \label{fig:lime_example}
-% \end{figure}
-
-\subsection{Probability Calibration Methods}
-
-Probability calibration is the process of adjusting predicted probabilities from a machine learning model to better reflect true likelihoods of outcomes. Many classification algorithms, particularly complex models like neural networks and ensemble methods, produce miscalibrated probability estimates—predictions that do not accurately represent the true probability of class membership. For instance, when a model predicts a 70\% probability of diabetes, ideally 70\% of such cases should actually be diabetic. Miscalibration can lead to inappropriate clinical decisions, as healthcare providers rely on these probabilities to determine intervention strategies.
-
-Calibration is distinct from discrimination (the ability to rank instances correctly). A model can have excellent discrimination (high AUC-ROC) while being poorly calibrated. Calibration ensures that predicted probabilities are reliable and can be used directly for decision-making, which is critical in medical applications where probability estimates guide treatment decisions.
+Reliable probability estimates are particularly important in this study
+because calibrated probabilities provide the foundation for the subsequent
+Calibrated Explanations framework. Three post-hoc calibration methods are
+therefore considered: Platt Scaling, Isotonic Regression, and Temperature
+Scaling \cite{ojeda_calibration_2023}.
 
 \subsubsection{Platt Scaling}
 
-Platt Scaling, also known as logistic calibration, is a parametric calibration method that fits a logistic regression model to map uncalibrated scores to calibrated probabilities. The method was originally developed for Support Vector Machines but is applicable to any classifier that produces continuous scores.
+Platt Scaling, also known as logistic calibration, is a parametric
+calibration method that maps uncalibrated model scores to calibrated
+probabilities using a logistic function. Given an uncalibrated score
+$f(x)$, the calibrated probability can be expressed as
 
-Given uncalibrated scores $f(x)$ from a classifier, Platt Scaling learns parameters $A$ and $B$ such that the calibrated probability is:
+\begin{equation}
+P(y=1 \mid x) =
+\frac{1}{1+\exp(Af(x)+B)},
+\end{equation}
 
-$$P(y=1|x) = \frac{1}{1 + \exp(A \cdot f(x) + B)}$$
-
-The parameters $A$ and $B$ are estimated by maximizing the likelihood on a held-out calibration set (separate from the training set used to train the original classifier). This calibration set should be representative of the target population to ensure the calibrated probabilities generalize well.
-
-Platt Scaling is particularly effective when the miscalibration follows a sigmoid pattern—when uncalibrated scores have a monotonic but non-linear relationship with true probabilities. The method is computationally efficient, requiring only the fitting of two parameters, and works well even with relatively small calibration sets. However, Platt Scaling assumes a specific functional form (sigmoid), which may not capture all types of miscalibration patterns.
+where $A$ and $B$ are parameters estimated using calibration data.
+The logistic transformation preserves the ordering of predictions while
+adjusting their probability estimates. Because it assumes a sigmoid-shaped
+relationship between model scores and outcome probabilities, Platt Scaling
+provides a relatively constrained parametric approach to calibration.
 
 \subsubsection{Isotonic Regression}
 
-Isotonic Regression is a non-parametric calibration method that fits a piecewise-constant, monotonically increasing function to map uncalibrated scores to calibrated probabilities. Unlike Platt Scaling, Isotonic Regression makes no assumptions about the functional form of the calibration mapping, making it more flexible.
+Isotonic Regression is a non-parametric calibration method that learns a
+monotonically increasing mapping between uncalibrated model scores and
+observed outcome probabilities. Unlike Platt Scaling, it does not assume a
+specific parametric form for the calibration function. Instead, it fits a
+piecewise-constant function while preserving the ordering of predicted
+scores.
 
-The method works by:
-\begin{enumerate}
-    \item Sorting instances by their uncalibrated scores
-    \item Grouping instances into bins
-    \item Computing the empirical probability (fraction of positive instances) in each bin
-    \item Enforcing monotonicity by merging adjacent bins that violate the monotonicity constraint
-\end{enumerate}
+This flexibility allows Isotonic Regression to represent more complex
+calibration relationships. However, because the mapping is learned directly
+from the calibration data, it can be more sensitive to limited sample sizes
+than parametric approaches. In this study, Isotonic Regression provides a
+flexible alternative to the parametric calibration methods.
 
-The resulting calibration function is a step function that maps score ranges to calibrated probabilities. For a new instance with score $f(x)$, the calibrated probability is the empirical probability of the bin containing $f(x)$.
+\subsubsection{Temperature Scaling}
 
-Isotonic Regression is more flexible than Platt Scaling and can capture complex miscalibration patterns, including non-sigmoid relationships. However, this flexibility comes at a cost: Isotonic Regression is more prone to overfitting, especially with small calibration sets, and may produce less smooth calibration curves. The method also requires more data than Platt Scaling to reliably estimate the piecewise-constant function.
+Temperature Scaling is a parametric post-hoc calibration method that
+adjusts the confidence of a classifier by rescaling its logits using a
+single positive temperature parameter $T$. For binary classification, the
+calibrated probability can be expressed as
+
+\begin{equation}
+P(y=1 \mid x) =
+\sigma\left(\frac{z(x)}{T}\right),
+\end{equation}
+
+where $z(x)$ represents the model logit, $T>0$ is the learned temperature
+parameter, and $\sigma(\cdot)$ denotes the sigmoid function.
+
+The temperature parameter controls the confidence of the predicted
+probabilities without changing the relative ordering of the model scores.
+In this study, Temperature Scaling is evaluated alongside Platt Scaling and
+Isotonic Regression to determine which post-hoc calibration approach
+provides the most reliable probability estimates
+\cite{balanya_temperature_2024, penso_medical_calibration_2024}.
 
 \subsubsection{Calibration Assessment}
 
-Calibration quality is assessed through several metrics and visualizations:
+Calibration quality can be evaluated using both graphical and quantitative
+measures. Reliability diagrams compare predicted probabilities with
+observed outcome frequencies, where predictions closer to the diagonal
+indicate better agreement between predicted and observed probabilities.
 
-\textbf{Calibration Plots (Reliability Diagrams)} plot predicted probabilities against observed frequencies. Instances are grouped into bins based on predicted probability, and for each bin, the mean predicted probability is plotted against the fraction of positive instances. A perfectly calibrated model produces points along the diagonal line $y=x$.
+The Brier Score measures the mean squared difference between predicted
+probabilities and binary outcomes:
 
-\textbf{Brier Score} measures the mean squared difference between predicted probabilities and actual outcomes:
-$$\mathrm{Brier\ Score} = \frac{1}{N} \sum_{i=1}^{N} (p_i - y_i)^2$$
+\begin{equation}
+\mathrm{BS} =
+\frac{1}{N}\sum_{i=1}^{N}(p_i-y_i)^2,
+\end{equation}
 
-where $p_i$ is the predicted probability and $y_i$ is the actual outcome (0 or 1). Lower Brier scores indicate better calibration and discrimination. The Brier score ranges from 0 (perfect) to 1 (worst).
+where $p_i$ is the predicted probability and $y_i$ is the observed binary
+outcome. Lower values indicate smaller probabilistic prediction error.
 
-\textbf{Expected Calibration Error (ECE)} divides predictions into bins and computes the weighted average of the absolute difference between confidence and accuracy in each bin:
-$$\mathrm{ECE} = \sum_{m=1}^{M} \frac{|B_m|}{N} |\mathrm{acc}(B_m) - \mathrm{conf}(B_m)|$$
+Expected Calibration Error (ECE) summarizes the discrepancy between
+predicted confidence and observed positive-class frequency across
+probability bins:
 
-where $B_m$ is the set of instances in bin $m$, $\mathrm{acc}(B_m)$ is the accuracy in that bin, and $\mathrm{conf}(B_m)$ is the average predicted probability in that bin. Lower ECE indicates better calibration.
+\begin{equation}
+\mathrm{ECE} =
+\sum_{m=1}^{M}
+\frac{|B_m|}{N}
+\left|
+\mathrm{obs}(B_m)-\mathrm{conf}(B_m)
+\right|,
+\end{equation}
 
-In this study, both Platt Scaling and Isotonic Regression are applied to calibrate the predictions from machine learning models, with Platt Scaling typically preferred due to its robustness and lower risk of overfitting on the available calibration data.
+where $B_m$ represents the instances assigned to bin $m$, and
+$\mathrm{obs}(B_m)$ is the observed positive-class frequency in that bin.
+Lower ECE values indicate closer agreement between predicted confidence and
+observed outcome frequencies.
+
+In this study, these measures are used to compare the probability
+reliability of the uncalibrated models and their Platt-scaled,
+isotonic-calibrated, and temperature-scaled counterparts.
+
+\subsection{Explainable Artificial Intelligence and Model Interpretability}
+
+Explainable Artificial Intelligence (XAI) refers to methods that make the
+behavior and predictions of machine learning models more understandable to
+humans. This is particularly relevant in healthcare applications, where
+predictive performance alone does not reveal which patient characteristics
+influenced a model's decision \cite{xai_healthcare_review_2022}.
+
+Model explanations can be examined from both global and local perspectives.
+Global interpretation describes patterns in model behavior across the
+dataset, such as the features that generally exert the greatest influence
+on predictions. Local interpretation instead explains the factors
+contributing to a particular individual's prediction. In this study, SHAP
+and LIME are used as complementary post-hoc explanation methods for
+interpreting diabetes-risk predictions.
+
+\subsubsection{SHAP (SHapley Additive exPlanations)}
+
+SHAP is a post-hoc explanation framework based on Shapley values from
+cooperative game theory. In machine learning, the input features are treated
+as contributors to a model prediction, and each feature is assigned a SHAP
+value representing its contribution relative to a baseline prediction.
+
+For feature $i$, its SHAP value can be expressed as
+
+\begin{equation}
+\phi_i =
+\sum_{S \subseteq F \setminus \{i\}}
+\frac{|S|!(|F|-|S|-1)!}{|F|!}
+\left[
+f(S \cup \{i\})-f(S)
+\right],
+\end{equation}
+
+where $F$ is the complete set of features, $S$ is a subset that excludes
+feature $i$, and $f(\cdot)$ represents the model output. The formulation
+considers the marginal contribution of a feature across different feature
+coalitions.
+
+SHAP supports both local and global interpretation. For an individual
+observation, SHAP values indicate how features contribute to its prediction.
+Across multiple observations, the distribution and magnitude of SHAP values
+can be aggregated to examine overall patterns of feature influence. In this study, SHAP is used to identify the features contributing to individual
+diabetes-risk predictions and to examine broader patterns of model behavior
+\cite{du_gdm_shap_2022, mao_diabetes_ml_2023}.
+
+\subsubsection{LIME (Local Interpretable Model-agnostic Explanations)}
+
+LIME is a post-hoc, model-agnostic explanation method that approximates the
+behavior of a complex predictive model within the local neighborhood of an
+individual observation. It generates perturbed samples around the instance
+being explained, obtains predictions from the original model, and assigns
+greater weight to samples that are more similar to the original observation.
+A simpler interpretable surrogate model is then fitted to the weighted
+samples to approximate the model's local decision behavior.
+
+The resulting surrogate model provides an explanation of how individual
+features influence the prediction within that local neighborhood. Because
+the approximation is local, a LIME explanation describes the behavior of
+the model around a particular observation rather than the behavior of the
+model as a whole.
+
+In this study, LIME complements SHAP by providing local surrogate-based
+explanations for selected diabetes-risk predictions. Whereas SHAP assigns
+feature contributions using a Shapley-value framework and can support both
+local and aggregated global analysis, LIME focuses on approximating model
+behavior around individual observations
+\cite{wang_diabetes_lime_2023, lu_uddin_stacking_2022}.
+
+\subsection{Calibrated Explanations and Uncertainty Quantification}
+
+The preceding sections establish the predictive, calibration, and
+explanatory foundations of the proposed framework. This section introduces
+Calibrated Explanations (CE), a post-hoc framework that integrates
+conformal-prediction-based calibration with feature-level interpretability.
+CE addresses a limitation of conventional XAI methods such as SHAP and
+LIME, which provide feature attributions without explicitly quantifying the
+uncertainty associated with the underlying probability estimates
+\cite{lofstrom_ce_2024}.
+
+\subsubsection{Venn-Abers Calibration}
+
+Venn-Abers calibration is a multi-probability calibration method derived
+from Venn predictors in conformal prediction theory. Unlike standard
+calibration methods that produce a single calibrated probability for each
+instance, Venn-Abers calibration produces a pair of probabilities
+$[p_0, p_1]$ for each prediction. These bounds represent the calibrated
+probability computed under the assumption that the instance belongs to the
+negative class ($p_0$) and the positive class ($p_1$), respectively.
+
+The width of the interval $[p_0, p_1]$ reflects calibrated predictive
+uncertainty: a narrow interval indicates high confidence in the calibrated
+estimate, while a wider interval indicates greater uncertainty. A point
+probability estimate is typically derived from the pair as a weighted
+combination. Venn-Abers calibration operates under exchangeability
+assumptions, and the separation between the probability bounds serves as
+an indication of predictive uncertainty
+\cite{nouretdinov_venn_abers_2024}.
+
+\subsubsection{Calibrated Explanations}
+
+Calibrated Explanations (CE) is a post-hoc, model-agnostic explanation
+framework that incorporates Venn-Abers calibration into the explanation
+process \cite{lofstrom_ce_2024}. For each prediction, CE produces a
+calibrated probability interval alongside feature-importance scores that
+include associated uncertainty ranges. This allows the explanation to
+communicate not only which features contributed to a prediction but also
+how reliable that prediction is.
+
+CE is applied in this study to produce uncertainty-aware explanations for
+the diabetes-risk predictions generated by the trained models. The framework
+complements SHAP and LIME by integrating calibration-based uncertainty
+directly into the feature attribution output, rather than treating
+calibration and interpretation as separate post-processing steps.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\linewidth]{Diagrams/calibrated_explanations_pipeline.pdf}
+    \caption{Conceptual flow from model prediction and Venn--Abers
+    calibration to uncertainty-aware factual and counterfactual
+    explanations. Authors' illustration based on
+    L\"ofstr\"om et al.~\cite{lofstrom_ce_2024}.}
+    \label{fig:calibrated_explanations}
+\end{figure}
+
+\subsubsection{Counterfactual Calibrated Explanations}
+
+Counterfactual Calibrated Explanations (CCE) extend the CE framework to
+generate counterfactual explanations. A counterfactual explanation
+identifies feature changes or alternative conditions associated with a
+change in the calibrated prediction. In the context of diabetes-risk screening, a
+counterfactual explanation for an at-risk individual describes which feature
+modifications would shift that individual's prediction to not at risk.
+
+CCE incorporates Venn-Abers calibration into this process, so that the
+predicted outcome associated with a counterfactual configuration is
+accompanied by a calibrated probability interval rather than an
+uncalibrated point estimate. This enables the counterfactual to communicate
+the reliability of the hypothetical prediction alongside the feature-level
+change \cite{lofstrom_ce_2024}.
+
+\subsubsection{Mondrian Calibrated Explanations and Fairness Analysis}
+
+Mondrian Calibrated Explanations extend the CE framework using Mondrian
+conformal prediction, in which the calibration set is partitioned into
+subgroups based on a conditioning variable and calibration is applied
+separately within each partition. This enables group-conditional analysis
+of calibration reliability and explanation consistency rather than reporting
+only aggregate metrics across the entire dataset.
+
+In this study, biological sex is used as a conditioning category to examine
+whether calibrated predictions, uncertainty estimates, and explanations
+behave consistently across male and female respondents. This provides a
+fairness-oriented subgroup analysis without treating group-conditional
+calibration alone as evidence of overall algorithmic fairness
+\cite{lofstrom_conditional_ce_2024}.
+
+Taken together, these theoretical foundations support the proposed
+calibrated explainable machine learning framework for early diabetes-risk
+detection. Machine learning and ensemble methods provide the predictive
+foundation, while recall-sensitive evaluation addresses the clinical
+importance of identifying at-risk individuals. Probability calibration
+examines whether predicted risks are reliable, and SHAP and LIME provide
+complementary interpretations of model behavior. Calibrated Explanations
+further integrate predictive uncertainty into the explanation process, while
+counterfactual and Mondrian extensions enable actionable insights and
+sex-stratified analysis. Collectively, these components establish the
+theoretical basis for evaluating not only whether a model predicts diabetes
+risk accurately, but also whether its predictions are reliable,
+interpretable, and appropriately characterized by uncertainty.

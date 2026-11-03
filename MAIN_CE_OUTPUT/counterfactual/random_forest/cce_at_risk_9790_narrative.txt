@@ -1,0 +1,45 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.668
+Prediction Interval: [0.667, 0.671]
+
+Alternatives to increase the calibrated probability for class 1:
+- If Ave_SBP > -1.26       then 0.843 [0.842, 0.846]
+- If waist > -0.10         then 0.781 [0.781, 0.782]
+- If con_alcohol > 0.00    then 0.696 [0.694, 0.700]
+- If Ave_DBP > -0.32       then 0.689 [0.687, 0.692]
+- If hdl < 0.33            then 0.688 [0.687, 0.690]
+- If Ave_DBP < -1.16       then 0.679 [0.677, 0.682]
+- If ldl > -0.43           then 0.678 [0.677, 0.680]
+- If ever_smk > 0.07       then 0.673 [0.667, 0.685]
+- If smoke_status < 0.99   then 0.670 [0.667, 0.676]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If pa_met < 0.00         then 0.470 [0.469, 0.471]
+- If age < 0.14            then 0.514 [0.511, 0.517]
+- If anthro_group < 3.93   then 0.518 [0.517, 0.519]
+- If pa_met > 0.62         then 0.518 [0.517, 0.519]
+- If sex < 1.07            then 0.518 [0.517, 0.519]
+- If sex > 2.00            then 0.518 [0.517, 0.519]
+- If ldl_hdl_ratio > -0.39 then 0.575 [0.573, 0.578]
+- If anthro_group > 4.18   then 0.598 [0.595, 0.601]
+- If drnk_30d_num < 0.93   then 0.608 [0.605, 0.612]
+- If binge_drink > 0.01    then 0.618 [0.616, 0.621]
+- If uic > -0.84           then 0.619 [0.617, 0.622]
+- If waist < -0.39         then 0.619 [0.619, 0.621]
+- If vita < 0.53           then 0.639 [0.634, 0.648]
+- If drnk_30d_num > 1.17   then 0.642 [0.641, 0.643]
+- If hdl > 2.00            then 0.642 [0.641, 0.643]
+- If ldl < -1.56           then 0.642 [0.641, 0.643]
+- If tri > 2.06            then 0.642 [0.641, 0.643]
+- If uic < -1.80           then 0.653 [0.651, 0.657]
+- If currentsmoking < 2.99 then 0.659 [0.656, 0.663]
+- If hemoglobin < -0.38    then 0.659 [0.656, 0.663]
+- If smoke_status > 1.12   then 0.659 [0.656, 0.663]
+- If tri < -0.16           then 0.666 [0.664, 0.670]

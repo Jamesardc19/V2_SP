@@ -1,0 +1,27 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated probability: 0.047
+Prediction Interval: [0.044, 0.047]
+
+Alternatives to increase the calibrated probability for class 1:
+- If age > -0.84         then 0.161 [0.160, 0.161]
+- If waist > -0.84       then 0.079 [0.077, 0.079]
+- If Ave_SBP > -0.96     then 0.074 [0.071, 0.074]
+- If sex < 2.00          then 0.068 [0.065, 0.069]
+- If hdl < -0.38         then 0.063 [0.058, 0.063]
+- If drnk_30d_num < 1.17 then 0.059 [0.057, 0.059]
+- If pa_met > 0.00       then 0.051 [0.044, 0.051]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If smoke_status > 0.19 then 0.043 [0.016, 0.044]
+- If drnk_30days < 1.00  then 0.044 [0.032, 0.045]
+- If hemoglobin < -0.78  then 0.044 [0.032, 0.045]
+- If hdl > 0.31          then 0.045 [0.032, 0.045]
+- If Ave_DBP > -2.10     then 0.046 [0.040, 0.046]
+- If tri < -0.16         then 0.047 [0.040, 0.047]

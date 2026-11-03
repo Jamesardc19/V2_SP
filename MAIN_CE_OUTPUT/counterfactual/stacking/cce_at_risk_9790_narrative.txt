@@ -1,0 +1,47 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.620
+Prediction Interval: [0.615, 0.628]
+
+Alternatives to increase the calibrated probability for class 1:
+- If waist > -0.05         then 0.785 [0.785, 0.787]
+- If Ave_SBP > -1.26       then 0.783 [0.783, 0.785]
+- If Ave_DBP > -0.32       then 0.666 [0.664, 0.669]
+- If con_alcohol > 0.00    then 0.638 [0.637, 0.640]
+- If pa_met > 1.00         then 0.638 [0.637, 0.640]
+- If smoke_status < 0.99   then 0.638 [0.637, 0.640]
+- If age > 2.16            then 0.638 [0.636, 0.640]
+- If drnk_30days < 1.00    then 0.637 [0.635, 0.640]
+- If pa_met < 0.05         then 0.637 [0.635, 0.640]
+- If ldl > -0.43           then 0.632 [0.630, 0.636]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If tri > 2.08            then 0.433 [0.432, 0.434]
+- If sex < 1.00            then 0.449 [0.448, 0.451]
+- If sex > 1.79            then 0.449 [0.448, 0.451]
+- If drnk_30d_num < 0.21   then 0.476 [0.474, 0.478]
+- If anthro_group < 3.05   then 0.487 [0.483, 0.491]
+- If age < 0.20            then 0.490 [0.485, 0.493]
+- If ldl_hdl_ratio > -0.41 then 0.523 [0.514, 0.532]
+- If waist < -0.39         then 0.526 [0.524, 0.528]
+- If hdl > 2.02            then 0.530 [0.529, 0.532]
+- If ldl_hdl_ratio < -1.69 then 0.550 [0.549, 0.552]
+- If uic > -0.84           then 0.555 [0.554, 0.556]
+- If anthro_group > 4.18   then 0.560 [0.559, 0.562]
+- If binge_drink > 0.01    then 0.560 [0.559, 0.562]
+- If drnk_30d_num > 1.17   then 0.560 [0.559, 0.562]
+- If hemoglobin < -0.32    then 0.565 [0.564, 0.566]
+- If ldl < -1.56           then 0.565 [0.564, 0.566]
+- If smoke_status > 1.12   then 0.574 [0.573, 0.576]
+- If uic < -1.81           then 0.574 [0.573, 0.576]
+- If vita < 0.53           then 0.576 [0.575, 0.578]
+- If tri < -0.16           then 0.592 [0.591, 0.594]
+- If ever_smk > 0.07       then 0.605 [0.604, 0.608]
+- If Ave_DBP < -1.16       then 0.611 [0.609, 0.615]
+- If hdl < 0.33            then 0.618 [0.617, 0.620]

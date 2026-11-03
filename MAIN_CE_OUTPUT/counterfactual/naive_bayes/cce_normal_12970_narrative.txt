@@ -1,0 +1,27 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.760
+Prediction Interval: [0.760, 0.761]
+
+Alternatives to increase the calibrated probability for class 1:
+- If anthro_group > 4.18  then 0.148 [0.147, 0.148]
+- If anthro_group < 3.99  then 0.348 [0.347, 0.348]
+- If age < -0.10          then 0.719 [0.719, 0.720]
+- If ldl < 2.22           then 0.719 [0.719, 0.720]
+- If ldl_hdl_ratio < 2.06 then 0.719 [0.719, 0.720]
+- If smoke_status < 1.99  then 0.719 [0.719, 0.720]
+- If tri < -0.01          then 0.719 [0.719, 0.720]
+- If waist < 1.21         then 0.721 [0.719, 0.726]
+- If drnk_30days < 0.96   then 0.734 [0.732, 0.737]
+- If Ave_SBP < -0.40      then 0.735 [0.734, 0.739]
+- If Ave_DBP < 0.39       then 0.738 [0.737, 0.739]
+- If uic > 0.10           then 0.752 [0.751, 0.753]
+- If vita < -0.06         then 0.752 [0.751, 0.753]
+
+Alternatives to decrease the calibrated probability for class 1:

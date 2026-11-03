@@ -32,13 +32,23 @@ This study develops, evaluates, and explains machine learning models for diabete
 
 ```
 ├── DATASETS/
-│   └── 2018-2021/
-│       └── MAIN DATASET/
-│           ├── data-set_anthrop.csv        # Anthropometric measurements
-│           ├── data-set_biochemical.csv    # Biochemical/lipid panel
-│           ├── data-set_clinical.csv       # Clinical (BP, hemoglobin, etc.)
-│           ├── data-set_dietary_indiv.csv  # Dietary intake (excluded by default)
-│           └── data-set_socio.csv          # Socioeconomic (age, sex)
+│   └── 2018-2021/                          # ENNS 2018-2021 (with data dictionaries)
+│       ├── MAIN DATASET/
+│       │   ├── data-set_anthrop.csv        # Anthropometric measurements
+│       │   ├── data-set_biochemical.csv    # Biochemical/lipid panel
+│       │   ├── data-set_clinical.csv       # Clinical (BP, hemoglobin, etc.)
+│       │   ├── data-set_dietary_indiv.csv  # Dietary intake (excluded by default)
+│       │   └── data-set_socio.csv          # Socioeconomic (age, sex)
+│       ├── ANTHROP DATASET/ BIOMEDICAL DATASET/ CLINICAL DATASET/
+│       ├── DIETARY INDIV DATASET/ SOCIO DATASET/
+│
+├── Thesis Manuscript/                      # Proposal, SP document templates, reference papers, notes
+├── ARCHIVE/                                # Local only (git-ignored): earlier versions and unused material
+│   ├── code/  docs/  notebooks/            # Superseded scripts, documents, notebooks
+│   ├── outputs/  model_binaries/           # Earlier outputs and trained models
+│   ├── experiments_2013/                   # 2013-dataset experiments
+│   ├── datasets_unused/  reference/        # 2013 and 2015 data, extracted reference text
+│   └── legacy_archives/                    # Earlier archive folders
 │
 ├── MAIN_PREPROCESS_OUTPUT/                 # Preprocessed arrays, scalers, feature list
 ├── MAIN_TRAINED_MODELS/                    # Saved model files (.joblib / .zip)
@@ -55,8 +65,11 @@ This study develops, evaluates, and explains machine learning models for diabete
 │   ├── global/                             # global_ce_importance.csv/png, heatmap
 │   └── mondrian/                           # Sex-stratified uncertainty comparison
 │
+├── V2_Pipeline.ipynb                       # Notebook documentation of the full V2 pipeline
+├── THESIS_RESULTS_SUMMARY.md               # Consolidated V2 results
 ├── preprocessing_pipeline_v7.py            # Core preprocessing utilities
 ├── main_preprocessing.py                   # Step 1 — preprocessing
+├── main_eda_extra.py                       # Supplementary EDA (eda2_* outputs)
 ├── main_train.py                           # Step 2 — training
 ├── main_xai.py                             # Step 3 — SHAP + LIME
 ├── main_calibration.py                     # Step 4 — Platt / Isotonic / Temperature

@@ -1,0 +1,31 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated Probability: 0.472
+Prediction Interval: [0.471, 0.472]
+
+Factors impacting the calibrated probability for class 1 positively:
+anthro_group (4.0) <= 4.18    - weight ~ 0.324 [0.324, 0.325]
+age (0.74) > -0.24            - weight ~ 0.124 [0.123, 0.127]
+vita (1.89) > -0.06           - weight ~ 0.093 [0.090, 0.097]
+tri (0.99) > -0.45            - weight ~ 0.087 [0.084, 0.091]
+uic (-1.24) <= 0.45           - weight ~ 0.033 [0.031, 0.034]
+drnk_30days (1.0) > 0.04      - weight ~ 0.014 [0.012, 0.016]
+hemoglobin (0.39) > -0.38     - weight ~ 0.003 [0.002, 0.004]
+
+Factors impacting the calibrated probability for class 1 negatively:
+Ave_SBP (-1.66) <= 0.05       - weight ~ -0.138 [-0.139, -0.138]
+binge_drink (0.0) <= 0.01     - weight ~ -0.110 [-0.110, -0.109]
+ever_smk (0.0) <= 0.07        - weight ~ -0.109 [-0.110, -0.109]
+Ave_DBP (-1.06) <= -0.02      - weight ~ -0.100 [-0.102, -0.099]
+waist (-0.29) <= 0.02         - weight ~ -0.072 [-0.073, -0.070]
+ldl_hdl_ratio (-0.7) <= -0.01 - weight ~ -0.043 [-0.044, -0.041]
+ldl (-0.55) <= 0.01           - weight ~ -0.023 [-0.024, -0.023]
+smoke_status (1.0) <= 1.12    - weight ~ -0.023 [-0.024, -0.023]
+drnk_30d_num (1.07) > -1.24   - weight ~ -0.000 [-0.001, 0.001] [[!] direction uncertain]
+hdl (0.42) > 0.32             - weight ~ -0.000 [-0.001, 0.001] [[!] direction uncertain]

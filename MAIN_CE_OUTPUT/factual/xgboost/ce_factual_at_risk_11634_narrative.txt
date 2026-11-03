@@ -1,0 +1,21 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated Probability: 0.743
+Prediction Interval: [0.743, 0.744]
+
+Factors impacting the calibrated probability for class 1 positively:
+age (1.27) > -0.46            - weight ~ 0.297 [0.296, 0.298]
+waist (0.44) > -0.11          - weight ~ 0.262 [0.261, 0.263]
+Ave_SBP (2.43) > -0.40        - weight ~ 0.134 [0.132, 0.135]
+tri (0.81) > -0.37            - weight ~ 0.078 [0.077, 0.079]
+anthro_group (4.0) <= 5.94    - weight ~ 0.010 [0.008, 0.011]
+vita (2.25) > -0.13           - weight ~ 0.010 [0.008, 0.011]
+
+Factors impacting the calibrated probability for class 1 negatively:
+drnk_30d_num (-1.46) <= -0.03 - weight ~ -0.081 [-0.083, -0.081]

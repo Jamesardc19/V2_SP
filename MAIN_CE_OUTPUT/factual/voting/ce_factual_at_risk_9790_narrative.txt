@@ -1,0 +1,32 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated Probability: 0.870
+Prediction Interval: [0.869, 0.872]
+
+Factors impacting the calibrated probability for class 1 positively:
+age (0.74) > -0.47            - weight ~ 0.263 [0.262, 0.263]
+pa_met (0.6) > 0.00           - weight ~ 0.236 [0.235, 0.236]
+sex (1.6) <= 2.00             - weight ~ 0.095 [0.094, 0.096]
+drnk_30d_num (1.07) > -0.03   - weight ~ 0.095 [0.094, 0.096]
+anthro_group (4.0) <= 5.94    - weight ~ 0.056 [0.055, 0.056]
+tri (0.99) > -0.48            - weight ~ 0.054 [0.052, 0.055]
+hemoglobin (0.39) > -0.85     - weight ~ 0.053 [0.048, 0.053]
+uic (-1.24) <= 0.35           - weight ~ 0.053 [0.048, 0.053]
+binge_drink (0.0) <= 0.01     - weight ~ 0.051 [0.045, 0.052]
+ldl_hdl_ratio (-0.7) <= -0.07 - weight ~ 0.017 [0.013, 0.018]
+vita (1.89) > -0.06           - weight ~ 0.017 [0.013, 0.018]
+
+Factors impacting the calibrated probability for class 1 negatively:
+Ave_SBP (-1.66) <= -0.40      - weight ~ -0.128 [-0.130, -0.128]
+waist (-0.29) <= -0.10        - weight ~ -0.119 [-0.124, -0.119]
+ldl (-0.55) <= -0.02          - weight ~ -0.015 [-0.026, -0.014]
+hdl (0.42) > 0.32             - weight ~ -0.007 [-0.018, -0.005]
+con_alcohol (0.0) <= 1.00     - weight ~ -0.000 [-0.003, 0.000] [[!] direction uncertain]
+ever_smk (0.0) <= 2.00        - weight ~ -0.000 [-0.003, 0.000] [[!] direction uncertain]
+Ave_DBP (-1.06) <= -0.26      - weight ~ -0.000 [-0.003, 0.000] [[!] direction uncertain]

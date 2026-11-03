@@ -1,0 +1,42 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.816
+Prediction Interval: [0.815, 0.818]
+
+Alternatives to increase the calibrated probability for class 1:
+- If age > 0.20           then 0.994 [0.994, 1.000]
+- If vita < 0.53          then 0.944 [0.943, 0.952]
+- If con_alcohol > 0.00   then 0.900 [0.899, 0.903]
+- If uic < 0.12           then 0.872 [0.872, 0.875]
+- If Ave_DBP < 0.75       then 0.850 [0.850, 0.854]
+- If sex > 1.00           then 0.836 [0.835, 0.840]
+- If alcohol < 1.00       then 0.834 [0.833, 0.838]
+- If smoke_status > 0.04  then 0.816 [0.815, 0.818]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If age < -0.24          then 0.471 [0.469, 0.472]
+- If waist < 0.24         then 0.581 [0.580, 0.583]
+- If drnk_30d_num > 0.21  then 0.584 [0.583, 0.586]
+- If drnk_30d_num < -0.02 then 0.638 [0.636, 0.640]
+- If anthro_group > 4.18  then 0.710 [0.709, 0.713]
+- If tri < -0.16          then 0.711 [0.711, 0.713]
+- If Ave_SBP < 0.72       then 0.713 [0.712, 0.715]
+- If tri > 2.08           then 0.717 [0.711, 0.731]
+- If ldl_hdl_ratio < 1.74 then 0.745 [0.743, 0.753]
+- If ldl < 0.28           then 0.750 [0.750, 0.752]
+- If Ave_DBP > 1.52       then 0.770 [0.770, 0.772]
+- If anthro_group < 3.05  then 0.770 [0.770, 0.772]
+- If ever_smk > 0.07      then 0.770 [0.770, 0.772]
+- If pa_met > 0.00        then 0.770 [0.770, 0.772]
+- If waist > 0.82         then 0.785 [0.785, 0.787]
+- If drnk_30days < 1.00   then 0.792 [0.791, 0.794]
+- If hdl > -0.31          then 0.796 [0.792, 0.810]
+- If ldl > 1.66           then 0.808 [0.807, 0.810]
+- If uic > 0.35           then 0.810 [0.808, 0.818]
+- If hemoglobin < -0.32   then 0.814 [0.813, 0.817]

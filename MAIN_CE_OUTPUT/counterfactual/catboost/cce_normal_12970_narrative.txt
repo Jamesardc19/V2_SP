@@ -1,0 +1,40 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.734
+Prediction Interval: [0.733, 0.735]
+
+Alternatives to increase the calibrated probability for class 1:
+- If ever_smk > 1.18       then 0.902 [0.901, 0.911]
+- If tri > 2.08            then 0.835 [0.834, 0.840]
+- If smoke_status < 1.99   then 0.824 [0.824, 0.827]
+- If Ave_DBP < -0.27       then 0.759 [0.759, 0.762]
+- If Ave_SBP > 0.16        then 0.751 [0.750, 0.753]
+- If vita > 0.23           then 0.751 [0.750, 0.753]
+- If waist > 1.44          then 0.742 [0.742, 0.744]
+- If sex > 1.00            then 0.741 [0.734, 0.762]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If age < 0.20            then 0.505 [0.504, 0.508]
+- If waist < 0.78          then 0.540 [0.538, 0.541]
+- If age > 1.81            then 0.571 [0.570, 0.572]
+- If hemoglobin < -0.78    then 0.609 [0.607, 0.612]
+- If tri < -0.16           then 0.640 [0.638, 0.643]
+- If Ave_SBP < -0.40       then 0.644 [0.643, 0.647]
+- If drnk_30d_num > 0.21   then 0.689 [0.687, 0.694]
+- If anthro_group < 3.45   then 0.693 [0.693, 0.694]
+- If anthro_group > 5.94   then 0.693 [0.693, 0.694]
+- If binge_drink > 0.01    then 0.693 [0.693, 0.694]
+- If con_alcohol < 1.00    then 0.693 [0.693, 0.694]
+- If currentsmoking > 0.01 then 0.693 [0.693, 0.694]
+- If drnk_30days < 1.00    then 0.693 [0.693, 0.694]
+- If pa_met < 1.00         then 0.693 [0.693, 0.694]
+- If uic > 0.12            then 0.693 [0.693, 0.694]
+- If vita < -0.07          then 0.693 [0.693, 0.694]
+- If Ave_DBP > 0.75        then 0.708 [0.707, 0.710]
+- If hdl < -0.38           then 0.720 [0.720, 0.721]

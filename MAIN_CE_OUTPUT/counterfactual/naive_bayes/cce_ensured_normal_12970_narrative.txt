@@ -1,0 +1,20 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.760
+Prediction Interval: [0.760, 0.761]
+
+Alternatives to increase the calibrated probability for class 1:
+- If anthro_group > 4.18  then 0.148 [0.147, 0.148]
+- If age < -0.10          then 0.719 [0.719, 0.720]
+- If ldl < 2.22           then 0.719 [0.719, 0.720]
+- If ldl_hdl_ratio < 2.06 then 0.719 [0.719, 0.720]
+- If smoke_status < 1.99  then 0.719 [0.719, 0.720]
+- If tri < -0.01          then 0.719 [0.719, 0.720]
+
+Alternatives to decrease the calibrated probability for class 1:

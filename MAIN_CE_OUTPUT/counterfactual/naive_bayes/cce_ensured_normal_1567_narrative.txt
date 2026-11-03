@@ -1,0 +1,40 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated probability: 0.168
+Prediction Interval: [0.162, 0.169]
+
+Alternatives to increase the calibrated probability for class 1:
+- If waist > -1.24         then 0.228 [0.226, 0.228]
+- If Ave_DBP > -1.28       then 0.213 [0.209, 0.214]
+- If Ave_SBP > -1.15       then 0.190 [0.186, 0.191]
+- If age > -0.64           then 0.190 [0.186, 0.191]
+- If binge_drink > 0.01    then 0.182 [0.180, 0.182]
+- If ever_smk > 0.07       then 0.182 [0.180, 0.182]
+- If ldl > 1.64            then 0.182 [0.180, 0.182]
+- If vita > -0.22          then 0.177 [0.174, 0.178]
+- If smoke_status > 0.04   then 0.175 [0.171, 0.175]
+- If ldl_hdl_ratio > -0.40 then 0.172 [0.168, 0.173]
+- If tri > -0.45           then 0.172 [0.168, 0.173]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If age < -1.02           then 0.148 [0.147, 0.148]
+- If alcohol < 0.97        then 0.148 [0.147, 0.148]
+- If anthro_group < 3.99   then 0.148 [0.147, 0.148]
+- If anthro_group > 4.18   then 0.148 [0.147, 0.148]
+- If con_alcohol > 0.08    then 0.148 [0.147, 0.148]
+- If currentsmoking > 1.03 then 0.148 [0.147, 0.148]
+- If drnk_30days < 0.96    then 0.148 [0.147, 0.148]
+- If hdl > 2.15            then 0.148 [0.147, 0.148]
+- If hemoglobin < -0.99    then 0.148 [0.147, 0.148]
+- If ldl < 0.30            then 0.148 [0.147, 0.148]
+- If ldl_hdl_ratio < -0.71 then 0.148 [0.147, 0.148]
+- If tri < -0.56           then 0.148 [0.147, 0.148]
+- If uic > 0.10            then 0.148 [0.147, 0.148]
+- If vita < -0.74          then 0.148 [0.147, 0.148]
+- If uic < -0.84           then 0.155 [0.152, 0.155]

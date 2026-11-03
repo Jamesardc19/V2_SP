@@ -1,0 +1,17 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated Probability: 0.619
+Prediction Interval: [0.619, 0.619]
+
+Factors impacting the calibrated probability for class 1 positively:
+age (-0.2) > -0.46     - weight ~ 0.245 [0.245, 0.246]
+Ave_SBP (1.25) > -0.39 - weight ~ 0.088 [0.088, 0.088]
+waist (0.45) > -0.20   - weight ~ 0.088 [0.088, 0.088]
+
+Factors impacting the calibrated probability for class 1 negatively:

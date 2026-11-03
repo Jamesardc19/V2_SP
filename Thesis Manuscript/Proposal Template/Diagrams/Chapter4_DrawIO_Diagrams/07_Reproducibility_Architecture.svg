@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="920" viewBox="0 0 980 920">
+<rect width="980" height="920" fill="#FFFFFF"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#183153" stroke-width="1.3"/></marker></defs>
+<text x="490.0" y="20" font-family="Arial" font-weight="bold" font-size="17" text-anchor="middle" fill="#183153">4.9 Executable Scripts and Output Artifacts</text>
+<polyline points="490.0,125 490.0,151.0 490.0,151.0 490.0,177" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="305,217.0 350.0,217.0 350.0,382.0 395,382.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="675,217.0 630.0,217.0 630.0,382.0 585,382.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="490.0,257 490.0,386.0 220.0,386.0 220.0,515" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="490.0,257 490.0,386.0 760.0,386.0 760.0,515" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="490.0,257 490.0,448.5 220.0,448.5 220.0,640" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="490.0,257 490.0,448.5 760.0,448.5 760.0,640" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="215.0,427 215.0,606.0 490.0,606.0 490.0,785" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="765.0,427 765.0,606.0 490.0,606.0 490.0,785" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="220.0,580 220.0,682.5 490.0,682.5 490.0,785" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="760.0,580 760.0,682.5 490.0,682.5 490.0,785" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="405,672.5 327.5,672.5 327.5,832.5 250,832.5" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="575,672.5 652.5,672.5 652.5,832.5 730,832.5" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="305" y="45" width="370" height="80" rx="10" fill="#DDF4EE" stroke="#183153" stroke-width="1.5"/>
+<text x="490.0" y="80.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">main_preprocessing.py</text>
+<text x="490.0" y="99.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">prepared data, features and splits</text>
+<rect x="305" y="177" width="370" height="80" rx="10" fill="#DDEBFA" stroke="#183153" stroke-width="1.5"/>
+<text x="490.0" y="212.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">main_train.py</text>
+<text x="490.0" y="231.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">models and test predictions</text>
+<rect x="35" y="337" width="360" height="90" rx="10" fill="#EEE7FA" stroke="#183153" stroke-width="1.5"/>
+<text x="215.0" y="377.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">main_xai.py</text>
+<text x="215.0" y="396.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">SHAP and LIME plots</text>
+<rect x="585" y="337" width="360" height="90" rx="10" fill="#EEE7FA" stroke="#183153" stroke-width="1.5"/>
+<text x="765.0" y="377.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">main_calibration.py</text>
+<text x="765.0" y="396.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">calibration comparisons</text>
+<rect x="35" y="515" width="370" height="65" rx="10" fill="#FFF0D9" stroke="#183153" stroke-width="1.5"/>
+<text x="220.0" y="552.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">ce_factual.py</text>
+<rect x="575" y="515" width="370" height="65" rx="10" fill="#FFF0D9" stroke="#183153" stroke-width="1.5"/>
+<text x="760.0" y="552.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">ce_cce.py</text>
+<rect x="35" y="640" width="370" height="65" rx="10" fill="#FFF0D9" stroke="#183153" stroke-width="1.5"/>
+<text x="220.0" y="677.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">ce_global.py</text>
+<rect x="575" y="640" width="370" height="65" rx="10" fill="#FFF0D9" stroke="#183153" stroke-width="1.5"/>
+<text x="760.0" y="677.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">ce_mondrian.py</text>
+<rect x="250" y="785" width="480" height="95" rx="10" fill="#DDF4EE" stroke="#183153" stroke-width="1.5"/>
+<text x="490.0" y="828.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Saved artifacts: MODEL_RESULTS · CALIBRATION · CE_OUTPUT</text>
+<text x="490.0" y="847.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Seed 42 · traceable experiment settings</text>
+</svg>

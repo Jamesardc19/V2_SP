@@ -1,0 +1,20 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated probability: 0.097
+Prediction Interval: [0.096, 0.097]
+
+Alternatives to increase the calibrated probability for class 1:
+- If anthro_group < 5.94 then 0.376 [0.376, 0.376]
+- If tri > 1.59          then 0.376 [0.376, 0.376]
+- If alcohol > 0.00      then 0.198 [0.198, 0.198]
+- If Ave_SBP > -0.96     then 0.182 [0.180, 0.182]
+- If hemoglobin < -0.85  then 0.131 [0.130, 0.131]
+- If tri < -0.21         then 0.131 [0.130, 0.131]
+
+Alternatives to decrease the calibrated probability for class 1:

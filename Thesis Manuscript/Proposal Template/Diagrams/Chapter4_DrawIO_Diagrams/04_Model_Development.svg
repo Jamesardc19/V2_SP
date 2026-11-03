@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="950" height="900" viewBox="0 0 950 900">
+<rect width="950" height="900" fill="#FFFFFF"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#183153" stroke-width="1.3"/></marker></defs>
+<text x="475.0" y="20" font-family="Arial" font-weight="bold" font-size="17" text-anchor="middle" fill="#183153">4.4 Ten Models and Ensemble Construction</text>
+<polyline points="265,66.0 337.5,66.0 337.5,200.0 410,200.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="655,66.0 597.5,66.0 597.5,200.0 540,200.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="220.0,252 220.0,278.0 220.0,278.0 220.0,304" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="410,346.0 337.5,346.0 337.5,496.0 265,496.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="730.0,252 730.0,506.0 460.0,506.0 460.0,760" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="265,496.0 337.5,496.0 337.5,635.0 410,635.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="655,496.0 582.5,496.0 582.5,641.0 510,641.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="410,635.0 337.5,635.0 337.5,801.5 265,801.5" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="510,641.0 582.5,641.0 582.5,801.5 655,801.5" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="265" y="35" width="390" height="62" rx="10" fill="#DDF4EE" stroke="#183153" stroke-width="1.5"/>
+<text x="460.0" y="71.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Training partition + training-only preprocessing</text>
+<rect x="30" y="148" width="380" height="104" rx="10" fill="#DDEBFA" stroke="#183153" stroke-width="1.5"/>
+<text x="220.0" y="186.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Seven conventional models</text>
+<text x="220.0" y="205.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">NB · kNN · AdaBoost · RF</text>
+<text x="220.0" y="224.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">XGBoost · LightGBM · CatBoost</text>
+<rect x="540" y="148" width="380" height="104" rx="10" fill="#EEE7FA" stroke="#183153" stroke-width="1.5"/>
+<text x="730.0" y="195.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">BO-TabNet</text>
+<text x="730.0" y="214.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Optuna TPE (30 trials)</text>
+<rect x="30" y="304" width="380" height="84" rx="10" fill="#DDEBFA" stroke="#183153" stroke-width="1.5"/>
+<text x="220.0" y="341.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">RandomizedSearchCV</text>
+<text x="220.0" y="360.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">5-fold, F2 scoring for tuned models</text>
+<rect x="265" y="452" width="390" height="88" rx="10" fill="#DDF4EE" stroke="#183153" stroke-width="1.5"/>
+<text x="460.0" y="491.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Trained base estimators</text>
+<text x="460.0" y="510.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Random Forest · XGBoost · LightGBM</text>
+<rect x="30" y="595" width="380" height="80" rx="10" fill="#FFF0D9" stroke="#183153" stroke-width="1.5"/>
+<text x="220.0" y="630.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Soft Voting</text>
+<text x="220.0" y="649.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Mean predicted probabilities</text>
+<rect x="510" y="595" width="410" height="92" rx="10" fill="#FFF0D9" stroke="#183153" stroke-width="1.5"/>
+<text x="715.0" y="627.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Stacking</text>
+<text x="715.0" y="646.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Out-of-fold base probabilities</text>
+<text x="715.0" y="665.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">→ Logistic Regression meta-learner</text>
+<rect x="265" y="760" width="390" height="83" rx="10" fill="#EEE7FA" stroke="#183153" stroke-width="1.5"/>
+<text x="460.0" y="797.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Candidate probabilities → validation calibration</text>
+<text x="460.0" y="816.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">→ held-out model evaluation</text>
+</svg>

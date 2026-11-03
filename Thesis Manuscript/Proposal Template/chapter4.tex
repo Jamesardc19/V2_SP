@@ -1,269 +1,212 @@
 \section{Design and Implementation}
 
-This chapter presents the design and implementation of the diabetes risk prediction system with calibrated explanations. The methodology encompasses data acquisition and preprocessing, machine learning model development with multiple algorithms, probability calibration techniques, explainable AI integration, and performance evaluation. The chapter is organized into seven major sections: conceptual framework, dataset description, preprocessing techniques, machine learning models, probability calibration methods, explainable AI techniques, and performance evaluation metrics.
+This chapter documents the operational realization of the theoretical framework presented in Chapter 3. It describes exactly how the 2018--2021 Philippine Expanded National Nutrition Survey (ENNS) data were integrated, preprocessed, and partitioned; how the ten candidate classifiers were trained and optimized; how probability calibration was applied and evaluated; and how SHAP, LIME, and Calibrated Explanations (CE) were generated. The chapter proceeds from raw data ingestion through to the full hybrid explainability pipeline, establishing the reproducible system whose results are reported in Chapter 5.
 
-\subsection{Conceptual Framework}
+\subsection{Methodological Pipeline Overview}
 
-% TODO: Add Figure - Conceptual Framework diagram (create in draw.io)
-% \begin{figure}[htbp]
+The implemented pipeline follows eight sequential stages from raw ENNS data to Calibrated Explanations output: (1) multi-dataset ENNS integration; (2) ENNS sentinel-value normalization and target construction; (3) selective feature engineering; (4) missing-value imputation, outlier capping, and standardization; (5) correlation-based feature elimination producing a final 22-feature predictor set; (6) SMOTE class balancing applied to the full preprocessed dataset; (7) stratified 70/15/15 partitioning; and (8) sequential execution of model training, probability calibration, SHAP/LIME explainability, and Calibrated Explanations generation.
+
+All data transformation parameters --- imputation statistics, outlier bounds, scaling parameters, and correlation filter decisions --- were estimated from the training partition only and applied without modification to the validation and test partitions. The ten trained classifiers span a Gaussian Na\"{i}ve Bayes baseline, six tuned traditional ML models (kNN, AdaBoost, XGBoost, Random Forest, CatBoost, LightGBM), a Bayesian-optimized deep learning model (BO-TabNet), and two ensemble architectures (Voting and Stacking). Three calibration methods (Platt Scaling, Isotonic Regression, Temperature Scaling) were applied to each model, and explanations were generated using SHAP, LIME, and the Calibrated Explanations framework with Venn-Abers calibration.
+
+% TODO: Add Figure - end-to-end pipeline diagram
+% \begin{figure}[H]
 %     \centering
-%     \includegraphics[width=\textwidth]{figures/conceptual_framework.png}
-%     \caption{Conceptual Framework of the Diabetes Risk Prediction System with Calibrated Explanations}
-%     \label{fig:conceptual_framework}
+%     \includegraphics[width=\textwidth]{Diagrams/pipeline_overview.pdf}
+%     \caption{End-to-end pipeline from 2018--2021 ENNS data ingestion to
+%     Calibrated Explanations output. Authors' illustration.}
+%     \label{fig:pipeline_overview}
 % \end{figure}
 
-The conceptual framework of this study consists of four key stages: \textbf{Input}, \textbf{Preprocessing}, \textbf{Processing}, and \textbf{Output}.
+\subsection{Data Source}
 
-\subsubsection{Input Stage}
+\subsubsection{2018--2021 Expanded National Nutrition Survey}
 
-The input stage involves acquiring data from the DOST-FNRI Expanded National Nutrition Survey (ENNS) 2013. Four primary datasets are loaded:
+The dataset used in this study is sourced from the 2018--2021 Expanded National Nutrition Survey (ENNS), conducted by the Food and Nutrition Research Institute (FNRI) under the Department of Science and Technology (DOST) of the Philippines. The ENNS is a nationally representative survey collecting data on health, nutrition, and socioeconomic characteristics of the Filipino population across all administrative regions.
 
-\begin{itemize}
-    \item \textbf{Clinical and Health Component Dataset:} Contains clinical measurements including fasting blood sugar (FBS), blood pressure, cholesterol levels, and lifestyle factors. This dataset includes information on smoking status, alcohol consumption patterns, and physical activity levels.
-    \item \textbf{Biochemical Component Dataset:} Includes laboratory test results such as lipid profiles (HDL-cholesterol, LDL-cholesterol, triglycerides), providing detailed biochemical indicators of metabolic health.
-    \item \textbf{Anthropometric Component Dataset:} Contains body measurements including height, weight, body mass index (BMI), waist circumference, and hip circumference. These measurements are critical for assessing obesity and central adiposity.
-    \item \textbf{Dietary Component Dataset:} Provides information on food group consumption (cereals, vegetables, fruits, meat, dairy, etc.) and nutrient intake (energy, protein, carbohydrates, fats, vitamins, minerals).
-\end{itemize}
+\subsubsection{ENNS Component Datasets}
 
-These datasets are merged using household number (\texttt{hhnum}) and member code (\texttt{member\_code}) as common identifiers to create a comprehensive dataset for diabetes prediction. The initial merged dataset contains 90,286 individuals with 77 features before preprocessing.
+Five component datasets were accessed and merged. The dietary component was examined but excluded from the final predictive feature set, as preliminary analysis indicated it introduced noise inconsistent with the study's clinical scope.
 
-\subsubsection{Preprocessing Stage}
+\begin{table}[H]
+\centering
+\caption{ENNS component datasets and their role in the final pipeline.}
+\label{tab:enns_components}
+\begin{tabular}{p{2.8cm}p{2cm}p{6.5cm}}
+\hline
+\textbf{Component} & \textbf{Status} & \textbf{Key Variables Retained} \\
+\hline
+Clinical/Health & Used & Ave\_SBP, Ave\_DBP, hemoglobin, uic, vita, behavioral and lifestyle variables \\
+Biochemical & Used & tri, hdl, ldl \\
+Anthropo\-metric & Used & waist, anthro\_group (height/weight used for feature engineering, then dropped) \\
+Socioeconomic & Partial (age, sex only) & age, sex \\
+Dietary & Examined; excluded & --- \\
+\hline
+\end{tabular}
+\end{table}
 
-The preprocessing stage applies multiple data transformation techniques to prepare the merged dataset for machine learning:
+The four retained component datasets were merged on the common identifiers \texttt{hhnum} (household number) and \texttt{member\_code}, using the clinical dataset as the left anchor.
 
-\begin{enumerate}
-    \item \textbf{Data Filtering:} Exclude children (age < 20), pregnant women, and lactating women to focus on the adult non-pregnant population.
-    \item \textbf{Missing Value Handling:} Drop rows with missing target variable (FBS); impute missing numerical features with K-Nearest Neighbors (KNN) imputation; impute missing categorical features with mode or placeholder value.
-    \item \textbf{Target Variable Conversion:} Transform continuous FBS values into binary classification (0 = non-diabetic for FBS < 100 mg/dL; 1 = diabetic for FBS $\geq$ 100 mg/dL).
-    \item \textbf{Feature Scaling:} Apply MinMaxScaler to all numerical features, transforming them to a range of [0, 1].
-    \item \textbf{Feature Selection:} Remove highly correlated features (correlation > 0.8) to reduce multicollinearity and redundancy.
-    \item \textbf{Class Imbalance Handling:} Apply SMOTE (Synthetic Minority Over-sampling Technique) to the training set to balance diabetic and non-diabetic classes.
-    \item \textbf{Data Leakage Prevention:} Perform train-validation-test split (70-15-15) before applying SMOTE and calibration to prevent data leakage.
-\end{enumerate}
+\subsubsection{Diabetes Risk Target Definition}
 
-\subsubsection{Processing Stage}
+The target variable \texttt{diabetes} was derived from fasting blood sugar (FBS). Following the American Diabetes Association diagnostic criteria \cite{ada_diabetes_diagnosis}, individuals with FBS $\geq$ 100 mg/dL (prediabetes: 100--125 mg/dL; diabetes: $\geq$126 mg/dL) were assigned Class~1 (\textit{at risk}), and those with FBS $<$ 100 mg/dL were assigned Class~0 (\textit{not at risk}). Rows with missing FBS were removed before any imputation step to prevent imputation-induced label leakage.
 
-The processing stage involves training multiple machine learning models, applying calibration, and generating explanations:
+\subsubsection{Final Predictor Set}
 
-\textbf{Model Training:} Nine machine learning algorithms are trained on the preprocessed training set:
-\begin{itemize}
-    \item Naive Bayes
-    \item K-Nearest Neighbors (k-NN)
-    \item Random Forest
-    \item XGBoost (Extreme Gradient Boosting)
-    \item LightGBM (Light Gradient Boosting Machine)
-    \item CatBoost (Categorical Boosting)
-    \item AdaBoost (Adaptive Boosting)
-    \item TabNet (Bayesian Optimized using validation set)
-    \item Ensemble Methods (Voting Classifier and Stacking Classifier)
-\end{itemize}
+Following feature engineering and correlation filtering, the final modeling set comprised 22 predictors spanning five domains.
 
-\textbf{Hyperparameter Optimization:} For TabNet, Bayesian Optimization is performed using the validation set to find optimal hyperparameters (learning rate, number of decision steps, attention dimensions, etc.).
+\begin{table}[H]
+\centering
+\caption{Final 22-feature predictor set used in all ten classifiers.}
+\label{tab:final_features}
+\begin{tabular}{clll}
+\hline
+\textbf{\#} & \textbf{Feature} & \textbf{Type} & \textbf{Domain} \\
+\hline
+1 & \texttt{Ave\_SBP} & Continuous & Clinical \\
+2 & \texttt{Ave\_DBP} & Continuous & Clinical \\
+3 & \texttt{uic} & Continuous & Clinical \\
+4 & \texttt{vita} & Continuous & Clinical \\
+5 & \texttt{hemoglobin} & Continuous & Clinical \\
+6 & \texttt{tri} & Continuous & Biochemical \\
+7 & \texttt{hdl} & Continuous & Biochemical \\
+8 & \texttt{ldl} & Continuous & Biochemical \\
+9 & \texttt{waist} & Continuous & Anthropometric \\
+10 & \texttt{anthro\_group} & Categorical & Demographic \\
+11 & \texttt{currentsmoking} & Categorical & Behavioral \\
+12 & \texttt{ever\_smk} & Categorical & Behavioral \\
+13 & \texttt{smoke\_status} & Categorical & Behavioral \\
+14 & \texttt{alcohol} & Categorical & Behavioral \\
+15 & \texttt{con\_alcohol} & Categorical & Behavioral \\
+16 & \texttt{drnk\_30days} & Categorical & Behavioral \\
+17 & \texttt{drnk\_30d\_num} & Continuous & Behavioral \\
+18 & \texttt{binge\_drink} & Categorical & Behavioral \\
+19 & \texttt{pa\_met} & Continuous & Behavioral \\
+20 & \texttt{age} & Continuous & Demographic \\
+21 & \texttt{sex} & Categorical & Demographic \\
+22 & \texttt{ldl\_hdl\_ratio} & Continuous & Engineered \\
+\hline
+\end{tabular}
+\end{table}
 
-\textbf{Probability Calibration:} Two calibration methods are applied to each trained model using the validation set:
-\begin{itemize}
-    \item Platt Scaling (Logistic Calibration)
-    \item Isotonic Regression
-\end{itemize}
+The FBS column was removed from the feature matrix after target construction.
 
-Calibration ensures that predicted probabilities accurately reflect true diabetes risk, enabling reliable risk stratification.
+\subsection{Preprocessing and Feature Engineering}
 
-\textbf{Explainable AI Integration:} Two XAI techniques are applied to generate explanations:
-\begin{itemize}
-    \item \textbf{SHAP (SHapley Additive exPlanations):} Provides global feature importance and individual prediction explanations based on Shapley values from game theory
-    \item \textbf{Calibrated Explanations:} Generates feature importance with uncertainty quantification, providing probabilistic explanations that account for model uncertainty
-\end{itemize}
+All preprocessing was implemented in Python using \texttt{Pandas}, \texttt{NumPy}, \texttt{scikit-learn} (version 1.2.2), and \texttt{imbalanced-learn}. The complete pipeline is executed by \texttt{main\_preprocessing.py}.
 
-\subsubsection{Output Stage}
+\subsubsection{Dataset Integration}
 
-The output stage presents the results of the diabetes risk prediction system:
+The anthropometric, biochemical, and clinical datasets were merged via a left join on \texttt{hhnum} and \texttt{member\_code}, using the clinical dataset as the anchor. The socioeconomic dataset was subsequently merged to extract \texttt{age} and \texttt{sex}. After merging, metadata columns (\texttt{regcode}, \texttt{provhuc}, \texttt{hhnum}, \texttt{member\_code}, and survey design codes) were dropped to prevent geographic data leakage.
 
-\begin{itemize}
-    \item \textbf{Prediction:} Binary classification (diabetic/non-diabetic) with calibrated probability estimate
-    \item \textbf{Risk Stratification:} Classification into risk levels (Low: < 30\%, Moderate: 30-70\%, High: > 70\%) based on calibrated probabilities
-    \item \textbf{Feature Importance:} Ranking of features by their contribution to the prediction
-    \item \textbf{Calibrated Explanations:} Feature-level explanations with uncertainty intervals showing which features increase or decrease diabetes risk
-    \item \textbf{Performance Metrics:} Model evaluation using Precision, Recall, F2-Score, AUPRC, and calibration metrics (Brier Score, ECE)
-\end{itemize}
+\subsubsection{ENNS Sentinel-Value Normalization}
 
-\subsection{DOST-FNRI 2013 National Nutrition Survey Dataset}
+The ENNS survey encodes missing, unknown, and non-applicable responses using survey-specific sentinel values (e.g., \texttt{999}, \texttt{9999}) as documented in the FNRI survey metadata. Before imputation, all such codes were recoded to \texttt{NaN} to ensure they were treated as genuine missing values.
 
-The dataset used in this study is sourced from the eNutrition website of the Food and Nutrition Research Institute (FNRI), an attached agency under the Department of Science and Technology (DOST) in the Philippines. The eNutrition website serves as the National Nutrition Survey (NNS) data warehouse, providing electronically accessible data on population health, nutrition, and dietary patterns.
+\subsubsection{Target Construction}
 
-\subsubsection{Clinical and Health Component Dataset}
+Rows with missing FBS were removed before any feature imputation step, preventing imputation-induced label leakage. The binary target \texttt{diabetes} was constructed from the remaining records using the FBS threshold described in Section~4.2.3.
 
-This dataset contains 105,949 individuals with 29 features, including:
+\subsubsection{Selective Feature Engineering}
 
-\textbf{Demographic Features:} Region code, province code, household number, member code, age, sex, physiological status, civil status
+Four candidate features were computed from raw anthropometric and biochemical measurements before imputation and scaling. Total cholesterol (\texttt{chol}) was dropped explicitly to retain the more specific LDL metric prior to correlation filtering.
 
-\textbf{Clinical Measurements:} Average systolic blood pressure (SBP), average diastolic blood pressure (DBP), fasting blood sugar (FBS - target variable), total cholesterol, triglycerides, HDL-cholesterol, LDL-cholesterol
+\begin{table}[H]
+\centering
+\caption{Engineered features and their outcome after correlation filtering.}
+\label{tab:engineered_features}
+\begin{tabular}{p{3cm}p{3.2cm}p{1.8cm}p{4cm}}
+\hline
+\textbf{Feature} & \textbf{Formula} & \textbf{Status} & \textbf{Reason} \\
+\hline
+\texttt{bmi} & weight $\div$ (height/100)$^2$ & Dropped & $r > 0.80$ with \texttt{waist} \\
+\texttt{tri\_hdl\_ratio} & tri $\div$ hdl & Dropped & $r > 0.80$ with \texttt{tri} \\
+\texttt{ldl\_hdl\_ratio} & ldl $\div$ hdl & \textbf{Retained} & Adds non-redundant atherogenic signal \\
+\texttt{bmi\_tri\_interact} & bmi $\times$ tri $\div$ 100 & Dropped & $r > 0.80$ with \texttt{tri} \\
+\hline
+\end{tabular}
+\end{table}
 
-\textbf{Lifestyle Factors:} Current smoking status, alcohol consumption patterns, physical activity level (MET classification)
+After engineering, \texttt{weight} and \texttt{height} were dropped as they were fully captured by derived features. Only \texttt{ldl\_hdl\_ratio} survived correlation filtering as an engineered predictor.
 
-\textbf{Survey Metadata:} Primary sampling unit, strata, sampling weights
+\subsubsection{Missing-Value Imputation}
 
-The FBS feature serves as the target variable, representing fasting blood glucose levels measured after 10-12 hours of fasting. This dataset was designed to assess risk factors for non-communicable diseases (NCDs) including diabetes, hypertension, and dyslipidemia.
+Missing values in continuous features were imputed using K-Nearest Neighbors (KNN) imputation with the number of neighbors $k$ optimized through cross-validation. Categorical features were imputed using mode values. All imputation parameters were fitted exclusively on the training partition and applied without refitting to validation and test partitions.
 
-\subsubsection{Biochemical Component Dataset}
+\subsubsection{Outlier Handling}
 
-This dataset provides laboratory test results for lipid profiles and other biomarkers, complementing the clinical measurements with detailed biochemical indicators of metabolic health.
+Outliers in continuous features were capped using the interquartile range (IQR) method with a 1.5$\times$IQR boundary. Values below $Q_1 - 1.5 \times \mathrm{IQR}$ were set to the lower bound; values above $Q_3 + 1.5 \times \mathrm{IQR}$ were set to the upper bound. IQR thresholds were computed from the training partition only.
 
-\subsubsection{Anthropometric Component Dataset}
+\subsubsection{Standardization}
 
-This dataset contains body measurements including height, weight, body mass index (BMI), waist circumference, and hip circumference. These anthropometric indicators are critical predictors of diabetes risk, particularly central obesity measured by waist circumference.
+Continuous predictors were standardized using \texttt{StandardScaler}. The scaler was fitted on the training partition and applied without refitting to the validation and test partitions. Categorical features were left unchanged.
 
-\subsubsection{Dietary Component Dataset}
+\subsubsection{Correlation-Based Feature Elimination}
 
-This dataset contains 19,831 individuals with 48 features representing food group consumption and nutrient intake:
+Pearson correlation was computed across all numerical features. For each pair with $|r| > 0.80$, the feature with the lower absolute correlation with the target variable was removed iteratively. This step, together with the feature engineering filter, produced the final 22-predictor set described in Table~\ref{tab:final_features}.
 
-\textbf{Food Groups (grams/day):} Cereals and cereal products, rice, corn, starchy roots and tubers, sugar and syrups, dried beans/nuts/seeds, vegetables (green leafy, yellow, others), fruits (vitamin C-rich, others), fish/meat/poultry, eggs, milk and milk products, fats and oils, beverages, condiments and spices
+\subsubsection{Class-Imbalance Handling}
 
-\textbf{Nutrient Intake:} Total energy (kcal), protein (g), calcium (mg), iron (mg), vitamin A ($\mu$g), thiamin (mg), riboflavin (mg), niacin (mg), vitamin C (mg), carbohydrates (g), fats (g)
+The dataset exhibits class imbalance, with not-at-risk cases substantially outnumbering at-risk cases. SMOTE \cite{elreedy_smote_2023} was applied to the full preprocessed dataset with \texttt{sampling\_strategy = 1.0} (full 1:1 balance) and \texttt{k\_neighbors = 5}. The resulting balanced dataset was subsequently partitioned into training, validation, and test sets.
 
-This dataset provides insights into dietary patterns and their relationship with diabetes risk, as diet is a major modifiable risk factor for Type 2 diabetes.
+\subsubsection{Train-Validation-Test Partition}
 
-\subsection{Preprocessing Techniques}
-
-All preprocessing was implemented using Python 3.9 with the following libraries: Pandas (version 1.5.3) for data manipulation, NumPy (version 1.24.2) for numerical operations, and Scikit-learn (version 1.2.2) for preprocessing utilities and machine learning algorithms.
-
-\subsubsection{Dataset Merging}
-
-The four component datasets (clinical, biochemical, anthropometric, dietary) are merged using a left join on the common identifiers \texttt{hhnum} (household number) and \texttt{member\_code} (member identifier). The clinical dataset serves as the base, as it contains the target variable (FBS). The merge operation combines all available information for each individual into a single comprehensive dataset.
-
-The merged dataset initially contains 90,286 entries with 77 features. These features include demographic information (region code, province code, age, sex, civil status), clinical measurements (blood pressure, FBS, cholesterol, triglycerides, HDL, LDL), anthropometric measurements (height, weight, BMI, waist, hip), lifestyle factors (smoking status, alcohol consumption, physical activity), and dietary intake (food groups and nutrient consumption).
-
-\subsubsection{Data Filtering}
-
-To ensure the study focuses on the appropriate population, the following exclusion criteria are applied:
-
-\begin{itemize}
-    \item \textbf{Age Filter:} Individuals under 20 years old are excluded, as diabetes screening guidelines typically target adults.
-    \item \textbf{Pregnancy Status:} Pregnant women are excluded to avoid confounding from gestational diabetes.
-    \item \textbf{Lactation Status:} Lactating women are excluded as their metabolic profiles may differ from the general population.
-\end{itemize}
-
-Additionally, administrative and survey design variables are removed to prevent data leakage. Specifically, \texttt{regcode} (region code), \texttt{provcode} (province code), \texttt{psurec} (primary sampling unit), \texttt{strrec} (strata), and sampling weight variables (\texttt{finalwgt1}, \texttt{finalwgt4}) are dropped. These variables are design artifacts that do not represent individual health characteristics and could allow models to learn geographic patterns rather than clinical risk factors.
-
-\subsubsection{Missing Value Handling}
-
-Missing data is handled using a multi-step approach:
-
-\begin{enumerate}
-    \item \textbf{Target Variable:} Rows with missing FBS values are dropped. For the sake of transparency and to preserve the integrity of the data, as well as to avoid imputation bias, the missing target values are dropped instead of imputed. This removes instances where diabetes status cannot be determined.
-    \item \textbf{Features with Excessive Missing Values:} Features with more than 50\% missing values are dropped entirely, as imputation would introduce too much uncertainty. For example, \texttt{drnk\_30dnum} (number of drinks in past 30 days) was removed due to excessive missingness.
-    \item \textbf{Numerical Features:} Missing values are imputed using K-Nearest Neighbors (KNN) imputation with k=5 neighbors. This method preserves the local structure of the data better than simple mean imputation. The KNN imputer is fitted on the training set only to prevent data leakage.
-    \item \textbf{Categorical Features:} Missing values are imputed with the mode (most frequent value) calculated from the training set. For some categorical features, missing values are assigned a placeholder value of 99, as indicated in the ENNS metadata, which represents "Not Applicable" or "Unknown."
-\end{enumerate}
-
-\subsubsection{Target Variable Conversion}
-
-The target attribute \texttt{fbs} represents the fasting blood sugar level and is inherently a continuous range of values. Since this study is performing binary classification, the target attribute is transformed into a binary categorical variable. The continuous FBS variable is converted to a binary target based on the American Diabetes Association diagnostic criteria:
+The balanced dataset was partitioned using a stratified 70/15/15 split with \texttt{random\_state = 42}:
 
 \begin{itemize}
-    \item \textbf{Non-diabetic (Class 0):} FBS < 100 mg/dL (normal fasting glucose)
-    \item \textbf{Diabetic (Class 1):} FBS $\geq$ 100 mg/dL (includes both prediabetes [100-125 mg/dL] and diabetes [$\geq$ 126 mg/dL])
+    \item \textbf{Training set (70\%):} used for model fitting, imputation, scaling, and RandomizedSearchCV cross-validation
+    \item \textbf{Validation set (15\%):} used for Optuna BO-TabNet optimization and post-hoc calibration fitting
+    \item \textbf{Test set (15\%):} used exclusively for final performance evaluation; no transformation parameters were re-estimated from it
 \end{itemize}
 
-This threshold-based conversion creates a binary classification problem suitable for the machine learning models employed. The combined prediabetes and diabetes class reflects the clinical importance of early detection, as individuals with prediabetes are at high risk of progression to Type 2 diabetes and benefit from early intervention.
+\subsection{Model Development and Optimization}
 
-\subsubsection{Feature Scaling}
+All classifiers were implemented in Python 3.9 using \texttt{scikit-learn} (version 1.2.2), \texttt{pytorch-tabnet} (version 4.0), \texttt{xgboost} (version 1.7.5), \texttt{lightgbm} (version 3.3.5), \texttt{catboost} (version 1.2), and \texttt{optuna}. Table~\ref{tab:model_optimization} summarizes the ten candidate classifiers and their optimization strategies; F2-score was the optimization objective for all tunable models.
 
-To scale the features of the merged dataset, the columns are segregated between numerical and categorical values. During feature scaling, only numerical features are scaled, while categorical features are left unchanged.
+\begin{table}[H]
+\centering
+\caption{Candidate classifiers and hyperparameter optimization strategy.}
+\label{tab:model_optimization}
+\begin{tabular}{p{3.6cm}p{4.8cm}rp{1.4cm}}
+\hline
+\textbf{Model} & \textbf{Optimization} & \textbf{Candidates} & \textbf{CV} \\
+\hline
+Na\"ive Bayes & Default (no tuning) & --- & --- \\
+kNN & RandomizedSearchCV & 15 & 5-fold \\
+AdaBoost & RandomizedSearchCV & 10 & 5-fold \\
+XGBoost & RandomizedSearchCV & 30 & 5-fold \\
+Random Forest & RandomizedSearchCV & 30 & 5-fold \\
+CatBoost & RandomizedSearchCV & 30 & 5-fold \\
+LightGBM & RandomizedSearchCV & 30 & 5-fold \\
+BO-TabNet & Optuna/TPE & 30 trials & val set \\
+Voting Ensemble & Constructed from tuned base learners & --- & --- \\
+Stacking Ensemble & Logistic Regression meta-learner & --- & 5-fold \\
+\hline
+\end{tabular}
+\end{table}
 
-MinMaxScaler is applied to all numerical features, transforming them to a range of [0, 1]:
+\subsubsection{RandomizedSearchCV Optimization}
 
-$$x_{\mathrm{scaled}} = \frac{x - x_{\min}}{x_{\max} - x_{\min}}$$
+For the six tunable traditional classifiers, \texttt{RandomizedSearchCV} was used with F2-score as the scoring function and 5-fold cross-validation on the training set. Representative search spaces covered: learning rate (0.01--0.3), maximum depth (3--10), and number of estimators (50--1000) for gradient-boosting models; number of neighbors and distance metric for kNN; and estimator count and learning rate for AdaBoost.
 
-where $x$ is the original feature value, $x_{\min}$ is the minimum value, and $x_{\max}$ is the maximum value in the training set. MinMaxScaler ensures that features with different units and scales (e.g., age in years vs. cholesterol in mg/dL) are normalized to a common range, which is particularly important for distance-based algorithms like k-NN and neural networks like TabNet. The scaling parameters ($x_{\min}$, $x_{\max}$) are computed from the training set only and applied to validation and test sets to prevent data leakage.
+\subsubsection{Bayesian Optimization of BO-TabNet}
 
-\subsubsection{Feature Selection}
+BO-TabNet was optimized using Optuna with the TPE sampler over 30 trials, evaluating F2-score on the validation set. The search space covered decision and attention dimensions \texttt{n\_d}/\texttt{n\_a} $\in \{8,16,32,64\}$; decision steps \texttt{n\_steps} $\in \{3,\ldots,7\}$; relaxation parameter $\gamma \in \{1.0,1.5,2.0\}$; sparsity regularization $\lambda_{\mathrm{sparse}} \in \{10^{-6},10^{-4},10^{-3}\}$; learning rate $\in \{0.005,0.01,0.02\}$; and batch size $\in \{256,512,1024\}$.
 
-After merging the four datasets, the merged dataset contains 77 features. Feature selection is applied to choose a subset of features while excluding others based on their correlation and relevance. Correlation-based feature selection is performed to remove redundant features:
+\subsubsection{Voting and Stacking Ensemble Construction}
 
-\begin{enumerate}
-    \item Compute the Pearson correlation matrix for all numerical features
-    \item Identify pairs of features with correlation coefficient > 0.8
-    \item For each highly correlated pair, remove the feature with lower correlation to the target variable
-\end{enumerate}
+Both ensemble classifiers used the same three optimized base learners: Random Forest, XGBoost, and LightGBM.
 
-Highly correlated features indicate that they carry similar information, which leads to multicollinearity and redundancy. Once highly correlated features are identified, they are removed from the merged dataset. This reduces multicollinearity, improves model interpretability, and decreases computational cost.
+\textbf{Voting Ensemble:} Implemented with \texttt{VotingClassifier} (\texttt{voting=`soft'}). The final probability is the unweighted mean of the three base learners' predicted class probabilities.
 
-After feature selection, the final dataset contains 64 features. These features represent a diverse set of health indicators including demographic factors, clinical measurements, anthropometric indices, lifestyle behaviors, and dietary patterns.
+\textbf{Stacking Ensemble:} Implemented with \texttt{StackingClassifier}. Out-of-fold predictions from the three base learners (via 5-fold CV) served as meta-features for a Logistic Regression meta-learner, allowing it to learn optimal weighting across the base models' complementary strengths.
 
-\subsubsection{Handling Class Imbalance}
+\subsubsection{Model-Selection Protocol}
 
-The dataset exhibits class imbalance, with non-diabetic cases significantly outnumbering diabetic cases. To address this imbalance, SMOTE (Synthetic Minority Over-sampling Technique) is applied to the training set:
-
-\begin{enumerate}
-    \item For each minority class instance, identify k=5 nearest neighbors from the same class
-    \item Generate synthetic instances by interpolating between the instance and its neighbors using the formula: $x_{\mathrm{synthetic}} = x_i + \lambda \cdot (x_{\mathrm{neighbor}} - x_i)$ where $\lambda \in [0,1]$ is a random value
-    \item Continue until the desired class balance is achieved (65:35 majority-to-minority ratio)
-\end{enumerate}
-
-Critically, SMOTE is applied only to the training set \textbf{after} the train-validation-test split to prevent data leakage. Applying SMOTE before splitting would allow synthetic instances based on test data to appear in the training set, artificially inflating performance metrics. The validation and test sets retain their original class distributions to provide realistic performance estimates that reflect real-world deployment scenarios.
-
-After performing all preprocessing techniques, the dataset is reduced to 90,286 entries with 64 features and 1 target variable. The data is partitioned using a 70-15-15 train-validation-test split. Consequently, the training set contains 67,206 entries, the validation set contains 11,540 entries, and the test set contains 11,540 entries.
-
-\subsection{Machine Learning Models}
-
-Nine machine learning algorithms are trained and evaluated for diabetes prediction. All models are implemented using Python 3.9 with Scikit-learn (version 1.2.2) for traditional machine learning algorithms and PyTorch-TabNet (version 4.0) for the deep learning model. Additional libraries used include XGBoost (version 1.7.5), LightGBM (version 3.3.5), and CatBoost (version 1.2) for gradient boosting implementations.
-
-\subsubsection{Naive Bayes}
-
-A Gaussian Naive Bayes classifier is trained using \texttt{sklearn.naive\_bayes.GaussianNB}, assuming that features follow a normal distribution within each class. Despite the strong independence assumption that all features are conditionally independent given the class label, Naive Bayes provides a fast baseline model with minimal hyperparameter tuning required. The model is trained with default parameters.
-
-\subsubsection{K-Nearest Neighbors}
-
-A k-Nearest Neighbors classifier is trained using \texttt{sklearn.neighbors.KNeighborsClassifier}. Hyperparameter tuning is performed using RandomizedSearchCV with 5-fold cross-validation to optimize the number of neighbors (k) and distance metric. The final model uses k=5 neighbors and Euclidean distance metric. The algorithm classifies instances based on the majority vote of their nearest neighbors in the feature space. Due to the instance-based nature of k-NN, feature scaling is critical for this model.
-
-\subsubsection{Random Forest}
-
-A Random Forest classifier is trained using \texttt{sklearn.ensemble.RandomForestClassifier}. Hyperparameter tuning is performed using RandomizedSearchCV with 5-fold cross-validation, optimizing for F2-score to prioritize recall. The search space includes: number of estimators (50-500), maximum depth (10-100), minimum samples split (2-20), minimum samples leaf (1-10), and maximum features (sqrt, log2, None). The final tuned model uses 100 decision trees with a maximum depth of 30. Each tree is built on a bootstrap sample of the training data, and random feature subsets are considered at each split. The final prediction is the majority vote across all trees.
-
-\subsubsection{Gradient Boosting Models}
-
-Three gradient boosting implementations are trained:
-
-\textbf{XGBoost:} Extreme Gradient Boosting is trained using \texttt{xgboost.XGBClassifier}. Hyperparameter tuning is performed using RandomizedSearchCV with 5-fold cross-validation and 50 iterations, optimizing for F2-score. The search space includes: learning rate (0.01-0.3), maximum depth (3-10), number of estimators (100-1000), subsample ratio (0.6-1.0), and regularization parameters (alpha, lambda). The final tuned model achieves the best performance among all models tested, with tree-based learners, L1 and L2 regularization, and optimized parallel processing.
-
-\textbf{LightGBM:} Light Gradient Boosting Machine is trained using \texttt{lightgbm.LGBMClassifier}. The model uses histogram-based algorithms and leaf-wise tree growth for improved efficiency compared to level-wise growth in traditional gradient boosting. Default parameters are used with minor adjustments for class imbalance (scale\_pos\_weight).
-
-\textbf{CatBoost:} Categorical Boosting is trained using \texttt{catboost.CatBoostClassifier}. The model provides native categorical feature handling and uses ordered boosting to reduce overfitting. Training is performed with 1000 iterations and early stopping based on validation set performance.
-
-\subsubsection{AdaBoost}
-
-Adaptive Boosting is trained using \texttt{sklearn.ensemble.AdaBoostClassifier}. Hyperparameter tuning is performed using RandomizedSearchCV with 5-fold cross-validation. The search space includes: number of estimators (50-500), learning rate (0.01-2.0), and base estimator type. The model trains a sequence of weak learners (decision stumps), with each subsequent learner focusing on instances misclassified by previous learners. Instance weights are adjusted iteratively to emphasize difficult cases, making the ensemble progressively better at handling challenging instances.
-
-\subsubsection{TabNet}
-
-TabNet is a deep learning architecture for tabular data with sequential attention mechanism, implemented using \texttt{pytorch\_tabnet.tab\_model.TabNetClassifier}. Two versions are trained:
-
-\textbf{TabNet (Baseline):} Trained with default hyperparameters as a baseline for comparison.
-
-\textbf{TabNet (Bayesian Optimized):} Bayesian Optimization is performed using \texttt{skopt.BayesSearchCV} with 12 iterations and 5-fold cross-validation (60 total model evaluations) to tune hyperparameters. The search space includes:
-
-\begin{itemize}
-    \item \texttt{n\_d} and \texttt{n\_a} (decision and attention dimensions): [8, 16, 32, 64]
-    \item \texttt{n\_steps} (number of decision steps): [3, 4, 5, 6, 7]
-    \item \texttt{gamma} (relaxation parameter): [1.0, 1.5, 2.0]
-    \item \texttt{lambda\_sparse} (sparsity regularization): [1e-6, 1e-4, 1e-3]
-    \item Learning rate: [0.005, 0.01, 0.02]
-    \item Batch size: [256, 512, 1024]
-\end{itemize}
-
-The Bayesian Optimization process took approximately 214 minutes to complete. The optimized TabNet model provides both predictive performance and interpretability through feature selection masks, which show which features were selected at each decision step for individual predictions.
-
-\subsubsection{Ensemble Methods}
-
-Two ensemble approaches are implemented using \texttt{sklearn.ensemble}:
-
-\textbf{Voting Classifier:} Implemented using \texttt{VotingClassifier} with soft voting. Combines predictions from multiple base models (Random Forest, XGBoost, LightGBM, CatBoost) by averaging their predicted probabilities. Each base model contributes equally to the final prediction (uniform weights).
-
-\textbf{Stacking Classifier:} Implemented using \texttt{StackingClassifier}. Uses predictions from base models (Random Forest, XGBoost, LightGBM, CatBoost, AdaBoost) as features for a meta-learner. The meta-learner is a Logistic Regression model trained using 5-fold cross-validation on the training set. This enables the meta-learner to learn optimal combination weights based on each base model's strengths and weaknesses.
+Models were ranked primarily by F2-score on the held-out test partition. ROC-AUC and AUPRC were retained as complementary discrimination measures, and Log-Loss and Brier Score were computed for probability quality. This dual-metric evaluation recognizes that screening performance (F2 and Recall) and deployment suitability (reliable calibrated probabilities) may favor different candidate models.
 
 \subsection{Probability Calibration}
 
-After training, each model's predicted probabilities are calibrated using the validation set to ensure they accurately reflect true diabetes risk.
+After training, each model's predicted probabilities are calibrated using the validation set to ensure they accurately reflect true diabetes risk. Three post-hoc calibration methods are applied and compared.
 
 \subsubsection{Platt Scaling}
 
@@ -275,21 +218,32 @@ where $f(x)$ is the uncalibrated score from the original model.
 
 \subsubsection{Isotonic Regression}
 
-Isotonic Regression fits a piecewise-constant monotonic function to map uncalibrated scores to calibrated probabilities. The validation set is used to learn the calibration mapping, which is then applied to test set predictions.
+Isotonic Regression fits a piecewise-constant monotonic function to map uncalibrated scores to calibrated probabilities. The calibration mapping is learned from the validation set and applied to test set predictions. Unlike Platt Scaling, Isotonic Regression does not assume a parametric form for the calibration relationship.
+
+\subsubsection{Temperature Scaling}
+
+Temperature Scaling adjusts model confidence by dividing the logit output by a single learned temperature parameter $T > 0$:
+
+$$P_{\mathrm{calibrated}}(y=1|x) = \sigma\!\left(\frac{z(x)}{T}\right)$$
+
+where $z(x)$ is the model logit and $\sigma(\cdot)$ is the sigmoid function. The temperature parameter is optimized on the validation set by minimizing negative log-likelihood. Values of $T > 1$ soften overconfident predictions, while $T < 1$ sharpens underconfident ones. Temperature Scaling does not alter the relative ranking of model predictions.
 
 \subsubsection{Calibration Evaluation}
 
 Calibration quality is assessed using:
 
 \begin{itemize}
-    \item \textbf{Calibration Plots:} Visual comparison of predicted probabilities vs. observed frequencies
-    \item \textbf{Brier Score:} Mean squared error between predicted probabilities and actual outcomes
-    \item \textbf{Expected Calibration Error (ECE):} Average absolute difference between confidence and accuracy across probability bins
+    \item \textbf{Log-Loss:} Primary calibration-selection criterion; measures the quality of predicted probability distributions
+    \item \textbf{Brier Score:} Mean squared error between predicted probabilities and actual binary outcomes
+    \item \textbf{ECE:} Weighted average discrepancy between predicted confidence and observed positive-class frequency across probability bins
+    \item \textbf{Reliability diagrams:} Visual calibration curves comparing mean predicted probability per bin against observed positive-class frequency
 \end{itemize}
+
+For each model, the calibration method yielding the lowest Log-Loss on the test set was selected as the best calibration configuration. The best-calibrated variant of the best-discriminating model was subsequently used as the recommended deployment configuration and as the basis for the Calibrated Explanations analysis.
 
 \subsection{Explainable Artificial Intelligence Techniques}
 
-Two XAI techniques are implemented to provide interpretable explanations for model predictions.
+Three complementary XAI frameworks are implemented to provide interpretable explanations for model predictions at both global and local levels.
 
 \subsubsection{SHAP (SHapley Additive exPlanations)}
 
@@ -298,94 +252,99 @@ SHAP is implemented using the SHAP Python library. For tree-based models (Random
 SHAP provides:
 \begin{itemize}
     \item \textbf{Global Feature Importance:} Ranking of features by mean absolute SHAP value across all instances
-    \item \textbf{Local Explanations:} Feature contributions for individual predictions shown through force plots
+    \item \textbf{Local Explanations:} Feature contributions for individual predictions shown through force plots and waterfall charts
     \item \textbf{Summary Plots:} Distribution of SHAP values across all instances, revealing feature impact patterns
 \end{itemize}
 
-\subsubsection{Calibrated Explanations}
+\subsubsection{LIME (Local Interpretable Model-agnostic Explanations)}
 
-Calibrated Explanations are implemented using the \texttt{calibrated-explanations} Python library. This technique provides:
+LIME is implemented using the \texttt{lime} Python library. For each instance to be explained, LIME generates perturbed samples in the neighborhood of the observation, obtains predictions from the original model for each perturbed sample, and fits a weighted linear regression surrogate model to approximate local model behavior. Samples closer to the original instance receive higher weights in the fitting process.
 
-\begin{itemize}
-    \item \textbf{Probabilistic Feature Importance:} Feature contributions with uncertainty intervals based on conformal prediction
-    \item \textbf{Factual Explanations:} Features that support the predicted class
-    \item \textbf{Counterfactual Explanations:} Features that, if changed, would alter the prediction
-    \item \textbf{Uncertainty Quantification:} Confidence intervals for both predictions and explanations
-\end{itemize}
+LIME provides local explanations that identify which features most influenced the prediction for a specific individual, complementing the global and aggregated perspective of SHAP with a locally faithful approximation of model decision behavior.
 
-Calibrated Explanations leverage the calibrated probabilities from Platt Scaling or Isotonic Regression to provide reliable uncertainty estimates.
 
-\subsection{Performance Evaluation Metrics}
+\subsection{Evaluation Metrics}
 
-Model performance is evaluated using multiple complementary metrics to assess different aspects of predictive quality.
+Model performance was evaluated on the held-out test partition using seven classification metrics and four calibration metrics. Mathematical definitions are provided in Chapter~3. Table~\ref{tab:metrics_roles} documents the role of each metric in this study.
 
-\subsubsection{Confusion Matrix}
+\begin{table}[H]
+\centering
+\caption{Evaluation metrics and their roles in this study.}
+\label{tab:metrics_roles}
+\begin{tabular}{p{3.3cm}p{6.8cm}l}
+\hline
+\textbf{Metric} & \textbf{Purpose} & \textbf{Priority} \\
+\hline
+\multicolumn{3}{l}{\textit{Classification Performance}} \\
+F2-Score & Recall-weighted metric; primary model-selection criterion & Primary \\
+Recall & Proportion of at-risk cases correctly identified & Primary \\
+Precision & Positive predictive value & Supplementary \\
+F1-Score & Balanced harmonic mean of Precision and Recall & Supplementary \\
+ROC-AUC & Overall discrimination across all classification thresholds & Supplementary \\
+AUPRC & Discrimination focused on the positive at-risk class & Supplementary \\
+Accuracy & Overall correctness (limited value under class imbalance) & Supplementary \\
+\hline
+\multicolumn{3}{l}{\textit{Calibration Quality}} \\
+Log-Loss & Primary calibration-selection criterion & Primary \\
+Brier Score & Mean squared probability error & Supplementary \\
+ECE & Bin-weighted confidence--frequency discrepancy & Supplementary \\
+Reliability diagram & Visual calibration curve per model & Supplementary \\
+\hline
+\end{tabular}
+\end{table}
 
-The confusion matrix summarizes classification performance by tabulating predicted versus actual classes:
+F2-score was used as the primary classification metric because the study prioritizes sensitivity to at-risk respondents; a missed diagnosis carries greater clinical cost than a false alarm in a diabetes-screening context. Log-Loss was used as the primary calibration-selection metric to identify the best-performing calibration configuration per model.
 
-\begin{itemize}
-    \item \textbf{True Positives (TP):} Diabetic cases correctly predicted as diabetic
-    \item \textbf{True Negatives (TN):} Non-diabetic cases correctly predicted as non-diabetic
-    \item \textbf{False Positives (FP):} Non-diabetic cases incorrectly predicted as diabetic (Type I error)
-    \item \textbf{False Negatives (FN):} Diabetic cases incorrectly predicted as non-diabetic (Type II error)
-\end{itemize}
+\subsection{Calibrated Explanations Implementation}
 
-% TODO: Add Figure - Confusion Matrix diagram
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.6\textwidth]{figures/confusion_matrix.png}
-%     \caption{Confusion Matrix}
-%     \label{fig:confusion_matrix}
-% \end{figure}
+\subsubsection{Scope and Model Coverage}
 
-\subsubsection{Precision, Recall, and F-Scores}
+Calibrated Explanations (CE) were implemented using the \texttt{calibrated-explanations} Python library \cite{lofstrom_ce_2024}. CE was applied to nine of the ten trained classifiers; BO-TabNet was excluded because its \texttt{pytorch-tabnet} interface is incompatible with the scikit-learn estimator contract required by the CE framework.
 
-\textbf{Precision} (Positive Predictive Value) measures the proportion of positive predictions that are correct:
-$$\mathrm{Precision} = \frac{TP}{TP + FP}$$
+For each compatible model, the validation partition was supplied to the CE framework as the calibration dataset for fitting internal Venn-Abers calibration. Test instances were used for generating individual and aggregated explanations. The four CE experiment types are described below.
 
-High precision indicates few false alarms, minimizing unnecessary follow-up testing and patient anxiety.
+\subsubsection{Factual Calibrated Explanations}
 
-\textbf{Recall} (Sensitivity, True Positive Rate) measures the proportion of actual positive cases correctly identified:
-$$\mathrm{Recall} = \frac{TP}{TP + FN}$$
+Factual CE was generated for six test instances per model: three predicted as at risk and three predicted as not at risk. Each explanation reports a Venn-Abers calibrated probability interval $[p_0, p_1]$ alongside per-feature importance scores with associated uncertainty ranges. Outputs are stored in \texttt{MAIN\_CE\_OUTPUT/factual/}.
 
-High recall is critical in medical screening to minimize missed diagnoses (false negatives).
+\subsubsection{Counterfactual CE and Ensured CCE}
 
-\textbf{F1-Score} is the harmonic mean of precision and recall, providing a balanced measure:
-$$F_1 = 2 \cdot \frac{\mathrm{Precision} \cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}$$
+Counterfactual CE (CCE) and Ensured CCE were generated for the same six test instances per model. Ordinary CCE identifies feature changes associated with a shift in the calibrated predicted class. Ensured CCE additionally constrains the alternative prediction to carry a calibrated probability above a defined confidence threshold, ensuring the counterfactual outcome is reliably supported. Six explanation plots per model are stored in \texttt{MAIN\_CE\_OUTPUT/counterfactual/}.
 
-\textbf{F2-Score} is a weighted harmonic mean that emphasizes recall over precision:
-$$F_2 = 5 \cdot \frac{\mathrm{Precision} \cdot \mathrm{Recall}}{4 \cdot \mathrm{Precision} + \mathrm{Recall}}$$
+\subsubsection{Global CE Aggregation}
 
-The F2-score is the primary evaluation metric for this study, as it prioritizes recall (minimizing false negatives) while maintaining reasonable precision. In diabetes screening, the cost of missing a diabetic case (false negative) exceeds the cost of a false alarm (false positive), making F2-score more appropriate than F1-score or accuracy.
+Global CE was computed across 150 test instances per model for all nine CE-compatible classifiers. Per-instance CE feature weights were aggregated to yield a model-level mean feature importance; the standard deviation of feature weight bounds was computed as the uncertainty width --- a measure of how consistently a feature drives predictions across patients. This uncertainty width complements the SHAP global ranking by quantifying per-feature explanation stability. Outputs are stored in \texttt{MAIN\_CE\_OUTPUT/global/}.
 
-\subsubsection{Specificity and Accuracy}
+\subsubsection{Mondrian CE for Sex-Stratified Analysis}
 
-\textbf{Specificity} (True Negative Rate) measures the proportion of actual negative cases correctly identified:
-$$\mathrm{Specificity} = \frac{TN}{TN + FP}$$
+Mondrian CE was applied to 50 test instances per sex group per model across the nine CE-compatible classifiers. The validation set was partitioned by the \texttt{sex} variable into two groups, and Venn-Abers calibration was fitted separately within each group. This produces group-conditional calibrated explanations, enabling examination of whether prediction uncertainty and feature attribution patterns are consistent across both sex groups \cite{lofstrom_conditional_ce_2024}. Outputs are stored in \texttt{MAIN\_CE\_OUTPUT/mondrian/}.
 
-\textbf{Accuracy} measures overall correctness:
-$$\mathrm{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}$$
+\subsection{Reproducibility and Implementation Environment}
 
-While accuracy is reported, it is not used as the primary metric due to class imbalance, as a model predicting only the majority class can achieve high accuracy while failing to detect minority class instances.
+\subsubsection{Pipeline Scripts}
 
-\subsubsection{ROC Curve and AUC}
+The complete pipeline is organized into eight scripts executed sequentially:
 
-The Receiver Operating Characteristic (ROC) curve plots the True Positive Rate (Recall) against the False Positive Rate (1 - Specificity) across all classification thresholds. The Area Under the ROC Curve (AUC-ROC) quantifies overall discriminative ability, with values ranging from 0.5 (random guessing) to 1.0 (perfect classification).
+\begin{table}[H]
+\centering
+\caption{Pipeline scripts and their functions.}
+\label{tab:scripts}
+\begin{tabular}{p{4.8cm}p{7.5cm}}
+\hline
+\textbf{Script} & \textbf{Function} \\
+\hline
+\texttt{main\_preprocessing.py} & Data integration, sentinel-value normalization, target construction, feature engineering, imputation, outlier capping, standardization, correlation filtering, SMOTE, and partitioning \\
+\texttt{main\_train.py} & Model training and hyperparameter optimization (10 classifiers) \\
+\texttt{main\_xai.py} & SHAP and LIME explainability \\
+\texttt{main\_calibration.py} & Post-hoc probability calibration (3 methods) \\
+\texttt{ce\_factual.py} & Factual Calibrated Explanations (9 models) \\
+\texttt{ce\_cce.py} & Counterfactual CE and Ensured CCE (9 models) \\
+\texttt{ce\_global.py} & Global CE aggregation across 150 test instances \\
+\texttt{ce\_mondrian.py} & Mondrian CE for sex-stratified analysis \\
+\hline
+\end{tabular}
+\end{table}
 
-However, ROC-AUC can be overly optimistic for imbalanced datasets, as it gives equal weight to both classes.
+\subsubsection{Reproducibility Settings}
 
-\subsubsection{Precision-Recall Curve and AUPRC}
-
-The Precision-Recall (PR) curve plots Precision against Recall across all thresholds. The Area Under the Precision-Recall Curve (AUPRC) is more informative than AUC-ROC for imbalanced datasets, as it focuses on performance on the positive (minority) class. AUPRC is sensitive to improvements in detecting positive cases and serves as a secondary evaluation metric alongside F2-score.
-
-\subsubsection{Calibration Metrics}
-
-\textbf{Brier Score} measures the mean squared difference between predicted probabilities and actual outcomes:
-$$\mathrm{Brier\ Score} = \frac{1}{N} \sum_{i=1}^{N} (p_i - y_i)^2$$
-
-where $p_i$ is the predicted probability and $y_i$ is the actual outcome (0 or 1). Lower Brier scores indicate better calibration and discrimination.
-
-\textbf{Expected Calibration Error (ECE)} quantifies calibration quality:
-$$\mathrm{ECE} = \sum_{m=1}^{M} \frac{|B_m|}{N} |\mathrm{acc}(B_m) - \mathrm{conf}(B_m)|$$
-
-where $B_m$ is the set of instances in bin $m$, $\mathrm{acc}(B_m)$ is the accuracy in that bin, and $\mathrm{conf}(B_m)$ is the average predicted probability in that bin. Lower ECE indicates better calibration.
+All stochastic operations used \texttt{random\_state = 42}. Trained model artifacts and preprocessing transformers are persisted using \texttt{joblib} in \texttt{MAIN\_TRAINED\_MODELS/} and \texttt{MAIN\_PREPROCESS\_OUTPUT/}, respectively. Calibration objects are stored in \texttt{MAIN\_CALIBRATION/}. CE outputs are organized under \texttt{MAIN\_CE\_OUTPUT/} in subdirectories \texttt{factual/}, \texttt{counterfactual/}, \texttt{global/}, and \texttt{mondrian/}.

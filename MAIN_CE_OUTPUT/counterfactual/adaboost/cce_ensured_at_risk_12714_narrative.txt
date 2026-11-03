@@ -1,0 +1,17 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.700
+Prediction Interval: [0.688, 0.730]
+
+Alternatives to increase the calibrated probability for class 1:
+- If age < 0.14     then 0.462 [0.461, 0.462]
+- If waist < 0.76   then 0.588 [0.583, 0.598]
+- If Ave_SBP < 0.20 then 0.646 [0.642, 0.656]
+
+Alternatives to decrease the calibrated probability for class 1:

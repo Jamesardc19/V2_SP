@@ -1,0 +1,27 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated Probability: 0.255
+Prediction Interval: [0.253, 0.255]
+
+Factors impacting the calibrated probability for class 1 positively:
+anthro_group (4.0) <= 5.94   - weight ~ 0.076 [0.074, 0.083]
+Ave_SBP (-0.06) > -0.40      - weight ~ 0.067 [0.066, 0.074]
+hemoglobin (-0.32) > -0.78   - weight ~ 0.040 [0.039, 0.041]
+vita (-0.55) <= -0.07        - weight ~ 0.040 [0.039, 0.041]
+drnk_30days (1.0) > 0.00     - weight ~ 0.040 [0.039, 0.041]
+pa_met (1.0) > 0.00          - weight ~ 0.027 [0.025, 0.036]
+tri (-0.13) > -0.48          - weight ~ 0.013 [0.013, 0.015]
+alcohol (0.0) <= 0.00        - weight ~ 0.012 [0.005, 0.036]
+
+Factors impacting the calibrated probability for class 1 negatively:
+age (-0.94) <= -0.48         - weight ~ -0.132 [-0.132, -0.130]
+waist (-0.47) <= -0.03       - weight ~ -0.051 [-0.052, -0.050]
+sex (2.0) > 2.00             - weight ~ -0.034 [-0.034, -0.033]
+drnk_30d_num (1.17) > 1.17   - weight ~ -0.023 [-0.023, -0.021]
+ldl_hdl_ratio (0.15) > -0.03 - weight ~ -0.011 [-0.012, -0.010]

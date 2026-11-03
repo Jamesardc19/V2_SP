@@ -1,0 +1,28 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.668
+Prediction Interval: [0.667, 0.671]
+
+Alternatives to increase the calibrated probability for class 1:
+- If Ave_SBP > -1.26     then 0.843 [0.842, 0.846]
+- If waist > -0.10       then 0.781 [0.781, 0.782]
+- If hdl < 0.33          then 0.688 [0.687, 0.690]
+- If ldl > -0.43         then 0.678 [0.677, 0.680]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If pa_met < 0.00       then 0.470 [0.469, 0.471]
+- If anthro_group < 3.93 then 0.518 [0.517, 0.519]
+- If pa_met > 0.62       then 0.518 [0.517, 0.519]
+- If sex < 1.07          then 0.518 [0.517, 0.519]
+- If sex > 2.00          then 0.518 [0.517, 0.519]
+- If waist < -0.39       then 0.619 [0.619, 0.621]
+- If drnk_30d_num > 1.17 then 0.642 [0.641, 0.643]
+- If hdl > 2.00          then 0.642 [0.641, 0.643]
+- If ldl < -1.56         then 0.642 [0.641, 0.643]
+- If tri > 2.06          then 0.642 [0.641, 0.643]

@@ -1,0 +1,14 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.719
+Prediction Interval: [0.719, 0.720]
+
+Alternatives to increase the calibrated probability for class 1:
+
+Alternatives to decrease the calibrated probability for class 1:

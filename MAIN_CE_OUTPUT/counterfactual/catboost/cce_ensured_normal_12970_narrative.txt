@@ -1,0 +1,24 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.734
+Prediction Interval: [0.733, 0.735]
+
+Alternatives to increase the calibrated probability for class 1:
+- If anthro_group < 3.45   then 0.693 [0.693, 0.694]
+- If anthro_group > 5.94   then 0.693 [0.693, 0.694]
+- If binge_drink > 0.01    then 0.693 [0.693, 0.694]
+- If con_alcohol < 1.00    then 0.693 [0.693, 0.694]
+- If currentsmoking > 0.01 then 0.693 [0.693, 0.694]
+- If drnk_30days < 1.00    then 0.693 [0.693, 0.694]
+- If pa_met < 1.00         then 0.693 [0.693, 0.694]
+- If uic > 0.12            then 0.693 [0.693, 0.694]
+- If vita < -0.07          then 0.693 [0.693, 0.694]
+- If hdl < -0.38           then 0.720 [0.720, 0.721]
+
+Alternatives to decrease the calibrated probability for class 1:

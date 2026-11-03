@@ -1,0 +1,18 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.996
+Prediction Interval: [0.996, 0.998]
+
+Alternatives to increase the calibrated probability for class 1:
+- If Ave_SBP > -1.48 then 0.998 [0.998, 1.000]
+- If waist > -0.03   then 0.998 [0.998, 1.000]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If pa_met < 0.34   then 0.716 [0.716, 0.717]
+- If pa_met > 1.00   then 0.716 [0.716, 0.717]

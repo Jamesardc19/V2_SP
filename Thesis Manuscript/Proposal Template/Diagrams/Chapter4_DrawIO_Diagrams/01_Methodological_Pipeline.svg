@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1000" viewBox="0 0 900 1000">
+<rect width="900" height="1000" fill="#FFFFFF"/>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#183153" stroke-width="1.3"/></marker></defs>
+<text x="450.0" y="20" font-family="Arial" font-weight="bold" font-size="17" text-anchor="middle" fill="#183153">4.1 Overall Methodological Pipeline</text>
+<polyline points="450.0,108 450.0,124.0 450.0,124.0 450.0,140" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="450.0,198 450.0,214.0 450.0,214.0 450.0,230" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="450.0,294 450.0,309.0 450.0,309.0 450.0,324" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="450.0,414 450.0,430.0 450.0,430.0 450.0,446" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="450.0,518 450.0,533.0 450.0,533.0 450.0,548" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="270,582.0 340.0,582.0 340.0,689.0 410,689.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="630,582.0 558.0,582.0 558.0,689.0 486,689.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="410,689.0 340.0,689.0 340.0,799.0 270,799.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="486,689.0 558.0,689.0 558.0,799.0 630,799.0" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<polyline points="450.0,838 450.0,857.0 450.0,857.0 450.0,876" fill="none" stroke="#183153" stroke-width="2" marker-end="url(#arrow)"/>
+<rect x="270" y="30" width="360" height="78" rx="10" fill="#DDF4EE" stroke="#183153" stroke-width="1.5"/>
+<text x="450.0" y="55.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">2018–2021 ENNS</text>
+<text x="450.0" y="74.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Anthropometric · Biochemical</text>
+<text x="450.0" y="93.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Clinical · Socioeconomic</text>
+<rect x="270" y="140" width="360" height="58" rx="10" fill="#DDEBFA" stroke="#183153" stroke-width="1.5"/>
+<text x="450.0" y="164.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Integrate respondent-level records</text>
+<text x="450.0" y="183.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">(hhnum + member_code)</text>
+<rect x="270" y="230" width="360" height="64" rx="10" fill="#DDEBFA" stroke="#183153" stroke-width="1.5"/>
+<text x="450.0" y="257.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Clean data · FBS threshold</text>
+<text x="450.0" y="276.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">FBS ≥100 mg/dL → at-risk class</text>
+<rect x="270" y="324" width="360" height="90" rx="10" fill="#DDEBFA" stroke="#183153" stroke-width="1.5"/>
+<text x="450.0" y="355.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Engineered features · imputation</text>
+<text x="450.0" y="374.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">IQR capping · StandardScaler</text>
+<text x="450.0" y="393.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">correlation filter → 22 predictors</text>
+<rect x="270" y="446" width="360" height="72" rx="10" fill="#FFE5E5" stroke="#183153" stroke-width="1.5"/>
+<text x="450.0" y="477.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">SMOTE full data → stratified 70/15/15</text>
+<text x="450.0" y="496.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">As documented; leakage concern</text>
+<rect x="270" y="548" width="360" height="68" rx="10" fill="#DDEBFA" stroke="#183153" stroke-width="1.5"/>
+<text x="450.0" y="577.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">10 models + hyperparameter tuning</text>
+<text x="450.0" y="596.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Primary objective: F2-score</text>
+<rect x="70" y="658" width="340" height="62" rx="10" fill="#EEE7FA" stroke="#183153" stroke-width="1.5"/>
+<text x="240.0" y="694.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Platt · Isotonic · Temperature</text>
+<rect x="486" y="658" width="340" height="62" rx="10" fill="#DDF4EE" stroke="#183153" stroke-width="1.5"/>
+<text x="656.0" y="694.0" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">SHAP · LIME</text>
+<rect x="270" y="760" width="360" height="78" rx="10" fill="#FFF0D9" stroke="#183153" stroke-width="1.5"/>
+<text x="450.0" y="794.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Venn–Abers CE</text>
+<text x="450.0" y="813.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Factual · CCE · Global · Mondrian</text>
+<rect x="270" y="876" width="360" height="72" rx="10" fill="#DDF4EE" stroke="#183153" stroke-width="1.5"/>
+<text x="450.0" y="907.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Saved model results, calibration</text>
+<text x="450.0" y="926.5" fill="#263346" font-family="Arial,sans-serif" font-size="14" font-weight="bold" text-anchor="middle">metrics, explanations and uncertainty</text>
+</svg>

@@ -1,0 +1,27 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.996
+Prediction Interval: [0.996, 1.000]
+
+Alternatives to increase the calibrated probability for class 1:
+- If Ave_SBP > -1.48       then 0.998 [0.998, 1.000]
+- If waist > -0.11         then 0.997 [0.997, 1.000]
+- If Ave_DBP < -1.16       then 0.996 [0.996, 1.000]
+- If binge_drink > 0.01    then 0.996 [0.996, 1.000]
+- If smoke_status < 0.99   then 0.996 [0.996, 1.000]
+- If ldl_hdl_ratio > -0.66 then 0.996 [0.996, 1.000]
+- If ldl > -0.37           then 0.996 [0.996, 1.000]
+- If currentsmoking < 2.99 then 0.996 [0.996, 1.000]
+- If ever_smk > 0.07       then 0.996 [0.996, 1.000]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If pa_met < 0.22         then 0.655 [0.655, 0.656]
+- If pa_met > 1.00         then 0.655 [0.655, 0.656]
+- If sex < 1.08            then 0.992 [0.992, 0.996]
+- If sex > 2.00            then 0.992 [0.992, 0.996]

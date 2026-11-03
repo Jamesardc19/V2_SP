@@ -1,0 +1,36 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated Probability: 0.062
+Prediction Interval: [0.056, 0.062]
+
+Factors impacting the calibrated probability for class 1 positively:
+Ave_DBP (-2.28) <= -0.26       - weight ~ 0.016 [0.016, 0.028]
+drnk_30d_num (1.17) > -0.03    - weight ~ 0.012 [0.011, 0.028]
+alcohol (0.0) <= 0.00          - weight ~ 0.006 [0.005, 0.028]
+uic (-0.25) <= 0.45            - weight ~ 0.001 [0.001, 0.006]
+anthro_group (6.0) > 5.94      - weight ~ 0.001 [0.001, 0.006]
+drnk_30days (1.0) > 0.00       - weight ~ 0.001 [0.001, 0.006]
+ever_smk (0.0) <= 2.00         - weight ~ 0.001 [0.000, 0.006]
+
+Factors impacting the calibrated probability for class 1 negatively:
+age (-1.26) <= -0.46           - weight ~ -0.197 [-0.198, -0.195]
+Ave_SBP (-1.67) <= -0.40       - weight ~ -0.132 [-0.132, -0.129]
+waist (-1.84) <= -0.11         - weight ~ -0.030 [-0.030, -0.029]
+currentsmoking (0.0) <= 0.95   - weight ~ -0.018 [-0.018, -0.016]
+ldl (-0.29) <= -0.02           - weight ~ -0.018 [-0.018, -0.016]
+pa_met (0.0) <= 0.00           - weight ~ -0.018 [-0.018, -0.016]
+sex (2.0) > 2.00               - weight ~ -0.018 [-0.018, -0.016]
+ldl_hdl_ratio (-0.28) <= -0.00 - weight ~ -0.016 [-0.018, -0.001]
+tri (0.87) > -0.37             - weight ~ -0.007 [-0.007, -0.001]
+hdl (0.08) <= 0.32             - weight ~ -0.006 [-0.007, 0.006] [[!] direction uncertain]
+binge_drink (0.0) <= 0.01      - weight ~ -0.005 [-0.005, 0.006] [[!] direction uncertain]
+con_alcohol (1.0) > 1.00       - weight ~ -0.005 [-0.005, 0.006] [[!] direction uncertain]
+smoke_status (0.0) <= 1.12     - weight ~ -0.005 [-0.005, 0.006] [[!] direction uncertain]
+vita (0.71) > -0.13            - weight ~ -0.001 [-0.002, 0.006] [[!] direction uncertain]
+hemoglobin (-0.32) > -0.85     - weight ~ -0.001 [-0.001, 0.006] [[!] direction uncertain]

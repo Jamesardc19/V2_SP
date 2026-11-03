@@ -1,0 +1,22 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.745
+Prediction Interval: [0.744, 0.748]
+
+Alternatives to increase the calibrated probability for class 1:
+- If age < 0.20          then 0.562 [0.561, 0.564]
+- If age > 1.98          then 0.609 [0.608, 0.610]
+- If Ave_SBP < 0.72      then 0.706 [0.706, 0.707]
+- If anthro_group > 5.94 then 0.716 [0.716, 0.717]
+- If ever_smk < 2.00     then 0.716 [0.716, 0.717]
+- If ever_smk > 3.01     then 0.716 [0.716, 0.717]
+- If uic < -1.80         then 0.716 [0.716, 0.717]
+- If vita < 0.27         then 0.716 [0.716, 0.717]
+
+Alternatives to decrease the calibrated probability for class 1:

@@ -1,0 +1,48 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.843
+Prediction Interval: [0.843, 0.847]
+
+Alternatives to increase the calibrated probability for class 1:
+- If waist > -0.10         then 0.962 [0.961, 0.973]
+- If uic < 0.10            then 0.864 [0.863, 0.865]
+- If binge_drink > 0.01    then 0.864 [0.863, 0.865]
+- If tri > 2.06            then 0.864 [0.863, 0.865]
+- If Ave_DBP < -0.32       then 0.850 [0.850, 0.853]
+- If hemoglobin > -0.38    then 0.848 [0.848, 0.850]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If age < 0.14            then 0.482 [0.482, 0.483]
+- If Ave_SBP < -0.40       then 0.583 [0.581, 0.585]
+- If waist < -0.39         then 0.666 [0.662, 0.675]
+- If drnk_30d_num > 0.93   then 0.668 [0.667, 0.671]
+- If vita < 0.13           then 0.669 [0.668, 0.670]
+- If tri < -0.16           then 0.688 [0.687, 0.689]
+- If anthro_group > 4.18   then 0.698 [0.698, 0.700]
+- If hemoglobin < -0.85    then 0.713 [0.711, 0.716]
+- If age > 1.81            then 0.724 [0.723, 0.725]
+- If currentsmoking > 0.01 then 0.724 [0.723, 0.725]
+- If ldl < 2.03            then 0.737 [0.736, 0.738]
+- If pa_met < 1.00         then 0.763 [0.762, 0.764]
+- If sex < 1.07            then 0.763 [0.762, 0.764]
+- If smoke_status > 0.19   then 0.763 [0.762, 0.764]
+- If ldl_hdl_ratio < 1.83  then 0.786 [0.786, 0.787]
+- If drnk_30d_num < -0.03  then 0.800 [0.799, 0.800]
+- If hdl < -0.25           then 0.808 [0.808, 0.810]
+- If uic > 0.35            then 0.816 [0.816, 0.819]
+- If Ave_DBP > 0.39        then 0.818 [0.818, 0.819]
+- If alcohol < 1.00        then 0.818 [0.818, 0.819]
+- If anthro_group < 3.93   then 0.818 [0.818, 0.819]
+- If con_alcohol < 1.00    then 0.818 [0.818, 0.819]
+- If drnk_30days < 1.00    then 0.818 [0.818, 0.819]
+- If ever_smk > 0.07       then 0.818 [0.818, 0.819]
+- If hdl > 0.33            then 0.818 [0.818, 0.819]
+- If sex > 2.00            then 0.818 [0.818, 0.819]
+- If vita > 0.53           then 0.826 [0.826, 0.828]
+- If Ave_SBP > 0.05        then 0.835 [0.834, 0.837]

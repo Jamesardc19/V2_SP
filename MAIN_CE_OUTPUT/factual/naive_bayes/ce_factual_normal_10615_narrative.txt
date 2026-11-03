@@ -1,0 +1,15 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated Probability: 0.148
+Prediction Interval: [0.147, 0.148]
+
+Factors impacting the calibrated probability for class 1 positively:
+anthro_group (6.0) > 4.18 - weight ~ -0.034 [-0.034, -0.032]
+
+Factors impacting the calibrated probability for class 1 negatively:

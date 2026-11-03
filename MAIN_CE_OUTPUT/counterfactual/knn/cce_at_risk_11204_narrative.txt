@@ -1,0 +1,36 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.831
+Prediction Interval: [0.831, 0.831]
+
+Alternatives to increase the calibrated probability for class 1:
+- If Ave_DBP > 0.57        then 0.831 [0.831, 0.831]
+- If Ave_SBP < -0.32       then 0.831 [0.831, 0.831]
+- If Ave_SBP > 0.16        then 0.831 [0.831, 0.831]
+- If age > 2.14            then 0.831 [0.831, 0.831]
+- If hdl > 0.31            then 0.831 [0.831, 0.831]
+- If hemoglobin < -0.85    then 0.831 [0.831, 0.831]
+- If tri > 1.59            then 0.831 [0.831, 0.831]
+- If uic < 0.09            then 0.831 [0.831, 0.831]
+- If uic > 0.26            then 0.831 [0.831, 0.831]
+- If waist < -0.29         then 0.831 [0.831, 0.831]
+- If waist > 0.15          then 0.831 [0.831, 0.831]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If hemoglobin > 1.49     then 0.376 [0.376, 0.376]
+- If currentsmoking > 0.01 then 0.376 [0.376, 0.376]
+- If ldl_hdl_ratio < 1.75  then 0.468 [0.468, 0.468]
+- If ldl < 2.26            then 0.486 [0.484, 0.486]
+- If tri < -0.21           then 0.528 [0.527, 0.528]
+- If age < 0.04            then 0.671 [0.669, 0.677]
+- If drnk_30d_num < 0.22   then 0.679 [0.679, 0.679]
+- If vita < 0.31           then 0.679 [0.679, 0.679]
+- If Ave_DBP < -0.27       then 0.765 [0.763, 0.768]
+- If con_alcohol < 1.00    then 0.803 [0.802, 0.810]
+- If hdl < -0.29           then 0.822 [0.821, 0.824]

@@ -1,0 +1,36 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.774
+Prediction Interval: [0.774, 0.775]
+
+Alternatives to increase the calibrated probability for class 1:
+- If tri > 2.05           then 0.870 [0.869, 0.872]
+- If Ave_SBP > 0.20       then 0.817 [0.816, 0.821]
+- If ever_smk > 0.07      then 0.814 [0.814, 0.815]
+- If Ave_DBP < 0.39       then 0.814 [0.814, 0.815]
+- If pa_met < 1.00        then 0.814 [0.814, 0.815]
+- If sex > 1.00           then 0.814 [0.814, 0.815]
+- If smoke_status < 1.99  then 0.814 [0.814, 0.815]
+- If vita > 0.23          then 0.814 [0.814, 0.815]
+- If waist > 1.46         then 0.801 [0.800, 0.802]
+- If ldl < 1.66           then 0.788 [0.787, 0.788]
+- If uic < -0.95          then 0.788 [0.787, 0.788]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If age < 0.14           then 0.586 [0.586, 0.587]
+- If waist < 0.54         then 0.617 [0.616, 0.618]
+- If tri < -0.16          then 0.621 [0.620, 0.622]
+- If age > 1.81           then 0.735 [0.734, 0.736]
+- If anthro_group > 5.75  then 0.749 [0.749, 0.750]
+- If drnk_30d_num > -0.98 then 0.751 [0.751, 0.753]
+- If Ave_SBP < -0.36      then 0.756 [0.755, 0.759]
+- If hemoglobin < -0.38   then 0.758 [0.757, 0.759]
+- If uic > 0.10           then 0.766 [0.766, 0.767]
+- If Ave_DBP > 0.63       then 0.768 [0.766, 0.775]
+- If vita < -0.06         then 0.772 [0.772, 0.775]

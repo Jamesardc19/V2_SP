@@ -1,0 +1,37 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 0
+Calibrated probability: 0.097
+Prediction Interval: [0.096, 0.097]
+
+Alternatives to increase the calibrated probability for class 1:
+- If currentsmoking > 0.01 then 0.831 [0.831, 0.831]
+- If ever_smk > 0.07       then 0.831 [0.831, 0.831]
+- If smoke_status < 1.99   then 0.831 [0.831, 0.831]
+- If drnk_30d_num > -1.22  then 0.679 [0.679, 0.679]
+- If hemoglobin < -0.85    then 0.412 [0.400, 0.421]
+- If hdl < -0.29           then 0.402 [0.401, 0.403]
+- If drnk_30days < 1.00    then 0.376 [0.376, 0.376]
+- If tri < -0.21           then 0.376 [0.376, 0.376]
+- If tri > 1.59            then 0.317 [0.316, 0.317]
+- If waist < 0.78          then 0.257 [0.257, 0.258]
+- If ldl < 2.26            then 0.251 [0.249, 0.251]
+- If uic < -0.79           then 0.251 [0.249, 0.251]
+- If vita > 0.23           then 0.211 [0.208, 0.212]
+- If uic > 0.09            then 0.202 [0.199, 0.203]
+- If pa_met < 1.00         then 0.198 [0.198, 0.198]
+- If sex > 1.00            then 0.198 [0.198, 0.198]
+- If age > 2.14            then 0.198 [0.198, 0.198]
+- If hemoglobin > 1.49     then 0.198 [0.198, 0.198]
+- If age < 0.04            then 0.190 [0.190, 0.190]
+- If Ave_SBP > 0.16        then 0.181 [0.178, 0.181]
+- If Ave_DBP > 0.57        then 0.170 [0.163, 0.171]
+- If ldl_hdl_ratio < 1.75  then 0.145 [0.140, 0.146]
+- If vita < -0.16          then 0.107 [0.105, 0.107]
+
+Alternatives to decrease the calibrated probability for class 1:

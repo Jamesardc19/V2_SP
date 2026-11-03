@@ -1,0 +1,34 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Factual Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated Probability: 0.996
+Prediction Interval: [0.996, 1.000]
+
+Factors impacting the calibrated probability for class 1 positively:
+pa_met (0.6) > 0.00           - weight ~ 0.340 [0.340, 0.341]
+age (0.74) > -0.46            - weight ~ 0.325 [0.320, 0.326]
+drnk_30d_num (1.07) > -0.03   - weight ~ 0.082 [0.072, 0.083]
+sex (1.6) <= 2.00             - weight ~ 0.004 [-0.000, 0.004] [[!] direction uncertain]
+tri (0.99) > -0.37            - weight ~ 0.004 [-0.003, 0.004] [[!] direction uncertain]
+hemoglobin (0.39) > -0.85     - weight ~ 0.003 [-0.004, 0.003] [[!] direction uncertain]
+anthro_group (4.0) <= 5.94    - weight ~ 0.003 [-0.004, 0.003] [[!] direction uncertain]
+uic (-1.24) <= 0.45           - weight ~ 0.001 [-0.004, 0.001] [[!] direction uncertain]
+alcohol (1.0) > 0.00          - weight ~ 0.001 [-0.004, 0.001] [[!] direction uncertain]
+Ave_DBP (-1.06) <= -0.26      - weight ~ 0.001 [-0.004, 0.001] [[!] direction uncertain]
+hdl (0.42) > 0.32             - weight ~ 0.000 [-0.004, 0.000] [[!] direction uncertain]
+ever_smk (0.0) <= 2.00        - weight ~ 0.000 [-0.004, 0.000] [[!] direction uncertain]
+drnk_30days (1.0) > 0.00      - weight ~ 0.000 [-0.004, 0.000] [[!] direction uncertain]
+
+Factors impacting the calibrated probability for class 1 negatively:
+Ave_SBP (-1.66) <= -0.40      - weight ~ -0.003 [-0.004, -0.003]
+waist (-0.29) <= -0.11        - weight ~ -0.001 [-0.004, -0.001]
+ldl_hdl_ratio (-0.7) <= -0.00 - weight ~ -0.000 [-0.004, -0.000]
+binge_drink (0.0) <= 0.01     - weight ~ -0.000 [-0.004, -0.000]
+ldl (-0.55) <= -0.02          - weight ~ -0.000 [-0.004, -0.000]
+currentsmoking (3.0) > 0.95   - weight ~ -0.000 [-0.004, 0.000] [[!] direction uncertain]
+vita (1.89) > -0.13           - weight ~ -0.000 [-0.004, 0.000] [[!] direction uncertain]

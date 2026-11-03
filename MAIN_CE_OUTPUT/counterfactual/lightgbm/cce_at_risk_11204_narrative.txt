@@ -1,0 +1,45 @@
+
+================================================================================
+Instance 0
+================================================================================
+
+Alternative Explanation (Advanced):
+--------------------------------------------------------------------------------
+Prediction: 1
+Calibrated probability: 0.998
+Prediction Interval: [0.998, 1.000]
+
+Alternatives to increase the calibrated probability for class 1:
+- If waist > -0.03         then 0.999 [0.999, 1.000]
+- If uic < 0.10            then 0.998 [0.998, 1.000]
+- If ever_smk > 0.07       then 0.998 [0.998, 1.000]
+- If currentsmoking > 0.01 then 0.998 [0.998, 1.000]
+- If con_alcohol < 1.00    then 0.998 [0.998, 1.000]
+
+Alternatives to decrease the calibrated probability for class 1:
+- If Ave_SBP < -0.40       then 0.876 [0.875, 0.887]
+- If drnk_30d_num > 0.94   then 0.888 [0.886, 0.903]
+- If hemoglobin < -0.72    then 0.897 [0.896, 0.903]
+- If age < 0.20            then 0.912 [0.911, 0.915]
+- If drnk_30d_num < 0.21   then 0.970 [0.969, 0.989]
+- If hemoglobin > -0.38    then 0.996 [0.996, 0.998]
+- If waist < -0.39         then 0.996 [0.996, 0.998]
+- If sex < 1.00            then 0.996 [0.996, 0.998]
+- If sex > 1.96            then 0.996 [0.996, 0.998]
+- If tri > 2.05            then 0.996 [0.996, 1.000]
+- If pa_met < 1.00         then 0.997 [0.997, 1.000]
+- If anthro_group > 5.94   then 0.997 [0.997, 1.000]
+- If tri < -0.17           then 0.997 [0.997, 1.000]
+- If age > 1.98            then 0.997 [0.997, 1.000]
+- If vita < 0.27           then 0.997 [0.997, 1.000]
+- If Ave_SBP > 0.16        then 0.997 [0.997, 1.000]
+- If binge_drink > 0.01    then 0.997 [0.997, 1.000]
+- If ldl < 1.66            then 0.997 [0.997, 1.000]
+- If hdl > 0.32            then 0.997 [0.997, 1.000]
+- If ldl_hdl_ratio < 1.74  then 0.998 [0.998, 1.000]
+- If Ave_DBP > 0.63        then 0.998 [0.998, 1.000]
+- If hdl < -0.25           then 0.998 [0.998, 1.000]
+- If Ave_DBP < -0.21       then 0.998 [0.998, 1.000]
+- If drnk_30days < 1.00    then 0.998 [0.998, 1.000]
+- If uic > 0.35            then 0.998 [0.998, 1.000]
+- If alcohol < 1.00        then 0.998 [0.998, 1.000]
