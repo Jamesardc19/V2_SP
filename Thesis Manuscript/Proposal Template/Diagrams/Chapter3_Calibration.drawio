@@ -1,0 +1,93 @@
+<mxfile host="Electron" modified="2026-11-14T15:39:47.811Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.5.1 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="5a2LjJsxm8hfkeNS1ZI1" version="24.5.1" type="device">
+  <diagram name="Page-1" id="mGNuf4SDarU_HcFve-SB">
+    <mxGraphModel dx="1235" dy="787" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="700" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-1" value="Proper Training Dataset" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#000099;" parent="1" vertex="1">
+          <mxGeometry x="80" y="110" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-2" target="_Bp-UZeucLEUOYjyCoWf-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-2" value="Train Black-Box Classification Model" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#7F00FF;" parent="1" vertex="1">
+          <mxGeometry x="20" y="200" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-3" target="_Bp-UZeucLEUOYjyCoWf-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-3" value="Independent Labeled&lt;div&gt;Calibration Set&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#000099;" parent="1" vertex="1">
+          <mxGeometry x="290" y="200" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-4" target="_Bp-UZeucLEUOYjyCoWf-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-4" value="&lt;div&gt;New Instance x to Explain&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#000099;" parent="1" vertex="1">
+          <mxGeometry x="560" y="200" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-5" target="_Bp-UZeucLEUOYjyCoWf-6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-5" value="&lt;div&gt;Venn-Abers Calibration&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#7F00FF;" parent="1" vertex="1">
+          <mxGeometry x="290" y="280" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-6" target="_Bp-UZeucLEUOYjyCoWf-10" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="348" y="410" />
+              <mxPoint x="78" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-6" target="_Bp-UZeucLEUOYjyCoWf-7" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.75;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-6" target="_Bp-UZeucLEUOYjyCoWf-12" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-6" value="&lt;div&gt;Calibrated Probability p&lt;/div&gt;&lt;div&gt;and Interval [p₀, p₁]&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#7F00FF;" parent="1" vertex="1">
+          <mxGeometry x="290" y="360" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-7" target="_Bp-UZeucLEUOYjyCoWf-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-7" value="&lt;div style=&quot;font-size: 11px;&quot;&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;Systematic Feature&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;Perturbations&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;font-size: 11px;&quot;&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;and Conditional Rules&lt;/font&gt;&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#7F00FF;" parent="1" vertex="1">
+          <mxGeometry x="130" y="440" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-8" target="_Bp-UZeucLEUOYjyCoWf-10" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-8" target="_Bp-UZeucLEUOYjyCoWf-12" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-8" value="&lt;div&gt;Recalculate Venn-Abers Probabilities and Intervals&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#7F00FF;" parent="1" vertex="1">
+          <mxGeometry x="130" y="520" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-9" value="&lt;div&gt;Feature Weights with&lt;/div&gt;&lt;div&gt;Uncertainty Intervals&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#009900;" parent="1" vertex="1">
+          <mxGeometry x="20" y="690" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-10" target="_Bp-UZeucLEUOYjyCoWf-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-10" value="&lt;div&gt;Factual Calibrated Explanations&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#009900;" parent="1" vertex="1">
+          <mxGeometry x="20" y="610" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-11" value="&lt;div&gt;Alternative Feature Conditionswith Probability Intervals&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#009900;" parent="1" vertex="1">
+          <mxGeometry x="290" y="690" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-12" target="_Bp-UZeucLEUOYjyCoWf-11" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-12" value="&lt;div&gt;Counterfactual Calibrated Explanations&lt;br&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#009900;" parent="1" vertex="1">
+          <mxGeometry x="290" y="610" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="_Bp-UZeucLEUOYjyCoWf-13" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="_Bp-UZeucLEUOYjyCoWf-1" target="_Bp-UZeucLEUOYjyCoWf-2" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="320" y="440" as="sourcePoint" />
+            <mxPoint x="370" y="390" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

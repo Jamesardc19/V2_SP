@@ -247,15 +247,6 @@ configurations based on their relative likelihood
 \cite{optuna_tpe}. The resulting optimized architecture is referred to in
 this study as BO-TabNet.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.78\linewidth]{Diagrams/optuna_tpe_workflow.pdf}
-    \caption{Sequential TPE-based hyperparameter optimization workflow
-    used for BO-TabNet. Authors' illustration based on the Optuna
-    TPESampler documentation \cite{optuna_tpe}.}
-    \label{fig:optuna_tpe}
-\end{figure}
-
 \subsection{Model Evaluation Metrics}
 
 After the predictive models are trained and optimized, their performance
@@ -275,9 +266,9 @@ classification tasks, derived from the confusion matrix of true positives
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.62\linewidth]{Diagrams/confusion_matrix.pdf}
-    \caption{Confusion-matrix outcomes underlying precision and recall for
-    the positive at-risk class. Authors' illustration.}
+    \includegraphics[width=0.62\linewidth]{Diagrams/confusion_matrix.png}
+    \caption{Confusion Matrix Diagram \cite{techplayon_confusion_2025}.}
+
     \label{fig:confusion_matrix}
 \end{figure}
 
@@ -356,20 +347,14 @@ to those predictions. Consequently, a model may discriminate effectively
 between at-risk and not-at-risk individuals while still producing poorly
 calibrated probability estimates.
 
+Calibration performance can be visualized using reliability diagrams, also known as calibration curves, which compare the mean predicted probability with the observed proportion of positive outcomes. A perfectly calibrated classifier follows the diagonal reference line, whereas deviations from this line indicate discrepancies between estimated probabilities and observed outcome frequencies. As illustrated in Figure~\ref{fig:reliability_diagram}, post-hoc calibration methods such as sigmoid calibration and isotonic regression can improve the correspondence between predicted probabilities and observed frequencies. The figure provides a conceptual example of probability calibration and does not represent the empirical results of the Philippine ENNS dataset \cite{sklearn_calibration_curves}.
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.72\linewidth]{Diagrams/reliability_diagram.pdf}
-    \caption{Conceptual reliability diagram showing agreement between
-    predicted probabilities and observed positive-class frequencies.
-    Authors' illustration based on \cite{ojeda_calibration_2023}.}
+    \includegraphics[width=0.72\linewidth]{Diagrams/Probability_Calibration.png}
+    \caption{Reliability diagram comparing uncalibrated and calibrated model probabilities. Adapted from scikit-learn \cite{sklearn_calibration_curves}.}
     \label{fig:reliability_diagram}
 \end{figure}
-
-Reliable probability estimates are particularly important in this study
-because calibrated probabilities provide the foundation for the subsequent
-Calibrated Explanations framework. Three post-hoc calibration methods are
-therefore considered: Platt Scaling, Isotonic Regression, and Temperature
-Scaling \cite{ojeda_calibration_2023}.
 
 \subsubsection{Platt Scaling}
 
@@ -583,7 +568,7 @@ calibration and interpretation as separate post-processing steps.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.92\linewidth]{Diagrams/calibrated_explanations_pipeline.pdf}
+    \includegraphics[width=0.92\linewidth]{Diagrams/Calibrated_Explanations_Pipeline.png}
     \caption{Conceptual flow from model prediction and Venn--Abers
     calibration to uncertainty-aware factual and counterfactual
     explanations. Authors' illustration based on

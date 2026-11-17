@@ -28,7 +28,75 @@ Adviser: Geoffrey A. Solano}
 
 \section{Expected Output/Timeline}
 
-Screenshots of your final software and Gantt chart of your activities are placed here.
+\subsection{Project Development Timeline}
+
+The proposed development of DiaScope AI is organized into five phases over a 26-week period. These phases cover data acquisition and preprocessing, model development and optimization, explainability and calibration integration, web application development, and system testing and documentation. Table~\ref{tab:timeline} summarizes the planned activities and their durations, while Figure~\ref{fig:project_gantt} illustrates the corresponding development schedule.
+
+\begin{table}[H]
+\centering
+\caption{Proposed project development timeline.}
+\label{tab:timeline}
+\begin{tabular}{p{2.5cm}p{4.2cm}p{3.2cm}p{2.1cm}p{1.2cm}}
+\hline
+\textbf{Phase} & \textbf{Main Activities} & \textbf{Expected Output} & \textbf{Status} & \textbf{Duration} \\
+\hline
+1. Dataset acquisition and preprocessing & ENNS integration, target construction, feature engineering, imputation, scaling, SMOTE, and partitioning & Preprocessed datasets and saved preprocessing objects & Completed in V2 & 1-4 weeks \\
+2. Model development and optimization & Training and tuning of ten classification approaches & Trained models and performance results & Completed in V2 & 5-14 weeks \\
+3. XAI, calibration, and CE integration & SHAP, LIME, probability calibration, and CE analyses & Explanation outputs and calibration comparison & Completed in V2 & 15-17 weeks \\
+4. Web application design and implementation & Interface design, framework selection, and integration of saved artifacts & Working prototype of the application & Not yet started & 18-23 weeks \\
+5. Integration testing, evaluation, and documentation & Testing of input handling and outputs, and thesis writing & Tested prototype and final manuscript & In progress (documentation) & 24-26 weeks \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Diagrams/Gantt_Chart.png}
+    \caption{Proposed development schedule for the diabetes risk assessment system. Authors' illustration.}
+    \label{fig:project_gantt}
+\end{figure}
+
+\subsection{User Interface Design}
+
+The interface designs below represent how users are expected to interact with the proposed system. They are proposed layouts and are not screenshots of an implemented application.
+
+\subsubsection{Landing Page}
+
+The proposed landing page will present the application title and a brief description of the diabetes risk assessment system. It will state that the application is an exploratory decision-support tool and that its results do not replace professional medical evaluation. A single main control will allow the user to begin an assessment.
+
+% PROPOSAL FIGURE PLACEHOLDER: Create Diagrams/landing_page_mockup.pdf before uncommenting.
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.9\textwidth]{Diagrams/landing_page_mockup.pdf}
+%     \caption{Proposed landing page of the diabetes risk assessment application. Authors' illustration.}
+%     \label{fig:landing_page_mockup}
+% \end{figure}
+
+\subsubsection{Health Information Input Interface}
+
+The proposed input form will follow the 22-predictor schema in Table~\ref{tab:final_features}. Fields will be grouped into demographic information, anthropometric measurements, clinical and biochemical measurements, and lifestyle and behavioral information. Each quantitative field will show its unit, required fields will be marked, and values will be validated before submission. The form will also offer a CSV upload option. Derived predictors such as \texttt{ldl\_hdl\_ratio} will be computed by the system and not entered by the user. Whether generated variables such as \texttt{smoke\_status} and \texttt{anthro\_group} can be derived from other inputs remains to be determined. Fasting blood sugar will not be requested because it defines the target label, and dietary fields will not be included because dietary predictors were excluded from the final V2 model.
+
+% PROPOSAL FIGURE PLACEHOLDER: Create Diagrams/health_input_mockup.pdf before uncommenting.
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.9\textwidth]{Diagrams/health_input_mockup.pdf}
+%     \caption{Proposed health information input interface for diabetes risk assessment. Authors' illustration.}
+%     \label{fig:health_input_mockup}
+% \end{figure}
+
+\subsubsection{Risk Assessment and Explanation Dashboard}
+
+The proposed dashboard will contain four information areas. The risk assessment summary will show the predicted elevated-FBS risk classification, the calibrated probability, and a brief interpretation. Chapter~1 describes Low, Moderate, and High risk levels, and the probability cut-offs for these levels were not defined in the V2 experiments and will be specified during application design. The SHAP and LIME area will show the factors influencing the prediction as a local explanation. The Calibrated Explanations area will show the CE factual explanation, the Venn-Abers probability uncertainty interval, and the uncertainty of the feature weights.
+
+The counterfactual area will show alternative feature conditions together with their estimated effect on the calibrated probability. These scenarios will be labeled as hypothetical changes in model predictions and not as guaranteed clinical interventions. Mondrian CE is a group-level evaluation and will not be shown as an individual fairness score. Only information that is understandable to the intended user will be displayed, and not every research visualization will be included.
+
+% PROPOSAL FIGURE PLACEHOLDER: Create Diagrams/results_dashboard_mockup.pdf before uncommenting.
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.95\textwidth]{Diagrams/results_dashboard_mockup.pdf}
+%     \caption{Proposed risk assessment and explanation dashboard. Authors' illustration.}
+%     \label{fig:results_dashboard_mockup}
+% \end{figure}
 
 \addcontentsline{toc}{section}{References}
 \bibliographystyle{ieeetr}

@@ -1,21 +1,19 @@
 \section{Design and Implementation}
 
-This chapter documents the operational realization of the theoretical framework presented in Chapter 3. It describes exactly how the 2018--2021 Philippine Expanded National Nutrition Survey (ENNS) data were integrated, preprocessed, and partitioned; how the ten candidate classifiers were trained and optimized; how probability calibration was applied and evaluated; and how SHAP, LIME, and Calibrated Explanations (CE) were generated. The chapter proceeds from raw data ingestion through to the full hybrid explainability pipeline, establishing the reproducible system whose results are reported in Chapter 5.
+This chapter presents the design and implementation of the proposed hybrid machine learning framework for identifying elevated fasting blood glucose risk using the 2018--2021 Philippine Expanded National Nutrition Survey (ENNS). It describes dataset preparation, the development of ten classification approaches, SHAP and LIME analysis, probability calibration, and Calibrated Explanations (CE). The chapter also outlines the experimental environment supporting the study's preliminary results.
 
 \subsection{Methodological Pipeline Overview}
 
-The implemented pipeline follows eight sequential stages from raw ENNS data to Calibrated Explanations output: (1) multi-dataset ENNS integration; (2) ENNS sentinel-value normalization and target construction; (3) selective feature engineering; (4) missing-value imputation, outlier capping, and standardization; (5) correlation-based feature elimination producing a final 22-feature predictor set; (6) SMOTE class balancing applied to the full preprocessed dataset; (7) stratified 70/15/15 partitioning; and (8) sequential execution of model training, probability calibration, SHAP/LIME explainability, and Calibrated Explanations generation.
+The pipeline comprised ENNS dataset integration, sentinel-value normalization, target construction, feature engineering, imputation, outlier capping, standardization, and correlation filtering. The resulting 22 predictors were used in SMOTE balancing and stratified 70/15/15 partitioning, followed by model development, SHAP and LIME, probability calibration, and CE analysis. A methodological pipeline diagram is proposed to summarize these stages.
 
-All data transformation parameters --- imputation statistics, outlier bounds, scaling parameters, and correlation filter decisions --- were estimated from the training partition only and applied without modification to the validation and test partitions. The ten trained classifiers span a Gaussian Na\"{i}ve Bayes baseline, six tuned traditional ML models (kNN, AdaBoost, XGBoost, Random Forest, CatBoost, LightGBM), a Bayesian-optimized deep learning model (BO-TabNet), and two ensemble architectures (Voting and Stacking). Three calibration methods (Platt Scaling, Isotonic Regression, Temperature Scaling) were applied to each model, and explanations were generated using SHAP, LIME, and the Calibrated Explanations framework with Venn-Abers calibration.
+The ten approaches consisted of Na\"{i}ve Bayes, six tuned conventional classifiers, BO-TabNet, Voting, and Stacking. Explanations were obtained using SHAP and LIME. Platt Scaling, Isotonic Regression, and Temperature Scaling were compared for probability calibration, while the CE framework employed Venn-Abers calibration to produce uncertainty-aware explanations.
 
-% TODO: Add Figure - end-to-end pipeline diagram
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=\textwidth]{Diagrams/pipeline_overview.pdf}
-%     \caption{End-to-end pipeline from 2018--2021 ENNS data ingestion to
-%     Calibrated Explanations output. Authors' illustration.}
-%     \label{fig:pipeline_overview}
-% \end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Diagrams/Methodological_Pipeline.pdf}
+    \caption{Methodological pipeline of the proposed hybrid prediction framework. Authors' illustration.}
+    \label{fig:pipeline_overview}
+\end{figure}
 
 \subsection{Data Source}
 
@@ -25,7 +23,7 @@ The dataset used in this study is sourced from the 2018--2021 Expanded National 
 
 \subsubsection{ENNS Component Datasets}
 
-Five component datasets were accessed and merged. The dietary component was examined but excluded from the final predictive feature set, as preliminary analysis indicated it introduced noise inconsistent with the study's clinical scope.
+Five ENNS components were examined. Four contributed to the modeling dataset, while the dietary component was excluded from the final predictors following preliminary analysis.
 
 \begin{table}[H]
 \centering
@@ -92,11 +90,11 @@ The FBS column was removed from the feature matrix after target construction.
 
 \subsection{Preprocessing and Feature Engineering}
 
-All preprocessing was implemented in Python using \texttt{Pandas}, \texttt{NumPy}, \texttt{scikit-learn} (version 1.2.2), and \texttt{imbalanced-learn}. The complete pipeline is executed by \texttt{main\_preprocessing.py}.
+All preprocessing was implemented in Python using \texttt{Pandas}, \texttt{NumPy}, \texttt{scikit-learn} (version 1.5.2), and \texttt{imbalanced-learn} (version 0.13.0). The complete pipeline is executed by \texttt{main\_preprocessing.py}.
 
 \subsubsection{Dataset Integration}
 
-The anthropometric, biochemical, and clinical datasets were merged via a left join on \texttt{hhnum} and \texttt{member\_code}, using the clinical dataset as the anchor. The socioeconomic dataset was subsequently merged to extract \texttt{age} and \texttt{sex}. After merging, metadata columns (\texttt{regcode}, \texttt{provhuc}, \texttt{hhnum}, \texttt{member\_code}, and survey design codes) were dropped to prevent geographic data leakage.
+The anthropometric, biochemical, and clinical datasets were merged via a left join on \texttt{hhnum} and \texttt{member\_code}, using the clinical dataset as the anchor. The socioeconomic dataset was subsequently merged to extract \texttt{age} and \texttt{sex}. After merging, metadata columns (\texttt{regcode}, \texttt{provhuc}, \texttt{hhnum}, \texttt{member\_code}, and survey design codes) were excluded from the predictor set.
 
 \subsubsection{ENNS Sentinel-Value Normalization}
 
@@ -126,19 +124,19 @@ Four candidate features were computed from raw anthropometric and biochemical me
 \end{tabular}
 \end{table}
 
-After engineering, \texttt{weight} and \texttt{height} were dropped as they were fully captured by derived features. Only \texttt{ldl\_hdl\_ratio} survived correlation filtering as an engineered predictor.
+After feature engineering, \texttt{weight} and \texttt{height} were excluded from the final predictors. Only \texttt{ldl\_hdl\_ratio} survived correlation filtering as an engineered predictor.
 
 \subsubsection{Missing-Value Imputation}
 
-Missing values in continuous features were imputed using K-Nearest Neighbors (KNN) imputation with the number of neighbors $k$ optimized through cross-validation. Categorical features were imputed using mode values. All imputation parameters were fitted exclusively on the training partition and applied without refitting to validation and test partitions.
+Missing values in continuous features were imputed using K-Nearest Neighbors (KNN) imputation with the number of neighbors $k$ optimized through cross-validation. Categorical features were imputed using mode values. The resulting imputed values were used in subsequent data preparation.
 
 \subsubsection{Outlier Handling}
 
-Outliers in continuous features were capped using the interquartile range (IQR) method with a 1.5$\times$IQR boundary. Values below $Q_1 - 1.5 \times \mathrm{IQR}$ were set to the lower bound; values above $Q_3 + 1.5 \times \mathrm{IQR}$ were set to the upper bound. IQR thresholds were computed from the training partition only.
+Outliers in continuous features were capped using the interquartile range (IQR) method with a 1.5$\times$IQR boundary. Values below $Q_1 - 1.5 \times \mathrm{IQR}$ were set to the lower bound, and values above $Q_3 + 1.5 \times \mathrm{IQR}$ were set to the upper bound.
 
 \subsubsection{Standardization}
 
-Continuous predictors were standardized using \texttt{StandardScaler}. The scaler was fitted on the training partition and applied without refitting to the validation and test partitions. Categorical features were left unchanged.
+Continuous predictors were standardized using \texttt{StandardScaler}. Categorical predictors were not standardized.
 
 \subsubsection{Correlation-Based Feature Elimination}
 
@@ -146,21 +144,21 @@ Pearson correlation was computed across all numerical features. For each pair wi
 
 \subsubsection{Class-Imbalance Handling}
 
-The dataset exhibits class imbalance, with not-at-risk cases substantially outnumbering at-risk cases. SMOTE \cite{elreedy_smote_2023} was applied to the full preprocessed dataset with \texttt{sampling\_strategy = 1.0} (full 1:1 balance) and \texttt{k\_neighbors = 5}. The resulting balanced dataset was subsequently partitioned into training, validation, and test sets.
+The dataset exhibited class imbalance, with not-at-risk cases substantially outnumbering at-risk cases. SMOTE \cite{elreedy_smote_2023} was applied to the full preprocessed dataset with \texttt{sampling\_strategy = 1.0} (full 1:1 balance) and \texttt{k\_neighbors = 5}. The resulting balanced dataset was subsequently partitioned into training, validation, and test sets.
 
 \subsubsection{Train-Validation-Test Partition}
 
 The balanced dataset was partitioned using a stratified 70/15/15 split with \texttt{random\_state = 42}:
 
 \begin{itemize}
-    \item \textbf{Training set (70\%):} used for model fitting, imputation, scaling, and RandomizedSearchCV cross-validation
+    \item \textbf{Training set (70\%):} used for model fitting and RandomizedSearchCV cross-validation
     \item \textbf{Validation set (15\%):} used for Optuna BO-TabNet optimization and post-hoc calibration fitting
-    \item \textbf{Test set (15\%):} used exclusively for final performance evaluation; no transformation parameters were re-estimated from it
+    \item \textbf{Test set (15\%):} used to calculate and compare reported model performance
 \end{itemize}
 
 \subsection{Model Development and Optimization}
 
-All classifiers were implemented in Python 3.9 using \texttt{scikit-learn} (version 1.2.2), \texttt{pytorch-tabnet} (version 4.0), \texttt{xgboost} (version 1.7.5), \texttt{lightgbm} (version 3.3.5), \texttt{catboost} (version 1.2), and \texttt{optuna}. Table~\ref{tab:model_optimization} summarizes the ten candidate classifiers and their optimization strategies; F2-score was the optimization objective for all tunable models.
+All classifiers were implemented in Python 3.12.2 using \texttt{scikit-learn} (version 1.5.2), \texttt{pytorch-tabnet} (version 4.1.0), \texttt{xgboost} (version 3.2.0), \texttt{lightgbm} (version 4.6.0), \texttt{catboost} (version 1.2.10), and \texttt{optuna} (version 4.8.0). Table~\ref{tab:model_optimization} summarizes the ten candidate approaches and their optimization strategies. F2-score was the objective for all tuned models.
 
 \begin{table}[H]
 \centering
@@ -186,86 +184,45 @@ Stacking Ensemble & Logistic Regression meta-learner & --- & 5-fold \\
 
 \subsubsection{RandomizedSearchCV Optimization}
 
-For the six tunable traditional classifiers, \texttt{RandomizedSearchCV} was used with F2-score as the scoring function and 5-fold cross-validation on the training set. Representative search spaces covered: learning rate (0.01--0.3), maximum depth (3--10), and number of estimators (50--1000) for gradient-boosting models; number of neighbors and distance metric for kNN; and estimator count and learning rate for AdaBoost.
+For the six tunable traditional classifiers, \texttt{RandomizedSearchCV} was used with F2-score as the scoring function and 5-fold cross-validation on the training set. Search spaces included learning rate, tree depth, and estimator count for boosting models, neighbor count and distance metrics for kNN, and estimator count and learning rate for AdaBoost.
 
 \subsubsection{Bayesian Optimization of BO-TabNet}
 
-BO-TabNet was optimized using Optuna with the TPE sampler over 30 trials, evaluating F2-score on the validation set. The search space covered decision and attention dimensions \texttt{n\_d}/\texttt{n\_a} $\in \{8,16,32,64\}$; decision steps \texttt{n\_steps} $\in \{3,\ldots,7\}$; relaxation parameter $\gamma \in \{1.0,1.5,2.0\}$; sparsity regularization $\lambda_{\mathrm{sparse}} \in \{10^{-6},10^{-4},10^{-3}\}$; learning rate $\in \{0.005,0.01,0.02\}$; and batch size $\in \{256,512,1024\}$.
+BO-TabNet was optimized using Optuna with the TPE sampler over 30 trials, evaluating F2-score on the validation set. The search covered decision and attention dimensions, decision steps, the relaxation parameter, sparsity regularization, learning rate, and batch size.
 
 \subsubsection{Voting and Stacking Ensemble Construction}
 
 Both ensemble classifiers used the same three optimized base learners: Random Forest, XGBoost, and LightGBM.
 
-\textbf{Voting Ensemble:} Implemented with \texttt{VotingClassifier} (\texttt{voting=`soft'}). The final probability is the unweighted mean of the three base learners' predicted class probabilities.
+\textbf{Voting Ensemble:} Implemented with \texttt{VotingClassifier} (\texttt{voting=`soft'}). The predicted probability was the unweighted mean of the base learners' probabilities.
 
-\textbf{Stacking Ensemble:} Implemented with \texttt{StackingClassifier}. Out-of-fold predictions from the three base learners (via 5-fold CV) served as meta-features for a Logistic Regression meta-learner, allowing it to learn optimal weighting across the base models' complementary strengths.
+\textbf{Stacking Ensemble:} Implemented with \texttt{StackingClassifier}. Out-of-fold predictions from the three base learners (via 5-fold CV) served as meta-features for a Logistic Regression meta-learner, to combine the base-model outputs.
 
 \subsubsection{Model-Selection Protocol}
 
-Models were ranked primarily by F2-score on the held-out test partition. ROC-AUC and AUPRC were retained as complementary discrimination measures, and Log-Loss and Brier Score were computed for probability quality. This dual-metric evaluation recognizes that screening performance (F2 and Recall) and deployment suitability (reliable calibrated probabilities) may favor different candidate models.
-
-\subsection{Probability Calibration}
-
-After training, each model's predicted probabilities are calibrated using the validation set to ensure they accurately reflect true diabetes risk. Three post-hoc calibration methods are applied and compared.
-
-\subsubsection{Platt Scaling}
-
-Platt Scaling fits a logistic regression model to map uncalibrated scores to calibrated probabilities. For each model, the validation set predictions are used to learn parameters $A$ and $B$ such that:
-
-$$P_{\mathrm{calibrated}}(y=1|x) = \frac{1}{1 + \exp(A \cdot f(x) + B)}$$
-
-where $f(x)$ is the uncalibrated score from the original model.
-
-\subsubsection{Isotonic Regression}
-
-Isotonic Regression fits a piecewise-constant monotonic function to map uncalibrated scores to calibrated probabilities. The calibration mapping is learned from the validation set and applied to test set predictions. Unlike Platt Scaling, Isotonic Regression does not assume a parametric form for the calibration relationship.
-
-\subsubsection{Temperature Scaling}
-
-Temperature Scaling adjusts model confidence by dividing the logit output by a single learned temperature parameter $T > 0$:
-
-$$P_{\mathrm{calibrated}}(y=1|x) = \sigma\!\left(\frac{z(x)}{T}\right)$$
-
-where $z(x)$ is the model logit and $\sigma(\cdot)$ is the sigmoid function. The temperature parameter is optimized on the validation set by minimizing negative log-likelihood. Values of $T > 1$ soften overconfident predictions, while $T < 1$ sharpens underconfident ones. Temperature Scaling does not alter the relative ranking of model predictions.
-
-\subsubsection{Calibration Evaluation}
-
-Calibration quality is assessed using:
-
-\begin{itemize}
-    \item \textbf{Log-Loss:} Primary calibration-selection criterion; measures the quality of predicted probability distributions
-    \item \textbf{Brier Score:} Mean squared error between predicted probabilities and actual binary outcomes
-    \item \textbf{ECE:} Weighted average discrepancy between predicted confidence and observed positive-class frequency across probability bins
-    \item \textbf{Reliability diagrams:} Visual calibration curves comparing mean predicted probability per bin against observed positive-class frequency
-\end{itemize}
-
-For each model, the calibration method yielding the lowest Log-Loss on the test set was selected as the best calibration configuration. The best-calibrated variant of the best-discriminating model was subsequently used as the recommended deployment configuration and as the basis for the Calibrated Explanations analysis.
+The ten models were compared primarily using F2-score, supported by Recall, ROC-AUC, and AUPRC. Log-Loss and Brier Score were also reported to examine probability quality. This evaluation distinguished recall-oriented screening performance from probability reliability.
 
 \subsection{Explainable Artificial Intelligence Techniques}
 
-Three complementary XAI frameworks are implemented to provide interpretable explanations for model predictions at both global and local levels.
+SHAP and LIME were used to interpret the predictions of the trained classifiers. Both techniques are discussed theoretically in Chapter~3, while this section specifies their use in the study.
 
-\subsubsection{SHAP (SHapley Additive exPlanations)}
+\subsubsection{SHAP}
 
-SHAP is implemented using the SHAP Python library. For tree-based models (Random Forest, XGBoost, LightGBM, CatBoost), TreeExplainer computes exact Shapley values efficiently. For other models, KernelExplainer approximates Shapley values through sampling.
+The \texttt{shap} library was used to generate local attributions and aggregated feature rankings. Tree-based models were analyzed using \texttt{TreeExplainer}, while model-agnostic approximation was used where appropriate. Outputs included summary plots, global feature importance, and individual explanation plots.
 
-SHAP provides:
-\begin{itemize}
-    \item \textbf{Global Feature Importance:} Ranking of features by mean absolute SHAP value across all instances
-    \item \textbf{Local Explanations:} Feature contributions for individual predictions shown through force plots and waterfall charts
-    \item \textbf{Summary Plots:} Distribution of SHAP values across all instances, revealing feature impact patterns
-\end{itemize}
+\subsubsection{LIME}
 
-\subsubsection{LIME (Local Interpretable Model-agnostic Explanations)}
+The \texttt{lime} library was used to explain selected individual predictions. \texttt{LimeTabularExplainer} generated local perturbations and fitted weighted surrogate models to identify the features influencing each prediction. These outputs complemented SHAP's global and local attribution analysis.
 
-LIME is implemented using the \texttt{lime} Python library. For each instance to be explained, LIME generates perturbed samples in the neighborhood of the observation, obtains predictions from the original model for each perturbed sample, and fits a weighted linear regression surrogate model to approximate local model behavior. Samples closer to the original instance receive higher weights in the fitting process.
+\subsection{Probability Calibration}
 
-LIME provides local explanations that identify which features most influenced the prediction for a specific individual, complementing the global and aggregated perspective of SHAP with a locally faithful approximation of model decision behavior.
+Three post-hoc calibration methods were evaluated using validation-set predictions: Platt Scaling, Isotonic Regression, and Temperature Scaling. Platt Scaling fitted a sigmoid mapping, Isotonic Regression fitted a monotonic mapping, and Temperature Scaling adjusted prediction logits through a learned temperature parameter. Their mathematical formulations are presented in Chapter~3.
 
+Calibration configurations were compared using Log-Loss as the main criterion, with Brier Score and Expected Calibration Error (ECE) as supplementary measures. Reliability diagrams visualized the agreement between predicted probabilities and observed positive-class frequencies. The calibration comparison was reported separately from the Venn-Abers procedure used within CE.
 
 \subsection{Evaluation Metrics}
 
-Model performance was evaluated on the held-out test partition using seven classification metrics and four calibration metrics. Mathematical definitions are provided in Chapter~3. Table~\ref{tab:metrics_roles} documents the role of each metric in this study.
+Model performance was summarized using seven classification measures and three numerical calibration metrics, alongside reliability diagrams. Mathematical definitions are provided in Chapter~3. Table~\ref{tab:metrics_roles} documents the role of each metric in this study.
 
 \begin{table}[H]
 \centering
@@ -293,31 +250,27 @@ Reliability diagram & Visual calibration curve per model & Supplementary \\
 \end{tabular}
 \end{table}
 
-F2-score was used as the primary classification metric because the study prioritizes sensitivity to at-risk respondents; a missed diagnosis carries greater clinical cost than a false alarm in a diabetes-screening context. Log-Loss was used as the primary calibration-selection metric to identify the best-performing calibration configuration per model.
+F2-score was prioritized because missing an elevated-FBS case is particularly important in screening. Log-Loss was the main criterion for comparing probability calibration configurations.
 
 \subsection{Calibrated Explanations Implementation}
 
-\subsubsection{Scope and Model Coverage}
+The \texttt{calibrated-explanations} library was applied to nine classifiers, excluding BO-TabNet because of estimator-interface compatibility constraints \cite{lofstrom_ce_2024}. Validation data served as the Venn-Abers calibration set, while selected test observations were used for explanations. Four analyses were conducted.
 
-Calibrated Explanations (CE) were implemented using the \texttt{calibrated-explanations} Python library \cite{lofstrom_ce_2024}. CE was applied to nine of the ten trained classifiers; BO-TabNet was excluded because its \texttt{pytorch-tabnet} interface is incompatible with the scikit-learn estimator contract required by the CE framework.
+\subsubsection{Factual CE}
 
-For each compatible model, the validation partition was supplied to the CE framework as the calibration dataset for fitting internal Venn-Abers calibration. Test instances were used for generating individual and aggregated explanations. The four CE experiment types are described below.
-
-\subsubsection{Factual Calibrated Explanations}
-
-Factual CE was generated for six test instances per model: three predicted as at risk and three predicted as not at risk. Each explanation reports a Venn-Abers calibrated probability interval $[p_0, p_1]$ alongside per-feature importance scores with associated uncertainty ranges. Outputs are stored in \texttt{MAIN\_CE\_OUTPUT/factual/}.
+Six test observations per model, comprising three predicted at-risk and three predicted not-at-risk cases, were explained using calibrated probabilities, probability intervals, and feature-weight intervals. Outputs were saved under \texttt{MAIN\_CE\_OUTPUT/factual/}.
 
 \subsubsection{Counterfactual CE and Ensured CCE}
 
-Counterfactual CE (CCE) and Ensured CCE were generated for the same six test instances per model. Ordinary CCE identifies feature changes associated with a shift in the calibrated predicted class. Ensured CCE additionally constrains the alternative prediction to carry a calibrated probability above a defined confidence threshold, ensuring the counterfactual outcome is reliably supported. Six explanation plots per model are stored in \texttt{MAIN\_CE\_OUTPUT/counterfactual/}.
+The same six observations per model were used for Counterfactual CE (CCE) and Ensured CCE. These analyses examined alternative feature conditions and their associated calibrated predictions and uncertainty estimates. Outputs were saved under \texttt{MAIN\_CE\_OUTPUT/counterfactual/}.
 
-\subsubsection{Global CE Aggregation}
+\subsubsection{Global CE}
 
-Global CE was computed across 150 test instances per model for all nine CE-compatible classifiers. Per-instance CE feature weights were aggregated to yield a model-level mean feature importance; the standard deviation of feature weight bounds was computed as the uncertainty width --- a measure of how consistently a feature drives predictions across patients. This uncertainty width complements the SHAP global ranking by quantifying per-feature explanation stability. Outputs are stored in \texttt{MAIN\_CE\_OUTPUT/global/}.
+Factual explanations from 150 test observations per compatible model were aggregated to summarize feature importance and its variability. Results were stored under \texttt{MAIN\_CE\_OUTPUT/global/}.
 
-\subsubsection{Mondrian CE for Sex-Stratified Analysis}
+\subsubsection{Mondrian CE}
 
-Mondrian CE was applied to 50 test instances per sex group per model across the nine CE-compatible classifiers. The validation set was partitioned by the \texttt{sex} variable into two groups, and Venn-Abers calibration was fitted separately within each group. This produces group-conditional calibrated explanations, enabling examination of whether prediction uncertainty and feature attribution patterns are consistent across both sex groups \cite{lofstrom_conditional_ce_2024}. Outputs are stored in \texttt{MAIN\_CE\_OUTPUT/mondrian/}.
+Mondrian CE was conducted for 50 test observations per sex group per model, using group-conditional Venn-Abers calibration \cite{lofstrom_conditional_ce_2024}. The resulting comparisons characterized differences in prediction intervals and explanatory patterns across groups. Results were stored under \texttt{MAIN\_CE\_OUTPUT/mondrian/}.
 
 \subsection{Reproducibility and Implementation Environment}
 
@@ -335,7 +288,7 @@ The complete pipeline is organized into eight scripts executed sequentially:
 \hline
 \texttt{main\_preprocessing.py} & Data integration, sentinel-value normalization, target construction, feature engineering, imputation, outlier capping, standardization, correlation filtering, SMOTE, and partitioning \\
 \texttt{main\_train.py} & Model training and hyperparameter optimization (10 classifiers) \\
-\texttt{main\_xai.py} & SHAP and LIME explainability \\
+\texttt{main\_xai.py} & SHAP and LIME analysis \\
 \texttt{main\_calibration.py} & Post-hoc probability calibration (3 methods) \\
 \texttt{ce\_factual.py} & Factual Calibrated Explanations (9 models) \\
 \texttt{ce\_cce.py} & Counterfactual CE and Ensured CCE (9 models) \\
@@ -347,4 +300,83 @@ The complete pipeline is organized into eight scripts executed sequentially:
 
 \subsubsection{Reproducibility Settings}
 
-All stochastic operations used \texttt{random\_state = 42}. Trained model artifacts and preprocessing transformers are persisted using \texttt{joblib} in \texttt{MAIN\_TRAINED\_MODELS/} and \texttt{MAIN\_PREPROCESS\_OUTPUT/}, respectively. Calibration objects are stored in \texttt{MAIN\_CALIBRATION/}. CE outputs are organized under \texttt{MAIN\_CE\_OUTPUT/} in subdirectories \texttt{factual/}, \texttt{counterfactual/}, \texttt{global/}, and \texttt{mondrian/}.
+All stochastic operations used \texttt{random\_state = 42}. Trained model artifacts are serialized in \texttt{MAIN\_TRAINED\_MODELS/} using \texttt{joblib}, with BO-TabNet saved in its native zip format. The fitted preprocessing objects are saved in \texttt{preprocessing\_info.pkl} under \texttt{MAIN\_PREPROCESS\_OUTPUT/}. The models wrapped with post-hoc calibrators are stored in \texttt{MAIN\_TRAINED\_MODELS\_CALIB/}, while \texttt{MAIN\_CALIBRATION/} contains the calibration comparison table and plots. CE outputs are organized under \texttt{MAIN\_CE\_OUTPUT/} in subdirectories \texttt{factual/}, \texttt{counterfactual/}, \texttt{global/}, and \texttt{mondrian/}.
+
+
+\subsection{System Design}
+
+The trained models, explanation methods, and calibration procedures described in the preceding sections will be delivered through a proposed web-based diabetes risk assessment system. The diagrams in this section describe the intended interactions between the user and the system. They do not describe an implemented application. The machine learning procedures themselves are documented in Sections~4.3 to 4.8 and are not repeated here.
+
+\subsubsection{System Context Diagram}
+
+The proposed web application will allow users to enter relevant health information and receive an elevated-FBS risk assessment. The system will process the submitted information to generate a predicted risk classification, calibrated probability, and corresponding explanations using SHAP, LIME, and Calibrated Explanations (CE). The interaction between the user and the proposed application is illustrated in Figure below.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Diagrams/System_Context_Diagram.png}
+    \caption{Proposed system context diagram of the web-based diabetes risk assessment application.}
+    \label{fig:system_context}
+\end{figure}
+
+\subsubsection{Use-Case Diagram}
+
+The use-case diagram illustrates the proposed interactions between users and the diabetes risk assessment system. Users will be able to enter health information or upload a CSV file, request a risk assessment, and view the resulting risk classification and calibrated probability. The assessment process will include input validation and prediction generation, while SHAP, LIME, Calibrated Explanations, and counterfactual scenarios will provide additional interpretation of the results. Figure below presents the system's functional requirements and their relationships.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Diagrams/diabetes_use_case_diagram.pdf}
+    \caption{Proposed use-case diagram of the web-based diabetes risk assessment application. Authors' illustration.}
+    \label{fig:system_usecase}
+\end{figure}
+
+\subsubsection{Activity Diagram}
+
+The activity diagram illustrates the proposed workflow of the web-based diabetes risk assessment system. Users will enter their health information manually or upload a CSV file for validation and processing. Once validated, the system will apply the saved preprocessing transformations, generate a risk prediction, and perform probability calibration. The application will then display the predicted risk classification, calibrated probability, and corresponding SHAP, LIME, and Calibrated Explanations (CE) outputs. Users may also explore counterfactual scenarios to examine how hypothetical changes in selected features affect the model's predictions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{Diagrams/Activity_Diagram.png}
+    \caption{Proposed activity diagram for the diabetes risk assessment process. Authors' illustration.}
+    \label{fig:system_activity}
+\end{figure}
+
+\subsection{Technical Architecture}
+
+This section presents the proposed software architecture and technical requirements of the web-based diabetes risk assessment system. It describes the integration of trained machine learning models, probability calibration, and explainability methods into the proposed application.
+
+\subsubsection{Proposed System Architecture}
+
+The proposed application will follow a three-layer architecture consisting of the presentation, application, and model layers. The presentation layer will provide the interface for entering health information and viewing risk assessments. The application layer will handle input validation, model inference, probability calibration, and explanation generation. The model layer will contain the saved preprocessing components, trained classifiers, and calibration artifacts.
+
+The system will integrate SHAP and LIME for model explanations and Calibrated Explanations (CE) for uncertainty-aware predictions and counterfactual analysis. The specific web development framework will be determined during application implementation.
+
+\subsubsection{Development and Model-Training Environment}
+
+The machine learning pipeline was developed using Python and supporting libraries for preprocessing, model training, calibration, and explainability. These included scikit-learn, XGBoost, LightGBM, CatBoost, PyTorch, SHAP, LIME, and Calibrated Explanations. Table~\ref{tab:dev_environment} summarizes the software libraries used in the existing implementation.
+
+\begin{table}[H]
+\centering
+\caption{Libraries used in the V2 pipeline and their roles.}
+\label{tab:dev_environment}
+\begin{tabular}{p{4.6cm}p{8cm}}
+\hline
+\textbf{Library} & \textbf{Role} \\
+\hline
+\texttt{pandas}, \texttt{numpy} & Data handling and numerical computation \\
+\texttt{scikit-learn}, \texttt{imbalanced-learn} & Preprocessing, classical models, ensembles, calibration, and SMOTE \\
+\texttt{xgboost}, \texttt{lightgbm}, \texttt{catboost} & Gradient boosting models \\
+\texttt{pytorch-tabnet}, \texttt{torch}, \texttt{optuna} & BO-TabNet and Bayesian optimization \\
+\texttt{shap}, \texttt{lime} & Model explanation \\
+\texttt{calibrated-explanations} & CE with Venn-Abers calibration \\
+\texttt{joblib} & Serialization of models and preprocessing objects \\
+\hline
+\end{tabular}
+\end{table}
+
+The proposed web application will reuse the trained models and preprocessing components. Its hardware requirements will be determined during system development and testing.
+
+\subsubsection{Web Application Requirements}
+
+The proposed application will be accessible through a modern web browser on a computer or mobile device. Users will be able to submit health information and view the corresponding risk assessment without installing the machine learning software locally. Internet connectivity will be required if the application is hosted remotely.
+
+The application will serve as an exploratory decision-support tool and will not replace professional medical diagnosis.
