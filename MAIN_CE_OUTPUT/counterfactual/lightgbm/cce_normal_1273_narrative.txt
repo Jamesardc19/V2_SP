@@ -6,27 +6,24 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 0
-Calibrated probability: 0.255
-Prediction Interval: [0.253, 0.255]
+Calibrated probability: 0.210
+Prediction Interval: [0.209, 0.211]
 
 Alternatives to increase the calibrated probability for class 1:
-- If anthro_group < 3.96 then 0.456 [0.455, 0.457]
-- If age > -0.82         then 0.385 [0.383, 0.386]
-- If Ave_SBP > 0.16      then 0.313 [0.311, 0.313]
-- If waist > -0.39       then 0.306 [0.305, 0.306]
-- If sex < 2.00          then 0.289 [0.288, 0.289]
-- If tri > 2.05          then 0.289 [0.288, 0.289]
-- If drnk_30d_num < 1.17 then 0.277 [0.275, 0.278]
-- If Ave_DBP < -1.16     then 0.274 [0.270, 0.275]
+- If age > -0.81         then 0.424 [0.422, 0.425]
+- If Ave_SBP > 0.16      then 0.288 [0.287, 0.288]
+- If binge_drink > 0.00  then 0.288 [0.287, 0.288]
+- If waist > -0.39       then 0.288 [0.287, 0.288]
+- If sex < 2.00          then 0.236 [0.234, 0.237]
+- If tri > 2.06          then 0.236 [0.234, 0.237]
+- If weight > -0.64      then 0.227 [0.225, 0.228]
 
 Alternatives to decrease the calibrated probability for class 1:
-- If age < -1.33         then 0.128 [0.115, 0.130]
-- If waist < -0.83       then 0.129 [0.127, 0.130]
-- If anthro_group > 5.94 then 0.179 [0.171, 0.181]
-- If Ave_SBP < -0.40     then 0.188 [0.180, 0.189]
-- If hemoglobin < -0.38  then 0.215 [0.213, 0.216]
-- If drnk_30days < 1.00  then 0.215 [0.213, 0.216]
-- If vita > -0.55        then 0.219 [0.215, 0.220]
-- If pa_met < 1.00       then 0.227 [0.218, 0.230]
-- If alcohol > 0.00      then 0.242 [0.218, 0.250]
-- If vita < -0.74        then 0.252 [0.242, 0.255]
+- If age < -1.15         then 0.153 [0.147, 0.153]
+- If anthro_group > 5.30 then 0.168 [0.136, 0.174]
+- If waist < -0.80       then 0.176 [0.172, 0.177]
+- If Ave_SBP < -0.40     then 0.180 [0.174, 0.181]
+- If pa_met < 1.00       then 0.204 [0.190, 0.208]
+- If Ave_DBP < -0.27     then 0.207 [0.197, 0.210]
+- If hemoglobin < -0.72  then 0.209 [0.202, 0.210]
+- If weight < -0.98      then 0.209 [0.202, 0.210]

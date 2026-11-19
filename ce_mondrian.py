@@ -52,8 +52,8 @@ def run_mondrian_for_model(model_key, model_name, model,
     rows = []
 
     group_specs = [
-        ('group_a', male_mask_cal,   male_mask_test),
-        ('group_b', female_mask_cal, female_mask_test),
+        ('male',    male_mask_cal,   male_mask_test),
+        ('female',  female_mask_cal, female_mask_test),
     ]
 
     for group_label, mask_cal, mask_test in group_specs:
@@ -157,10 +157,10 @@ def save_mondrian_outputs(mondrian_df, config):
         fig, ax = plt.subplots(figsize=(11, 6))
         x = np.arange(len(pivot))
         w = 0.35
-        ax.bar(x - w / 2, pivot.get('group_a', 0), w,
-               label='Group A (lower sex value)',  color='#2980b9', alpha=0.85)
-        ax.bar(x + w / 2, pivot.get('group_b', 0), w,
-               label='Group B (higher sex value)', color='#e74c3c', alpha=0.85)
+        ax.bar(x - w / 2, pivot.get('male', 0), w,
+               label='Male',  color='#2980b9', alpha=0.85)
+        ax.bar(x + w / 2, pivot.get('female', 0), w,
+               label='Female', color='#e74c3c', alpha=0.85)
         ax.set_xticks(x)
         ax.set_xticklabels(pivot.index, rotation=35, ha='right', fontsize=9)
         ax.set_ylabel('Mean CE Feature Uncertainty Width', fontsize=10)
@@ -199,18 +199,17 @@ def main():
     mondrian_dir.mkdir(parents=True, exist_ok=True)
 
     sex_col   = config.sex_col_idx
-    threshold = np.median(X_cal[:, sex_col])
 
-    male_mask_cal    = X_cal[:, sex_col] <  threshold
-    female_mask_cal  = X_cal[:, sex_col] >= threshold
-    male_mask_test   = X_test[:, sex_col] <  threshold
-    female_mask_test = X_test[:, sex_col] >= threshold
+    male_mask_cal    = X_cal[:, sex_col]  == 1
+    female_mask_cal  = X_cal[:, sex_col]  == 2
+    male_mask_test   = X_test[:, sex_col] == 1
+    female_mask_test = X_test[:, sex_col] == 2
 
-    print(f"\n  Sex threshold (median of col {sex_col}): {threshold}")
-    print(f"  Cal  — Group A: {male_mask_cal.sum():>5},  "
-          f"Group B: {female_mask_cal.sum()}")
-    print(f"  Test — Group A: {male_mask_test.sum():>5},  "
-          f"Group B: {female_mask_test.sum()}")
+    print(f"\n  Sex column index: {sex_col}  (1 = Male, 2 = Female)")
+    print(f"  Cal  - Male: {male_mask_cal.sum():>5},  "
+          f"Female: {female_mask_cal.sum()}")
+    print(f"  Test - Male: {male_mask_test.sum():>5},  "
+          f"Female: {female_mask_test.sum()}")
 
     if male_mask_cal.sum() < 10 or female_mask_cal.sum() < 10:
         print("  [warn] Insufficient calibration samples per sex group. Exiting.")

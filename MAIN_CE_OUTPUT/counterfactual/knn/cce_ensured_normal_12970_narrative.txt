@@ -6,13 +6,32 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 0
-Calibrated probability: 0.097
-Prediction Interval: [0.096, 0.097]
+Calibrated probability: 0.167
+Prediction Interval: [0.166, 0.167]
 
 Alternatives to increase the calibrated probability for class 1:
-- If currentsmoking > 0.01 then 0.831 [0.831, 0.831]
-- If ever_smk > 0.07       then 0.831 [0.831, 0.831]
-- If smoke_status < 1.99   then 0.831 [0.831, 0.831]
-- If drnk_30d_num > -1.22  then 0.679 [0.679, 0.679]
+- If hdl < -0.05         then 0.515 [0.515, 0.515]
+- If hemoglobin < -0.85  then 0.515 [0.515, 0.515]
+- If Ave_DBP > 0.57      then 0.357 [0.356, 0.357]
+- If age < -0.03         then 0.357 [0.356, 0.357]
+- If binge_drink > 0.00  then 0.357 [0.356, 0.357]
+- If bmi > 0.92          then 0.357 [0.356, 0.357]
+- If chol < 1.25         then 0.357 [0.356, 0.357]
+- If height > 1.87       then 0.357 [0.356, 0.357]
+- If hemoglobin > 1.43   then 0.357 [0.356, 0.357]
+- If hip > 1.47          then 0.357 [0.356, 0.357]
+- If pa_met < 1.00       then 0.357 [0.356, 0.357]
+- If smoke_status < 1.48 then 0.357 [0.356, 0.357]
+- If tri > 2.11          then 0.357 [0.356, 0.357]
+- If uic < -0.86         then 0.357 [0.356, 0.357]
+- If weight > 1.58       then 0.357 [0.356, 0.357]
+- If Ave_SBP < -0.32     then 0.293 [0.293, 0.293]
+- If Ave_SBP > 0.16      then 0.293 [0.293, 0.293]
+- If height < 0.14       then 0.293 [0.293, 0.293]
+- If hip < 0.69          then 0.293 [0.293, 0.293]
+- If waist < 1.21        then 0.293 [0.293, 0.293]
+- If weight < 0.81       then 0.293 [0.293, 0.293]
+- If ever_smk > -0.97    then 0.262 [0.261, 0.262]
 
 Alternatives to decrease the calibrated probability for class 1:
+- If Ave_DBP < -0.26     then 0.103 [0.102, 0.103]

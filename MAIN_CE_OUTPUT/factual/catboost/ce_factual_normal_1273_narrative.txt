@@ -6,24 +6,17 @@ Instance 0
 Factual Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 0
-Calibrated Probability: 0.241
-Prediction Interval: [0.240, 0.241]
+Calibrated Probability: 0.195
+Prediction Interval: [0.193, 0.195]
 
 Factors impacting the calibrated probability for class 1 positively:
-anthro_group (4.0) <= 5.94  - weight ~ 0.084 [0.083, 0.085]
-smoke_status (0.0) <= 1.12  - weight ~ 0.084 [0.083, 0.085]
-tri (-0.13) > -0.43         - weight ~ 0.056 [0.056, 0.057]
-ever_smk (0.0) <= 2.00      - weight ~ 0.050 [0.044, 0.069]
+Ave_SBP (-0.06) > -0.40    - weight ~ 0.041 [0.040, 0.046]
+tri (-0.13) > -0.45        - weight ~ 0.002 [0.001, 0.007]
+anthro_group (4.0) <= 5.95 - weight ~ 0.002 [-0.000, 0.012] [[!] direction uncertain]
 
 Factors impacting the calibrated probability for class 1 negatively:
-age (-0.94) <= -0.38        - weight ~ -0.202 [-0.203, -0.201]
-waist (-0.47) <= 0.06       - weight ~ -0.116 [-0.117, -0.115]
-Ave_SBP (-0.06) <= 0.16     - weight ~ -0.079 [-0.080, -0.077]
-drnk_30d_num (1.17) > 1.17  - weight ~ -0.032 [-0.032, -0.031]
-Ave_DBP (-0.26) > -0.32     - weight ~ -0.000 [-0.000, 0.001] [[!] direction uncertain]
-hdl (-0.34) <= 0.31         - weight ~ -0.000 [-0.000, 0.001] [[!] direction uncertain]
-hemoglobin (-0.32) > -0.85  - weight ~ -0.000 [-0.000, 0.001] [[!] direction uncertain]
-ldl (-0.13) <= -0.02        - weight ~ -0.000 [-0.000, 0.001] [[!] direction uncertain]
-ldl_hdl_ratio (0.15) > 0.05 - weight ~ -0.000 [-0.000, 0.001] [[!] direction uncertain]
-uic (2.33) > 0.30           - weight ~ -0.000 [-0.000, 0.001] [[!] direction uncertain]
-vita (-0.55) <= -0.07       - weight ~ -0.000 [-0.000, 0.001] [[!] direction uncertain]
+age (-0.94) <= -0.49       - weight ~ -0.298 [-0.299, -0.297]
+waist (-0.47) <= -0.09     - weight ~ -0.118 [-0.118, -0.116]
+binge_drink (0.0) <= 0.00  - weight ~ -0.059 [-0.060, -0.058]
+sex (2.0) > 1.99           - weight ~ -0.046 [-0.055, -0.015]
+weight (-0.76) <= -0.27    - weight ~ -0.011 [-0.013, -0.004]

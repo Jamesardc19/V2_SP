@@ -6,13 +6,17 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 1
-Calibrated probability: 0.642
-Prediction Interval: [0.641, 0.643]
+Calibrated probability: 0.909
+Prediction Interval: [0.909, 0.911]
 
 Alternatives to increase the calibrated probability for class 1:
-- If drnk_30d_num > 0.93 then 0.459 [0.457, 0.459]
-- If anthro_group > 4.18 then 0.518 [0.517, 0.519]
-- If ever_smk > 0.07     then 0.518 [0.517, 0.519]
-- If pa_met > 0.00       then 0.518 [0.517, 0.519]
+- If age < -0.14         then 0.620 [0.619, 0.621]
+- If pa_met < 0.00       then 0.787 [0.787, 0.789]
+- If pa_met > 0.90       then 0.787 [0.787, 0.789]
+- If anthro_group > 5.52 then 0.802 [0.801, 0.803]
+- If tri < -0.16         then 0.835 [0.834, 0.836]
+- If height < -2.08      then 0.858 [0.858, 0.860]
+- If anthro_group < 3.76 then 0.884 [0.884, 0.885]
+- If bmi > 0.42          then 0.892 [0.892, 0.894]
 
 Alternatives to decrease the calibrated probability for class 1:

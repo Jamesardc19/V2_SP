@@ -6,21 +6,38 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 1
-Calibrated probability: 0.743
-Prediction Interval: [0.743, 0.744]
+Calibrated probability: 0.728
+Prediction Interval: [0.727, 0.732]
 
 Alternatives to increase the calibrated probability for class 1:
-- If waist > 0.51         then 0.829 [0.828, 0.833]
-- If tri > 2.05           then 0.778 [0.777, 0.780]
+- If tri > 2.06            then 0.809 [0.808, 0.814]
+- If pa_met < 1.00         then 0.808 [0.806, 0.814]
+- If waist > 0.77          then 0.796 [0.793, 0.807]
+- If anthro_group > 1.00   then 0.773 [0.772, 0.774]
+- If Ave_DBP < 0.57        then 0.764 [0.763, 0.766]
+- If binge_drink > 0.02    then 0.753 [0.746, 0.774]
+- If height > 0.17         then 0.747 [0.746, 0.749]
+- If hip < 0.05            then 0.747 [0.746, 0.749]
+- If sex > 1.00            then 0.747 [0.746, 0.749]
+- If uic > -0.97           then 0.747 [0.746, 0.749]
+- If chol > 0.35           then 0.734 [0.733, 0.738]
+- If bmi > 0.92            then 0.730 [0.727, 0.738]
 
 Alternatives to decrease the calibrated probability for class 1:
-- If waist < 0.15         then 0.516 [0.513, 0.518]
-- If age < 0.14           then 0.522 [0.521, 0.523]
-- If age > 1.92           then 0.681 [0.681, 0.682]
-- If tri < -0.07          then 0.691 [0.691, 0.693]
-- If Ave_SBP < 0.76       then 0.700 [0.699, 0.702]
-- If uic < -1.80          then 0.710 [0.707, 0.715]
-- If anthro_group > 5.94  then 0.733 [0.733, 0.735]
-- If vita < 0.52          then 0.738 [0.736, 0.741]
-- If drnk_30d_num > -1.46 then 0.740 [0.740, 0.741]
-- If hemoglobin < -0.38   then 0.740 [0.740, 0.741]
+- If age < 0.22            then 0.519 [0.518, 0.522]
+- If waist < 0.24          then 0.557 [0.555, 0.559]
+- If uic < -1.74           then 0.610 [0.610, 0.611]
+- If hemoglobin < -0.38    then 0.696 [0.695, 0.697]
+- If Ave_SBP < 0.80        then 0.704 [0.704, 0.706]
+- If age > 1.82            then 0.704 [0.704, 0.706]
+- If tri < -0.16           then 0.707 [0.706, 0.709]
+- If drnk_30days < 0.99    then 0.708 [0.707, 0.713]
+- If bmi < 0.09            then 0.721 [0.720, 0.724]
+- If alcohol < 0.99        then 0.725 [0.724, 0.726]
+- If con_alcohol < 1.00    then 0.725 [0.724, 0.726]
+- If height < -1.71        then 0.725 [0.724, 0.726]
+- If ldl_hdl_ratio > -0.01 then 0.726 [0.725, 0.728]
+- If weight < 0.01         then 0.726 [0.725, 0.728]
+- If vita < 0.24           then 0.726 [0.725, 0.730]
+- If chol < -0.13          then 0.727 [0.726, 0.730]
+- If ldl_hdl_ratio < -0.21 then 0.727 [0.726, 0.730]

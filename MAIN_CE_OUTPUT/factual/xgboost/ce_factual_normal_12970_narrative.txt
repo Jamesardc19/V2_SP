@@ -6,24 +6,25 @@ Instance 0
 Factual Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 1
-Calibrated Probability: 0.778
-Prediction Interval: [0.777, 0.780]
+Calibrated Probability: 0.773
+Prediction Interval: [0.772, 0.774]
 
 Factors impacting the calibrated probability for class 1 positively:
-age (0.39) > -0.46            - weight ~ 0.357 [0.353, 0.364]
-waist (1.35) > -0.11          - weight ~ 0.256 [0.253, 0.258]
-tri (1.22) > -0.37            - weight ~ 0.160 [0.159, 0.161]
-Ave_SBP (0.05) > -0.40        - weight ~ 0.035 [0.034, 0.035]
-anthro_group (4.0) <= 5.94    - weight ~ 0.035 [0.034, 0.035]
-hemoglobin (0.56) > -0.85     - weight ~ 0.035 [0.034, 0.035]
-uic (-0.44) <= 0.45           - weight ~ 0.035 [0.034, 0.035]
-hdl (-0.0) <= 0.32            - weight ~ 0.012 [0.010, 0.012]
-ldl_hdl_ratio (2.08) > -0.00  - weight ~ 0.012 [0.010, 0.012]
-vita (0.02) > -0.13           - weight ~ 0.012 [0.010, 0.012]
-ldl (2.26) > -0.02            - weight ~ 0.000 [-0.002, 0.001] [[!] direction uncertain]
+age (0.39) > -0.48         - weight ~ 0.425 [0.425, 0.427]
+waist (1.35) > -0.02       - weight ~ 0.239 [0.238, 0.240]
+tri (1.15) > -0.45         - weight ~ 0.176 [0.175, 0.176]
+weight (1.5) > -0.38       - weight ~ 0.065 [0.063, 0.066]
+hemoglobin (0.56) > -0.99  - weight ~ 0.065 [0.061, 0.066]
+Ave_SBP (0.05) > -0.36     - weight ~ 0.048 [0.047, 0.048]
+anthro_group (4.0) <= 5.95 - weight ~ 0.044 [0.041, 0.046]
+bmi (0.87) > -0.29         - weight ~ 0.009 [0.007, 0.009]
+chol (2.25) > -0.13        - weight ~ 0.009 [0.007, 0.009]
+alcohol (1.0) > 0.00       - weight ~ 0.000 [-0.001, 0.001] [[!] direction uncertain]
+drnk_30days (1.0) > 0.02   - weight ~ 0.000 [-0.001, 0.001] [[!] direction uncertain]
+uic (-0.73) <= 0.26        - weight ~ 0.000 [-0.001, 0.001] [[!] direction uncertain]
+vita (0.42) > -0.05        - weight ~ 0.000 [-0.001, 0.001] [[!] direction uncertain]
 
 Factors impacting the calibrated probability for class 1 negatively:
-drnk_30d_num (-1.46) <= -0.03 - weight ~ -0.030 [-0.032, -0.030]
-Ave_DBP (0.51) > -0.26        - weight ~ -0.028 [-0.029, -0.027]
-ever_smk (0.0) <= 2.00        - weight ~ -0.028 [-0.029, -0.027]
-sex (1.0) <= 2.00             - weight ~ -0.028 [-0.029, -0.027]
+Ave_DBP (0.51) > -0.26     - weight ~ -0.037 [-0.042, -0.036]
+sex (1.0) <= 2.00          - weight ~ -0.037 [-0.042, -0.036]
+pa_met (1.0) > 0.00        - weight ~ -0.009 [-0.042, 0.000] [[!] direction uncertain]

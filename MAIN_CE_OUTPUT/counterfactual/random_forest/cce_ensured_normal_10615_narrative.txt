@@ -6,9 +6,21 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 0
-Calibrated probability: 0.047
-Prediction Interval: [0.046, 0.047]
+Calibrated probability: 0.072
+Prediction Interval: [0.070, 0.072]
 
 Alternatives to increase the calibrated probability for class 1:
+- If bmi > -1.15           then 0.156 [0.154, 0.157]
+- If age > -1.22           then 0.131 [0.129, 0.132]
 
 Alternatives to decrease the calibrated probability for class 1:
+- If Ave_DBP > -1.39       then 0.044 [0.043, 0.044]
+- If uic < -0.97           then 0.044 [0.043, 0.044]
+- If anthro_group < 5.95   then 0.044 [0.043, 0.044]
+- If pa_met > 0.00         then 0.044 [0.043, 0.044]
+- If ldl_hdl_ratio < -0.22 then 0.045 [0.043, 0.045]
+- If height > 0.17         then 0.053 [0.052, 0.054]
+- If tri < -0.16           then 0.054 [0.052, 0.054]
+- If vita < 0.33           then 0.054 [0.052, 0.054]
+- If hip > -1.26           then 0.063 [0.061, 0.063]
+- If uic > 0.07            then 0.063 [0.061, 0.063]

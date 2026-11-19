@@ -58,7 +58,7 @@ class Config:
     cv_folds      = 5
     n_iter        = 30   # RandomizedSearch + Optuna BO trials
     skip_tabnet   = False  # Set True to skip TabNet (loads prior metrics from CSV instead)
-    tabnet_only   = True   # Set True to train ONLY TabNet (loads prior ML metrics from CSV)
+    tabnet_only   = False  # Set True to train ONLY TabNet (loads prior ML metrics from CSV)
 
     # Primary metric: F2 (recall-weighted, beta=2)
     f2_scorer           = make_scorer(fbeta_score, beta=2, zero_division=0)

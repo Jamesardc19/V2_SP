@@ -6,27 +6,29 @@ Instance 0
 Factual Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 0
-Calibrated Probability: 0.207
-Prediction Interval: [0.204, 0.208]
+Calibrated Probability: 0.197
+Prediction Interval: [0.195, 0.198]
 
 Factors impacting the calibrated probability for class 1 positively:
-uic (2.33) > 0.35            - weight ~ 0.090 [0.089, 0.095]
-tri (-0.13) > -0.49          - weight ~ 0.084 [0.083, 0.087]
-hemoglobin (-0.32) > -0.92   - weight ~ 0.037 [0.030, 0.069]
-Ave_DBP (-0.26) > -0.32      - weight ~ 0.031 [0.031, 0.034]
-Ave_SBP (-0.06) > -0.40      - weight ~ 0.027 [0.027, 0.030]
-currentsmoking (0.0) <= 0.95 - weight ~ 0.012 [0.011, 0.016]
-drnk_30days (1.0) > 0.00     - weight ~ 0.012 [0.011, 0.016]
-vita (-0.55) <= -0.13        - weight ~ 0.012 [0.011, 0.016]
-hdl (-0.34) <= 0.33          - weight ~ 0.004 [0.003, 0.007]
-ldl_hdl_ratio (0.15) > -0.07 - weight ~ 0.004 [0.003, 0.007]
-binge_drink (0.0) <= 0.01    - weight ~ 0.003 [0.000, 0.016] [[!] direction uncertain]
+Ave_SBP (-0.06) > -0.40      - weight ~ 0.056 [0.056, 0.058]
+anthro_group (4.0) <= 5.90   - weight ~ 0.047 [0.046, 0.048]
+hip (-0.23) <= -0.09         - weight ~ 0.047 [0.046, 0.048]
+bmi (0.11) > -0.15           - weight ~ 0.035 [0.034, 0.037]
+uic (2.36) > 0.26            - weight ~ 0.035 [0.034, 0.037]
+vita (-0.54) <= -0.05        - weight ~ 0.033 [0.032, 0.037]
+hdl (-0.26) <= 0.36          - weight ~ 0.020 [0.019, 0.024]
+hemoglobin (-0.32) > -0.92   - weight ~ 0.004 [0.002, 0.011]
+ever_smk (0.0) <= 0.01       - weight ~ 0.002 [0.000, 0.010]
+tri (-0.13) > -0.45          - weight ~ 0.002 [0.000, 0.010]
+Ave_DBP (-0.26) > -0.32      - weight ~ 0.001 [-0.000, 0.004] [[!] direction uncertain]
 
 Factors impacting the calibrated probability for class 1 negatively:
-age (-0.94) <= -0.47         - weight ~ -0.148 [-0.149, -0.146]
-waist (-0.47) <= -0.10       - weight ~ -0.099 [-0.100, -0.096]
-drnk_30d_num (1.17) > -0.03  - weight ~ -0.080 [-0.080, -0.079]
-smoke_status (0.0) <= 1.12   - weight ~ -0.033 [-0.034, -0.031]
-ldl (-0.13) <= -0.09         - weight ~ -0.022 [-0.023, -0.020]
-alcohol (0.0) <= 0.00        - weight ~ -0.014 [-0.017, -0.004]
-anthro_group (4.0) <= 5.94   - weight ~ -0.014 [-0.017, -0.004]
+age (-0.94) <= -0.43         - weight ~ -0.167 [-0.169, -0.164]
+waist (-0.47) <= -0.10       - weight ~ -0.084 [-0.086, -0.081]
+binge_drink (0.0) <= 0.00    - weight ~ -0.039 [-0.040, -0.036]
+pa_met (1.0) > 0.00          - weight ~ -0.039 [-0.040, -0.036]
+weight (-0.76) <= -0.16      - weight ~ -0.025 [-0.027, -0.020]
+chol (-0.33) <= -0.13        - weight ~ -0.013 [-0.014, -0.011]
+height (-1.67) <= 0.17       - weight ~ -0.013 [-0.014, -0.011]
+ldl_hdl_ratio (0.19) > -0.22 - weight ~ -0.010 [-0.011, -0.006]
+ldl (-0.06) <= 0.06          - weight ~ -0.000 [-0.000, 0.002] [[!] direction uncertain]

@@ -4,7 +4,7 @@ This chapter presents the design and implementation of the proposed hybrid machi
 
 \subsection{Methodological Pipeline Overview}
 
-The pipeline comprised ENNS dataset integration, sentinel-value normalization, target construction, feature engineering, imputation, outlier capping, standardization, and correlation filtering. The resulting 22 predictors were used in SMOTE balancing and stratified 70/15/15 partitioning, followed by model development, SHAP and LIME, probability calibration, and CE analysis. A methodological pipeline diagram is proposed to summarize these stages.
+The pipeline comprised ENNS dataset integration, sentinel-value normalization, target construction, feature engineering, skip-logic recoding, imputation, outlier capping, standardization, and correlation filtering. The resulting 26 predictors were used in SMOTE balancing and stratified 70/15/15 partitioning, followed by model development, SHAP and LIME, probability calibration, and CE analysis. A methodological pipeline diagram is proposed to summarize these stages.
 
 The ten approaches consisted of Na\"{i}ve Bayes, six tuned conventional classifiers, BO-TabNet, Voting, and Stacking. Explanations were obtained using SHAP and LIME. Platt Scaling, Isotonic Regression, and Temperature Scaling were compared for probability calibration, while the CE framework employed Venn-Abers calibration to produce uncertainty-aware explanations.
 
@@ -34,8 +34,8 @@ Five ENNS components were examined. Four contributed to the modeling dataset, wh
 \textbf{Component} & \textbf{Status} & \textbf{Key Variables Retained} \\
 \hline
 Clinical/Health & Used & Ave\_SBP, Ave\_DBP, hemoglobin, uic, vita, behavioral and lifestyle variables \\
-Biochemical & Used & tri, hdl, ldl \\
-Anthropo\-metric & Used & waist, anthro\_group (height/weight used for feature engineering, then dropped) \\
+Biochemical & Used & chol, tri, hdl, ldl \\
+Anthropo\-metric & Used & weight, height, waist, hip, anthro\_group (bmi computed from weight and height) \\
 Socioeconomic & Partial (age, sex only) & age, sex \\
 Dietary & Examined; excluded & --- \\
 \hline
@@ -50,11 +50,11 @@ The target variable \texttt{diabetes} was derived from fasting blood sugar (FBS)
 
 \subsubsection{Final Predictor Set}
 
-Following feature engineering and correlation filtering, the final modeling set comprised 22 predictors spanning five domains.
+Following feature engineering and correlation filtering, the final modeling set comprised 26 predictors spanning clinical, biochemical, anthropometric, demographic, behavioral, and engineered domains.
 
 \begin{table}[H]
 \centering
-\caption{Final 22-feature predictor set used in all ten classifiers.}
+\caption{Final 26-feature predictor set used in all ten classifiers.}
 \label{tab:final_features}
 \begin{tabular}{clll}
 \hline
@@ -65,23 +65,27 @@ Following feature engineering and correlation filtering, the final modeling set 
 3 & \texttt{uic} & Continuous & Clinical \\
 4 & \texttt{vita} & Continuous & Clinical \\
 5 & \texttt{hemoglobin} & Continuous & Clinical \\
-6 & \texttt{tri} & Continuous & Biochemical \\
-7 & \texttt{hdl} & Continuous & Biochemical \\
-8 & \texttt{ldl} & Continuous & Biochemical \\
-9 & \texttt{waist} & Continuous & Anthropometric \\
-10 & \texttt{anthro\_group} & Categorical & Demographic \\
-11 & \texttt{currentsmoking} & Categorical & Behavioral \\
-12 & \texttt{ever\_smk} & Categorical & Behavioral \\
-13 & \texttt{smoke\_status} & Categorical & Behavioral \\
-14 & \texttt{alcohol} & Categorical & Behavioral \\
-15 & \texttt{con\_alcohol} & Categorical & Behavioral \\
-16 & \texttt{drnk\_30days} & Categorical & Behavioral \\
-17 & \texttt{drnk\_30d\_num} & Continuous & Behavioral \\
-18 & \texttt{binge\_drink} & Categorical & Behavioral \\
-19 & \texttt{pa\_met} & Continuous & Behavioral \\
-20 & \texttt{age} & Continuous & Demographic \\
-21 & \texttt{sex} & Categorical & Demographic \\
-22 & \texttt{ldl\_hdl\_ratio} & Continuous & Engineered \\
+6 & \texttt{chol} & Continuous & Biochemical \\
+7 & \texttt{tri} & Continuous & Biochemical \\
+8 & \texttt{hdl} & Continuous & Biochemical \\
+9 & \texttt{ldl} & Continuous & Biochemical \\
+10 & \texttt{weight} & Continuous & Anthropometric \\
+11 & \texttt{height} & Continuous & Anthropometric \\
+12 & \texttt{waist} & Continuous & Anthropometric \\
+13 & \texttt{hip} & Continuous & Anthropometric \\
+14 & \texttt{bmi} & Continuous & Engineered \\
+15 & \texttt{ldl\_hdl\_ratio} & Continuous & Engineered \\
+16 & \texttt{age} & Continuous & Demographic \\
+17 & \texttt{sex} & Categorical & Demographic \\
+18 & \texttt{anthro\_group} & Categorical & Demographic \\
+19 & \texttt{currentsmoking} & Categorical & Behavioral \\
+20 & \texttt{ever\_smk} & Categorical & Behavioral \\
+21 & \texttt{smoke\_status} & Categorical & Behavioral \\
+22 & \texttt{alcohol} & Categorical & Behavioral \\
+23 & \texttt{con\_alcohol} & Categorical & Behavioral \\
+24 & \texttt{drnk\_30days} & Categorical & Behavioral \\
+25 & \texttt{binge\_drink} & Categorical & Behavioral \\
+26 & \texttt{pa\_met} & Categorical & Behavioral \\
 \hline
 \end{tabular}
 \end{table}
@@ -98,7 +102,7 @@ The anthropometric, biochemical, and clinical datasets were merged via a left jo
 
 \subsubsection{ENNS Sentinel-Value Normalization}
 
-The ENNS survey encodes missing, unknown, and non-applicable responses using survey-specific sentinel values (e.g., \texttt{999}, \texttt{9999}) as documented in the FNRI survey metadata. Before imputation, all such codes were recoded to \texttt{NaN} to ensure they were treated as genuine missing values.
+The ENNS survey encodes non-applicable responses using survey-specific codes documented in the FNRI data dictionaries, such as \texttt{99} for \texttt{ever\_smk} and \texttt{9} for \texttt{con\_alcohol} and \texttt{drnk\_30days}. Before imputation, these codes were recoded to \texttt{NaN} to ensure they were treated as missing values.
 
 \subsubsection{Target Construction}
 
@@ -106,29 +110,33 @@ Rows with missing FBS were removed before any feature imputation step, preventin
 
 \subsubsection{Selective Feature Engineering}
 
-Four candidate features were computed from raw anthropometric and biochemical measurements before imputation and scaling. Total cholesterol (\texttt{chol}) was dropped explicitly to retain the more specific LDL metric prior to correlation filtering.
+Four candidate features were computed from raw anthropometric and biochemical measurements before imputation and scaling. Total cholesterol (\texttt{chol}) was retained alongside LDL because they are distinct laboratory measures, and weight and height were retained alongside the derived \texttt{bmi} because they are measurements that a user can supply.
 
 \begin{table}[H]
 \centering
-\caption{Engineered features and their outcome after correlation filtering.}
+\caption{Engineered features and their outcome.}
 \label{tab:engineered_features}
 \begin{tabular}{p{3cm}p{3.2cm}p{1.8cm}p{4cm}}
 \hline
 \textbf{Feature} & \textbf{Formula} & \textbf{Status} & \textbf{Reason} \\
 \hline
-\texttt{bmi} & weight $\div$ (height/100)$^2$ & Dropped & $r > 0.80$ with \texttt{waist} \\
-\texttt{tri\_hdl\_ratio} & tri $\div$ hdl & Dropped & $r > 0.80$ with \texttt{tri} \\
+\texttt{bmi} & weight $\div$ (height/100)$^2$ & \textbf{Retained} & Standard anthropometric index \\
+\texttt{tri\_hdl\_ratio} & tri $\div$ hdl & Dropped & Redundant with \texttt{tri} \\
 \texttt{ldl\_hdl\_ratio} & ldl $\div$ hdl & \textbf{Retained} & Adds non-redundant atherogenic signal \\
-\texttt{bmi\_tri\_interact} & bmi $\times$ tri $\div$ 100 & Dropped & $r > 0.80$ with \texttt{tri} \\
+\texttt{bmi\_tri\_interact} & bmi $\times$ tri $\div$ 100 & Dropped & Redundant with \texttt{tri} and \texttt{bmi} \\
 \hline
 \end{tabular}
 \end{table}
 
-After feature engineering, \texttt{weight} and \texttt{height} were excluded from the final predictors. Only \texttt{ldl\_hdl\_ratio} survived correlation filtering as an engineered predictor.
+After feature engineering, \texttt{bmi} and \texttt{ldl\_hdl\_ratio} were retained as engineered predictors, while \texttt{tri\_hdl\_ratio} and \texttt{bmi\_tri\_interact} were dropped as redundant.
+
+\subsubsection{ENNS Skip-Logic Recoding}
+
+Several ENNS questionnaire items are asked only when an earlier answer applies, and the survey leaves the dependent items blank otherwise. Treating these blanks as ordinary missing values would assign them the most frequent answer, which is incorrect. Respondents who had never consumed alcohol (\texttt{alcohol} = 0) were therefore assigned \texttt{con\_alcohol} = 0 and \texttt{drnk\_30days} = 0, and respondents with \texttt{con\_alcohol} = 0 were assigned \texttt{drnk\_30days} = 0. Current smokers were not asked the \texttt{ever\_smk} question, so blanks in \texttt{ever\_smk} for current smokers were assigned a separate code of 6. The variable \texttt{drnk\_30d\_num} (number of standard drinks) was excluded because about half of its values were blank and a further quarter carried an undocumented code of 999999 that was not a valid count.
 
 \subsubsection{Missing-Value Imputation}
 
-Missing values in continuous features were imputed using K-Nearest Neighbors (KNN) imputation with the number of neighbors $k$ optimized through cross-validation. Categorical features were imputed using mode values. The resulting imputed values were used in subsequent data preparation.
+Missing values in continuous features were imputed using K-Nearest Neighbors (KNN) imputation with the number of neighbors $k$ optimized through cross-validation. Remaining blanks in categorical features that were not explained by skip logic were assigned an explicit missing category coded as $-1$ instead of the mode, so that no answer was invented. The resulting imputed values were used in subsequent data preparation.
 
 \subsubsection{Outlier Handling}
 
@@ -140,7 +148,7 @@ Continuous predictors were standardized using \texttt{StandardScaler}. Categoric
 
 \subsubsection{Correlation-Based Feature Elimination}
 
-Pearson correlation was computed across all numerical features. For each pair with $|r| > 0.80$, the feature with the lower absolute correlation with the target variable was removed iteratively. This step, together with the feature engineering filter, produced the final 22-predictor set described in Table~\ref{tab:final_features}.
+Pearson correlation was computed across all features on the training partition. A protected list of measurements and questionnaire answers that a user can supply (\texttt{weight}, \texttt{height}, \texttt{bmi}, \texttt{waist}, \texttt{hip}, \texttt{chol}, \texttt{ldl}, \texttt{tri}, \texttt{hdl}, \texttt{currentsmoking}, \texttt{ever\_smk}, and \texttt{smoke\_status}) was exempted from removal. For each pair with $|r| > 0.80$, the unprotected feature was removed when only one feature of the pair was protected, the later feature was removed when neither was protected, and both features were kept when both were protected. Because the redundant derived features were dropped beforehand, the filter removed no further features. The final 26-predictor set is described in Table~\ref{tab:final_features}.
 
 \subsubsection{Class-Imbalance Handling}
 
@@ -216,7 +224,7 @@ The \texttt{lime} library was used to explain selected individual predictions. \
 
 \subsection{Probability Calibration}
 
-Three post-hoc calibration methods were evaluated using validation-set predictions: Platt Scaling, Isotonic Regression, and Temperature Scaling. Platt Scaling fitted a sigmoid mapping, Isotonic Regression fitted a monotonic mapping, and Temperature Scaling adjusted prediction logits through a learned temperature parameter. Their mathematical formulations are presented in Chapter~3.
+Three post-hoc calibration methods were evaluated using validation-set predictions: Platt Scaling, Isotonic Regression, and Temperature Scaling. Platt Scaling fitted a sigmoid mapping, Isotonic Regression fitted a monotonic mapping, and Temperature Scaling adjusted prediction logits through a learned temperature parameter. Their mathematical formulations are presented in Chapter~3. Calibration was applied to all ten classification approaches, and the method retained for each model was selected by five-fold cross-validated Log-Loss on the validation set.
 
 Calibration configurations were compared using Log-Loss as the main criterion, with Brier Score and Expected Calibration Error (ECE) as supplementary measures. Reliability diagrams visualized the agreement between predicted probabilities and observed positive-class frequencies. The calibration comparison was reported separately from the Venn-Abers procedure used within CE.
 

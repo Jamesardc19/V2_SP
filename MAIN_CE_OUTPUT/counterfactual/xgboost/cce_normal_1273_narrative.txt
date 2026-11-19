@@ -6,28 +6,27 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 0
-Calibrated probability: 0.240
-Prediction Interval: [0.239, 0.240]
+Calibrated probability: 0.259
+Prediction Interval: [0.257, 0.260]
 
 Alternatives to increase the calibrated probability for class 1:
-- If age > -0.81         then 0.456 [0.455, 0.457]
-- If anthro_group < 3.45 then 0.401 [0.400, 0.401]
-- If waist > -0.39       then 0.337 [0.334, 0.338]
-- If Ave_SBP > 0.16      then 0.287 [0.285, 0.288]
-- If sex < 2.00          then 0.285 [0.284, 0.286]
-- If drnk_30d_num < 1.17 then 0.255 [0.254, 0.255]
-- If tri > -0.07         then 0.255 [0.254, 0.255]
+- If age > -0.79         then 0.451 [0.449, 0.452]
+- If Ave_SBP > 0.16      then 0.346 [0.345, 0.347]
+- If waist > -0.39       then 0.315 [0.312, 0.317]
+- If tri > 2.06          then 0.311 [0.301, 0.316]
+- If sex < 2.00          then 0.302 [0.301, 0.303]
+- If binge_drink > 0.02  then 0.293 [0.273, 0.301]
+- If hip < -0.47         then 0.271 [0.262, 0.274]
 
 Alternatives to decrease the calibrated probability for class 1:
-- If age < -1.26         then 0.132 [0.129, 0.133]
-- If waist < -0.83       then 0.156 [0.153, 0.157]
-- If Ave_SBP < -0.40     then 0.215 [0.209, 0.216]
-- If tri < -0.37         then 0.232 [0.228, 0.233]
-- If Ave_DBP < -1.16     then 0.240 [0.239, 0.240]
-- If uic < 0.76          then 0.240 [0.239, 0.240]
-- If anthro_group > 5.94 then 0.240 [0.239, 0.240]
-- If drnk_30days < 1.00  then 0.240 [0.239, 0.240]
-- If pa_met < 1.00       then 0.240 [0.239, 0.240]
-- If smoke_status > 0.19 then 0.240 [0.239, 0.240]
-- If hemoglobin < -0.38  then 0.240 [0.239, 0.240]
-- If vita > -0.26        then 0.240 [0.239, 0.240]
+- If age < -1.31         then 0.165 [0.163, 0.166]
+- If waist < -0.83       then 0.174 [0.173, 0.175]
+- If weight < -0.85      then 0.202 [0.200, 0.202]
+- If Ave_SBP < -0.32     then 0.205 [0.195, 0.207]
+- If Ave_DBP < -1.16     then 0.230 [0.229, 0.231]
+- If hemoglobin < -0.38  then 0.230 [0.229, 0.231]
+- If uic < 1.80          then 0.245 [0.243, 0.245]
+- If height > 0.17       then 0.251 [0.227, 0.259]
+- If anthro_group < 3.96 then 0.255 [0.242, 0.259]
+- If tri < -0.16         then 0.255 [0.243, 0.259]
+- If bmi < 0.09          then 0.259 [0.255, 0.260]

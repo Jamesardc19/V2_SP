@@ -6,16 +6,29 @@ Instance 0
 Factual Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 1
-Calibrated Probability: 0.743
-Prediction Interval: [0.743, 0.744]
+Calibrated Probability: 0.728
+Prediction Interval: [0.727, 0.732]
 
 Factors impacting the calibrated probability for class 1 positively:
-age (1.27) > -0.46            - weight ~ 0.297 [0.296, 0.298]
-waist (0.44) > -0.11          - weight ~ 0.262 [0.261, 0.263]
-Ave_SBP (2.43) > -0.40        - weight ~ 0.134 [0.132, 0.135]
-tri (0.81) > -0.37            - weight ~ 0.078 [0.077, 0.079]
-anthro_group (4.0) <= 5.94    - weight ~ 0.010 [0.008, 0.011]
-vita (2.25) > -0.13           - weight ~ 0.010 [0.008, 0.011]
+age (1.27) > -0.48             - weight ~ 0.308 [0.307, 0.308]
+waist (0.77) > -0.02           - weight ~ 0.198 [0.187, 0.206]
+Ave_SBP (2.43) > -0.36         - weight ~ 0.064 [0.059, 0.066]
+hemoglobin (0.29) > -0.99      - weight ~ 0.047 [0.045, 0.047]
+tri (1.09) > -0.45             - weight ~ 0.030 [0.028, 0.031]
+drnk_30days (1.0) > 0.02       - weight ~ 0.020 [0.016, 0.021]
+bmi (0.61) > -0.29             - weight ~ 0.008 [0.006, 0.009]
+alcohol (1.0) > 0.00           - weight ~ 0.004 [0.003, 0.004]
+anthro_group (-1.0) <= 5.95    - weight ~ 0.004 [0.003, 0.004]
+con_alcohol (1.0) > 0.00       - weight ~ 0.004 [0.003, 0.004]
+weight (0.43) > -0.38          - weight ~ 0.004 [0.003, 0.004]
+ldl_hdl_ratio (-0.06) <= -0.01 - weight ~ 0.002 [0.000, 0.003]
+vita (2.24) > -0.05            - weight ~ 0.002 [0.000, 0.003]
+chol (0.33) > -0.13            - weight ~ 0.001 [-0.002, 0.002] [[!] direction uncertain]
 
 Factors impacting the calibrated probability for class 1 negatively:
-drnk_30d_num (-1.46) <= -0.03 - weight ~ -0.081 [-0.083, -0.081]
+pa_met (1.0) > 0.00            - weight ~ -0.080 [-0.086, -0.078]
+Ave_DBP (1.34) > -0.26         - weight ~ -0.044 [-0.046, -0.044]
+binge_drink (0.0) <= 0.02      - weight ~ -0.025 [-0.046, -0.018]
+height (-0.11) <= 0.17         - weight ~ -0.019 [-0.021, -0.018]
+hip (0.31) > -0.19             - weight ~ -0.019 [-0.021, -0.018]
+sex (1.0) <= 2.00              - weight ~ -0.019 [-0.021, -0.018]

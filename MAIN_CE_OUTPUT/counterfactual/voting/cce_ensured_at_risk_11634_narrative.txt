@@ -6,9 +6,16 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 1
-Calibrated probability: 0.774
-Prediction Interval: [0.774, 0.775]
+Calibrated probability: 0.788
+Prediction Interval: [0.787, 0.789]
 
 Alternatives to increase the calibrated probability for class 1:
+- If Ave_SBP < 0.80     then 0.666 [0.666, 0.667]
+- If age > 1.82         then 0.708 [0.707, 0.708]
+- If drnk_30days < 1.00 then 0.708 [0.707, 0.708]
+- If height < -2.08     then 0.708 [0.707, 0.708]
+- If vita < 0.24        then 0.708 [0.707, 0.708]
+- If weight < -0.03     then 0.708 [0.707, 0.708]
+- If hemoglobin < -0.38 then 0.734 [0.734, 0.735]
 
 Alternatives to decrease the calibrated probability for class 1:

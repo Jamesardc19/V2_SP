@@ -6,21 +6,31 @@ Instance 0
 Factual Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 0
-Calibrated Probability: 0.047
-Prediction Interval: [0.046, 0.047]
+Calibrated Probability: 0.072
+Prediction Interval: [0.070, 0.072]
 
 Factors impacting the calibrated probability for class 1 positively:
-anthro_group (6.0) > 5.94      - weight ~ 0.018 [0.018, 0.023]
-vita (0.71) > -0.13            - weight ~ 0.018 [0.018, 0.023]
-drnk_30days (1.0) > 0.00       - weight ~ 0.017 [0.017, 0.023]
-Ave_DBP (-2.28) <= -0.32       - weight ~ 0.001 [0.000, 0.012]
-drnk_30d_num (1.17) > -0.03    - weight ~ 0.000 [0.000, 0.005]
+tri (0.93) > -0.45            - weight ~ 0.028 [0.028, 0.030]
+anthro_group (6.0) > 5.90     - weight ~ 0.028 [0.028, 0.030]
+pa_met (0.0) <= 0.00          - weight ~ 0.028 [0.028, 0.030]
+ldl_hdl_ratio (-0.09) > -0.22 - weight ~ 0.028 [0.027, 0.030]
+vita (0.72) > -0.05           - weight ~ 0.026 [0.026, 0.030]
+Ave_DBP (-2.28) <= -0.32      - weight ~ 0.019 [0.019, 0.021]
+height (-1.73) <= 0.17        - weight ~ 0.019 [0.019, 0.021]
+chol (-0.3) <= -0.13          - weight ~ 0.013 [0.013, 0.021]
+alcohol (0.0) <= 0.00         - weight ~ 0.001 [-0.000, 0.013] [[!] direction uncertain]
+uic (-0.28) <= 0.26           - weight ~ 0.001 [-0.000, 0.012] [[!] direction uncertain]
 
 Factors impacting the calibrated probability for class 1 negatively:
-age (-1.26) <= -0.47           - weight ~ -0.148 [-0.148, -0.146]
-Ave_SBP (-1.67) <= -0.40       - weight ~ -0.068 [-0.069, -0.066]
-ldl_hdl_ratio (-0.28) <= -0.07 - weight ~ -0.061 [-0.061, -0.058]
-con_alcohol (1.0) > 1.00       - weight ~ -0.057 [-0.057, -0.055]
-sex (2.0) > 2.00               - weight ~ -0.057 [-0.057, -0.055]
-uic (-0.25) <= 0.35            - weight ~ -0.057 [-0.057, -0.055]
-ldl (-0.29) <= -0.09           - weight ~ -0.019 [-0.019, -0.017]
+bmi (-1.16) <= -0.15          - weight ~ -0.122 [-0.123, -0.119]
+waist (-1.84) <= -0.10        - weight ~ -0.078 [-0.078, -0.073]
+age (-1.26) <= -0.43          - weight ~ -0.070 [-0.071, -0.067]
+Ave_SBP (-1.67) <= -0.40      - weight ~ -0.063 [-0.064, -0.060]
+weight (-1.72) <= -0.16       - weight ~ -0.038 [-0.039, -0.034]
+currentsmoking (0.0) <= 0.68  - weight ~ -0.016 [-0.017, -0.009]
+drnk_30days (0.0) <= 0.00     - weight ~ -0.011 [-0.011, -0.004]
+smoke_status (0.0) <= 1.00    - weight ~ -0.011 [-0.011, -0.004]
+ever_smk (0.0) <= 0.01        - weight ~ -0.005 [-0.006, -0.001]
+hemoglobin (-0.32) > -0.92    - weight ~ -0.004 [-0.004, 0.000] [[!] direction uncertain]
+hdl (-0.14) <= 0.36           - weight ~ -0.001 [-0.001, 0.002] [[!] direction uncertain]
+ldl (-0.25) <= 0.06           - weight ~ -0.001 [-0.001, 0.002] [[!] direction uncertain]

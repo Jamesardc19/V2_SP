@@ -6,23 +6,19 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 0
-Calibrated probability: 0.241
-Prediction Interval: [0.240, 0.241]
+Calibrated probability: 0.195
+Prediction Interval: [0.193, 0.195]
 
 Alternatives to increase the calibrated probability for class 1:
-- If age > -0.84         then 0.429 [0.428, 0.431]
-- If Ave_SBP > 0.16      then 0.320 [0.318, 0.320]
-- If waist > -0.38       then 0.320 [0.318, 0.320]
-- If drnk_30d_num < 1.17 then 0.273 [0.272, 0.273]
+- If age > -0.79         then 0.481 [0.479, 0.483]
+- If waist > -0.39       then 0.299 [0.297, 0.299]
+- If Ave_SBP > 0.16      then 0.279 [0.276, 0.280]
+- If binge_drink > 0.00  then 0.254 [0.252, 0.254]
+- If sex < 1.99          then 0.240 [0.209, 0.250]
+- If weight > -0.59      then 0.206 [0.199, 0.208]
 
 Alternatives to decrease the calibrated probability for class 1:
-- If waist < -0.84       then 0.146 [0.145, 0.147]
-- If age < -1.31         then 0.157 [0.156, 0.157]
-- If anthro_group < 3.45 then 0.157 [0.156, 0.157]
-- If anthro_group > 5.94 then 0.157 [0.156, 0.157]
-- If smoke_status > 0.19 then 0.157 [0.156, 0.157]
-- If Ave_SBP < -0.40     then 0.184 [0.179, 0.185]
-- If Ave_DBP > 0.75      then 0.201 [0.192, 0.202]
-- If hdl < -0.38         then 0.213 [0.212, 0.213]
-- If tri < -0.16         then 0.213 [0.212, 0.213]
-- If ever_smk > 1.18     then 0.233 [0.214, 0.238]
+- If age < -1.31         then 0.138 [0.135, 0.138]
+- If Ave_SBP < -0.36     then 0.154 [0.149, 0.155]
+- If tri < -0.45         then 0.192 [0.187, 0.194]
+- If anthro_group > 5.87 then 0.193 [0.183, 0.195]

@@ -6,17 +6,37 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 1
-Calibrated probability: 0.870
-Prediction Interval: [0.869, 0.872]
+Calibrated probability: 0.670
+Prediction Interval: [0.667, 0.676]
 
 Alternatives to increase the calibrated probability for class 1:
-- If pa_met < 0.06       then 0.634 [0.634, 0.635]
-- If pa_met > 1.00       then 0.670 [0.670, 0.672]
-- If age < 0.14          then 0.711 [0.711, 0.713]
-- If drnk_30d_num > 1.17 then 0.774 [0.774, 0.775]
-- If sex > 2.00          then 0.774 [0.774, 0.775]
-- If drnk_30d_num < 0.93 then 0.774 [0.774, 0.775]
-- If anthro_group > 5.75 then 0.814 [0.814, 0.815]
-- If anthro_group < 3.73 then 0.814 [0.814, 0.815]
+- If Ave_SBP > -1.46       then 0.841 [0.841, 0.843]
+- If waist > -0.39         then 0.761 [0.761, 0.762]
+- If Ave_DBP < -1.94       then 0.708 [0.707, 0.708]
+- If bmi < -1.12           then 0.708 [0.707, 0.708]
+- If chol > -0.26          then 0.708 [0.707, 0.708]
+- If tri > 2.06            then 0.708 [0.707, 0.708]
+- If ldl_hdl_ratio > -0.63 then 0.707 [0.706, 0.708]
+- If hdl > 0.35            then 0.694 [0.693, 0.698]
+- If tri < -0.16           then 0.684 [0.683, 0.685]
+- If weight > -0.38        then 0.682 [0.679, 0.687]
+- If Ave_DBP > -1.21       then 0.674 [0.673, 0.677]
 
 Alternatives to decrease the calibrated probability for class 1:
+- If pa_met < 0.00         then 0.293 [0.292, 0.294]
+- If pa_met > 0.99         then 0.319 [0.318, 0.320]
+- If age < 0.18            then 0.484 [0.481, 0.487]
+- If anthro_group > 5.30   then 0.584 [0.583, 0.584]
+- If waist < -0.83         then 0.591 [0.591, 0.592]
+- If alcohol < 0.99        then 0.631 [0.627, 0.636]
+- If vita < 0.24           then 0.639 [0.638, 0.641]
+- If hip > -0.70           then 0.639 [0.638, 0.641]
+- If anthro_group < 3.96   then 0.646 [0.644, 0.648]
+- If binge_drink > 0.00    then 0.646 [0.644, 0.648]
+- If con_alcohol > 0.00    then 0.646 [0.644, 0.648]
+- If currentsmoking < 2.00 then 0.646 [0.644, 0.648]
+- If ever_smk < 4.33       then 0.646 [0.644, 0.648]
+- If sex > 1.00            then 0.646 [0.644, 0.648]
+- If height < 0.18         then 0.650 [0.648, 0.654]
+- If hemoglobin < -0.38    then 0.650 [0.648, 0.654]
+- If hdl < -0.06           then 0.658 [0.656, 0.663]

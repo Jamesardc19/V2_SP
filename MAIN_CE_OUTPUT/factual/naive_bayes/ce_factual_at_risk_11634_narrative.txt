@@ -5,23 +5,33 @@ Instance 0
 
 Factual Explanation (Advanced):
 --------------------------------------------------------------------------------
-Prediction: 1
-Calibrated Probability: 0.760
-Prediction Interval: [0.760, 0.761]
+Prediction: 0
+Calibrated Probability: 0.409
+Prediction Interval: [0.408, 0.410]
 
 Factors impacting the calibrated probability for class 1 positively:
-anthro_group (4.0) <= 4.18    - weight ~ 0.613 [0.612, 0.613]
-Ave_SBP (2.43) > 0.05         - weight ~ 0.041 [0.041, 0.041]
-age (1.27) > -0.24            - weight ~ 0.023 [0.021, 0.023]
+Ave_SBP (2.43) > -0.40        - weight ~ 0.131 [0.130, 0.133]
+age (1.27) > -0.56            - weight ~ 0.108 [0.107, 0.110]
+vita (2.24) > -0.12           - weight ~ 0.061 [0.060, 0.062]
+waist (0.77) > 0.04           - weight ~ 0.061 [0.060, 0.062]
+Ave_DBP (1.34) > -0.14        - weight ~ 0.055 [0.055, 0.056]
+pa_met (1.0) > -0.00          - weight ~ 0.050 [0.049, 0.051]
+smoke_status (2.0) > 1.87     - weight ~ 0.050 [0.049, 0.051]
+bmi (0.61) > 0.05             - weight ~ 0.050 [0.049, 0.051]
+tri (1.09) > -0.45            - weight ~ 0.050 [0.049, 0.051]
+hip (0.31) > 0.07             - weight ~ 0.034 [0.033, 0.035]
+weight (0.43) > -0.03         - weight ~ 0.034 [0.033, 0.035]
+chol (0.33) > -0.08           - weight ~ 0.019 [0.017, 0.024]
+uic (-1.65) <= 0.56           - weight ~ 0.019 [0.017, 0.024]
+hemoglobin (0.29) > -0.99     - weight ~ 0.018 [0.017, 0.020]
+con_alcohol (1.0) > -0.79     - weight ~ 0.002 [0.000, 0.004]
+drnk_30days (1.0) > 0.00      - weight ~ 0.002 [0.000, 0.004]
+sex (1.0) <= 1.85             - weight ~ 0.002 [0.000, 0.004]
+alcohol (1.0) > 0.01          - weight ~ 0.001 [-0.001, 0.004] [[!] direction uncertain]
+hdl (0.16) <= 0.17            - weight ~ 0.001 [-0.000, 0.002] [[!] direction uncertain]
 
 Factors impacting the calibrated probability for class 1 negatively:
-Ave_DBP (1.34) > -0.02        - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
-drnk_30d_num (-1.46) <= -1.24 - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
-hdl (-0.04) <= 0.32           - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
-hemoglobin (0.29) > -0.38     - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
-ldl (-0.48) <= 0.01           - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
-ldl_hdl_ratio (-0.1) <= -0.01 - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
-tri (0.81) > -0.45            - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
-uic (-1.65) <= 0.45           - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
-vita (2.25) > -0.06           - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
-waist (0.44) > 0.02           - weight ~ -0.000 [-0.001, 0.000] [[!] direction uncertain]
+anthro_group (-1.0) <= 4.00   - weight ~ -0.376 [-0.378, -0.376]
+binge_drink (0.0) <= 0.03     - weight ~ -0.035 [-0.035, -0.034]
+ldl (-0.29) <= 0.12           - weight ~ -0.023 [-0.024, -0.022]
+ldl_hdl_ratio (-0.06) <= 0.00 - weight ~ -0.012 [-0.012, -0.011]

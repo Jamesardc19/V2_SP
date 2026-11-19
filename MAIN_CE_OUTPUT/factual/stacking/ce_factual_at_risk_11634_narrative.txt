@@ -6,30 +6,27 @@ Instance 0
 Factual Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 1
-Calibrated Probability: 0.685
-Prediction Interval: [0.681, 0.694]
+Calibrated Probability: 0.862
+Prediction Interval: [0.862, 0.864]
 
 Factors impacting the calibrated probability for class 1 positively:
-waist (0.44) > -0.05          - weight ~ 0.172 [0.171, 0.173]
-age (1.27) > -0.46            - weight ~ 0.158 [0.157, 0.159]
-Ave_SBP (2.43) > -0.40        - weight ~ 0.125 [0.124, 0.127]
-vita (2.25) > -0.16           - weight ~ 0.094 [0.092, 0.095]
-anthro_group (4.0) <= 5.94    - weight ~ 0.047 [0.045, 0.048]
-tri (0.81) > -0.49            - weight ~ 0.044 [0.042, 0.045]
-ever_smk (3.0) > 2.00         - weight ~ 0.042 [0.040, 0.044]
-hdl (-0.04) <= 0.33           - weight ~ 0.031 [0.029, 0.032]
-ldl (-0.48) <= -0.04          - weight ~ 0.029 [0.027, 0.030]
-ldl_hdl_ratio (-0.1) <= -0.03 - weight ~ 0.018 [0.016, 0.018]
-currentsmoking (0.0) <= 0.95  - weight ~ 0.005 [0.004, 0.006]
-drnk_30days (1.0) > 0.00      - weight ~ 0.005 [0.004, 0.006]
-sex (1.0) <= 2.00             - weight ~ 0.005 [0.004, 0.006]
-uic (-1.65) <= 0.35           - weight ~ 0.004 [-0.000, 0.007] [[!] direction uncertain]
-alcohol (1.0) > 0.00          - weight ~ 0.000 [-0.010, 0.005] [[!] direction uncertain]
+Ave_SBP (2.43) > -0.40        - weight ~ 0.316 [0.314, 0.317]
+age (1.27) > -0.43            - weight ~ 0.315 [0.314, 0.316]
+waist (0.77) > -0.02          - weight ~ 0.258 [0.256, 0.259]
+anthro_group (-1.0) <= 5.95   - weight ~ 0.210 [0.208, 0.211]
+tri (1.09) > -0.45            - weight ~ 0.176 [0.174, 0.177]
+weight (0.43) > -0.09         - weight ~ 0.162 [0.154, 0.166]
+vita (2.24) > -0.15           - weight ~ 0.149 [0.146, 0.151]
+hemoglobin (0.29) > -0.72     - weight ~ 0.111 [0.108, 0.112]
+chol (0.33) > -0.16           - weight ~ 0.106 [0.102, 0.107]
+bmi (0.61) > -0.15            - weight ~ 0.096 [0.087, 0.098]
+uic (-1.65) <= 0.25           - weight ~ 0.067 [0.064, 0.068]
+ldl_hdl_ratio (-0.06) > -0.22 - weight ~ 0.050 [0.047, 0.051]
+drnk_30days (1.0) > 0.00      - weight ~ 0.050 [0.044, 0.051]
+hdl (0.16) <= 0.44            - weight ~ 0.033 [0.025, 0.035]
+ldl (-0.29) <= 0.06           - weight ~ 0.031 [0.024, 0.032]
+con_alcohol (1.0) > -0.97     - weight ~ 0.009 [0.003, 0.010]
+height (-0.11) <= 0.17        - weight ~ 0.006 [0.001, 0.006]
 
 Factors impacting the calibrated probability for class 1 negatively:
-hemoglobin (0.29) > -0.38     - weight ~ -0.085 [-0.087, -0.085]
-Ave_DBP (1.34) > -0.32        - weight ~ -0.085 [-0.087, -0.085]
-binge_drink (0.0) <= 0.01     - weight ~ -0.085 [-0.087, -0.085]
-pa_met (1.0) > 0.00           - weight ~ -0.085 [-0.087, -0.085]
-drnk_30d_num (-1.46) <= -0.03 - weight ~ -0.079 [-0.081, -0.078]
-smoke_status (2.0) > 1.12     - weight ~ -0.025 [-0.028, -0.024]
+pa_met (1.0) > 0.00           - weight ~ -0.034 [-0.039, -0.033]

@@ -4,9 +4,14 @@ Main Preprocessing Pipeline (2018-2021 ENNS Dataset)
 Key design decisions:
   1. No population filter  (all age groups included — children, pregnant, lactating)
   2. Selective feature engineering (bmi, tri_hdl_ratio, ldl_hdl_ratio, bmi_tri_interact)
-  3. Correlation threshold = 0.80
+  3. Correlation threshold = 0.80, with a protected list of user-suppliable features
+     (weight, height, bmi, waist, hip, chol, ldl, tri, hdl and the smoking answers)
+     that are never dropped. tri_hdl_ratio and bmi_tri_interact are dropped explicitly.
   4. SMOTE applied to the FULL preprocessed dataset BEFORE re-splitting 70/15/15
   5. Socio dataset integrated: age and sex included as features
+  6. ENNS skip-logic recoded instead of mode-imputed (alcohol, con_alcohol,
+     drnk_30days, ever_smk); remaining categorical blanks get an explicit -1 category
+  7. drnk_30d_num dropped (50.6% blank plus an undocumented 999999 code)
 """
 
 import numpy as np
@@ -49,13 +54,13 @@ from preprocessing_pipeline_v7 import (
 def engineer_features_selective(df):
     """
     Compute only the engineered features clinically relevant to diabetes risk:
-      - bmi            : weight / (height/100)²    drops weight & height
+      - bmi            : weight / (height/100)²    weight & height are kept
       - tri_hdl_ratio  : tri / (hdl + eps)          insulin resistance proxy
       - ldl_hdl_ratio  : ldl / hdl                  dyslipidaemia pattern
       - bmi_tri_interact: bmi * tri / 100           obesity × triglyceride risk
 
     tri, hdl, ldl are KEPT alongside their derived ratios.
-    The correlation filter (0.80) will remove any that become redundant.
+    The correlation filter (0.80) will remove any derived feature that becomes redundant.
     """
     print("\n" + "="*70)
     print("SELECTIVE FEATURE ENGINEERING (diabetes risk scope)")
@@ -65,9 +70,7 @@ def engineer_features_selective(df):
 
     if 'weight' in df.columns and 'height' in df.columns:
         df['bmi'] = df['weight'] / ((df['height'] / 100) ** 2)
-        df = df.drop(columns=['weight', 'height'])
         created.append('bmi')
-        dropped.extend(['weight', 'height'])
 
     if 'tri' in df.columns and 'hdl' in df.columns:
         df['tri_hdl_ratio'] = df['tri'] / (df['hdl'] + eps)
@@ -82,8 +85,8 @@ def engineer_features_selective(df):
         created.append('bmi_tri_interact')
 
     print(f"  Created : {created}")
-    print(f"  Dropped : {dropped}  (replaced by bmi)")
-    print(f"  Retained: tri, hdl, ldl  (kept alongside derived ratios)")
+    print(f"  Dropped : {dropped}")
+    print(f"  Retained: weight, height, tri, hdl, ldl  (kept alongside derived features)")
     print(f"  Shape   : {df.shape}")
     return df
 
@@ -104,13 +107,26 @@ class Config(ConfigV7):
 
     # No feature engineering (controlled via the main() flow)
 
-    # Explicitly drop before correlation filter
-    # chol (total cholesterol) dropped in favour of ldl (LDL — bad cholesterol);
-    # ldl + hdl + tri give the full standard lipid panel
-    drop_before_corr = ['chol']
+    # Dropped before any processing
+    # drnk_30d_num: 50.6% blank plus an undocumented 999999 code in 26% of rows
+    # alcohol_status: duplicate of alcohol / con_alcohol
+    drop_features = ['drnk_30d_num', 'alcohol_status']
 
-    # More aggressive correlation pruning (align with 2013)
+    # Derived features dropped right after engineering (redundant with tri / bmi)
+    drop_derived = ['tri_hdl_ratio', 'bmi_tri_interact']
+
+    # Explicitly drop before correlation filter (none: chol and ldl are different lab measures)
+    drop_before_corr = []
+
+    # Measurements and questionnaire answers that a user can supply are never removed by the correlation filter
+    protected_features = ['weight', 'height', 'bmi', 'waist', 'hip', 'chol', 'ldl', 'tri', 'hdl',
+                          'currentsmoking', 'ever_smk', 'smoke_status']
+
+    # Correlation pruning applies to the remaining (derived or duplicate) features
     correlation_threshold = 0.80
+
+    # Explicit category for categorical blanks that are not skip-logic (e.g. missing clinical form)
+    missing_category_code = -1
 
     # SMOTE settings (applied to full dataset before split)
     resampling_method       = 'smote'
@@ -154,6 +170,67 @@ def merge_socio(df, config):
     print(f"  age  null : {df['age'].isna().sum():,}  "
           f"sex  null : {df['sex'].isna().sum():,}")
     return df
+
+
+# =============================================================================
+# ENNS SKIP-LOGIC RECODING  (replaces mode imputation of "not applicable" answers)
+# =============================================================================
+
+def recode_skip_logic(df):
+    print("\n" + "="*70)
+    print("ENNS SKIP-LOGIC RECODING")
+    print("="*70)
+
+    never = df['alcohol'] == 0
+    df.loc[never, ['con_alcohol', 'drnk_30days']] = 0
+    print(f"  alcohol = 0 -> con_alcohol = 0, drnk_30days = 0 : {int(never.sum()):,} rows")
+
+    no_12m = df['con_alcohol'] == 0
+    df.loc[no_12m, 'drnk_30days'] = 0
+    print(f"  con_alcohol = 0 -> drnk_30days = 0              : {int(no_12m.sum()):,} rows")
+
+    cur = df['ever_smk'].isna() & (df['currentsmoking'] >= 1)
+    df.loc[cur, 'ever_smk'] = 6
+    print(f"  ever_smk blank for current smokers -> code 6     : {int(cur.sum()):,} rows")
+    return df
+
+
+# =============================================================================
+# CORRELATION FILTER WITH PROTECTED FEATURES
+# =============================================================================
+
+def drop_correlated_protected(X_train, X_val, X_test, config):
+    print("\n" + "="*70)
+    print(f"DROPPING HIGHLY CORRELATED FEATURES (threshold={config.correlation_threshold}, protected list kept)")
+    print("="*70)
+
+    protected = set(config.protected_features)
+    corr = X_train.corr().abs()
+    cols = list(corr.columns)
+    to_drop, kept_pairs = [], []
+    for j in range(len(cols)):
+        for i in range(j):
+            a, b = cols[i], cols[j]
+            if a in to_drop or b in to_drop:
+                continue
+            r = corr.iloc[i, j]
+            if not r > config.correlation_threshold:
+                continue
+            if a in protected and b in protected:
+                kept_pairs.append((a, b, round(float(r), 3)))
+            elif b in protected:
+                to_drop.append(a)
+            else:
+                to_drop.append(b)
+
+    X_train = X_train.drop(columns=to_drop, errors='ignore')
+    X_val   = X_val.drop(columns=to_drop,   errors='ignore')
+    X_test  = X_test.drop(columns=to_drop,  errors='ignore')
+
+    print(f"  Dropped {len(to_drop)} features: {to_drop}")
+    print(f"  Correlated pairs kept because both are protected: {kept_pairs}")
+    print(f"  Remaining features: {X_train.shape[1]}")
+    return X_train, X_val, X_test, to_drop
 
 
 # =============================================================================
@@ -425,6 +502,10 @@ def save_outputs(X_train_np, y_train_np, X_val_np, y_val_np,
         'imputer':           imputer,
         'cat_modes':         cat_modes,
         'corr_dropped':      corr_dropped,
+        'categorical_features':  [c for c in feature_names if c in config.CATEGORICAL_FEATURES],
+        'missing_category_code': config.missing_category_code,
+        'protected_features':    config.protected_features,
+        'dropped_features':      config.drop_features,
         'resampling_method': config.resampling_method,
         'fbs_threshold':     config.fbs_threshold,
         'train_shape':       X_train_np.shape,
@@ -453,7 +534,7 @@ def main():
     print("\n" + "="*70)
     print("MAIN PREPROCESSING PIPELINE  (2018-2021 ENNS)")
     print("SMOTE before split | no population filter | selective feature engineering")
-    print("Correlation threshold: 0.80  |  SMOTE strategy: 1.0 (full balance)")
+    print("Correlation threshold: 0.80 (protected features)  |  SMOTE strategy: 1.0 (full balance)")
     print("Socio dataset: age + sex included as features")
     print("="*70)
 
@@ -468,6 +549,9 @@ def main():
     df = drop_metadata_columns(df)        # drops regcode, provhuc, hhnum, member_code
                                            # age and sex are retained (not in metadata_prefixes)
     df = recode_special_missing(df, config)
+    df = recode_skip_logic(df)
+    df = df.drop(columns=config.drop_features, errors='ignore')
+    print(f"  Dropped features: {config.drop_features}")
 
     # filter_population: SKIPPED — all age groups included
     df = create_target(df, config)        # drops rows with NaN FBS — index shrinks
@@ -477,6 +561,8 @@ def main():
     print("  Dropped admin columns: mos_lactation, mos_preg (near-all-NaN)")
 
     df = engineer_features_selective(df)    # bmi, tri_hdl_ratio, ldl_hdl_ratio, bmi_tri_interact
+    df = df.drop(columns=config.drop_derived, errors='ignore')
+    print(f"  Dropped derived features: {config.drop_derived}")
 
     # ── EDA: re-attach geo columns using index alignment (survives FBS row drops)
     df_eda = df.copy()
@@ -494,8 +580,12 @@ def main():
     cat_cols, cont_cols = identify_feature_types(X_train, config)
     optimal_k = optimize_knn_neighbors(X_train, cont_cols, config)
 
+    for ds in (X_train, X_val, X_test):
+        ds[cat_cols] = ds[cat_cols].fillna(config.missing_category_code)
+
     X_train, X_val, X_test, imputer, cat_modes = impute_missing(
         X_train, X_val, X_test, cat_cols, cont_cols, optimal_k, config)
+    cat_modes = {c: config.missing_category_code for c in cat_cols}
     X_train, X_val, X_test = handle_outliers(
         X_train, X_val, X_test, cont_cols, config)
     X_train, X_val, X_test, scaler = scale_features(
@@ -509,7 +599,7 @@ def main():
         X_test  = X_test.drop(columns=pre_drop,  errors='ignore')
         print(f"  [Config] Pre-dropped before corr filter: {pre_drop}")
 
-    X_train, X_val, X_test, corr_dropped = drop_correlated_features(
+    X_train, X_val, X_test, corr_dropped = drop_correlated_protected(
         X_train, X_val, X_test, config)
 
     feature_names = list(X_train.columns)

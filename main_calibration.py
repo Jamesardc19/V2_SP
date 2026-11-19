@@ -1,7 +1,8 @@
 """
 Main Model Calibration Pipeline (2018-2021 ENNS)
 Applies Platt scaling (sigmoid), isotonic regression, and temperature scaling.
-Evaluates reliability, Brier score, log-loss, and AUC before/after calibration.
+Evaluates reliability, Brier score, log-loss, ECE, and AUC before/after calibration.
+The calibration method saved per model is selected by 5-fold CV log-loss on the validation set.
 Handles BO-TabNet via a float32-safe sklearn wrapper.
 """
 
@@ -18,6 +19,7 @@ import matplotlib.pyplot as plt
 
 from scipy.optimize import minimize_scalar
 from sklearn.calibration import CalibratedClassifierCV, calibration_curve
+from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import (
     brier_score_loss, roc_auc_score, log_loss,
     average_precision_score, f1_score, fbeta_score,
@@ -39,7 +41,7 @@ class Config:
     calib_models_dir = Path(r"d:\School Files\CMSC\CMSC 199\SP\V2_SP\MAIN_TRAINED_MODELS_CALIB")
 
     models_to_calibrate = [
-        'botabnet',
+        'botabnet', 'knn',
         'xgboost', 'random_forest', 'lightgbm', 'catboost',
         'adaboost', 'naive_bayes', 'stacking', 'voting',
     ]
@@ -119,6 +121,17 @@ def load_models(config):
 # METRICS
 # =============================================================================
 
+def expected_calibration_error(y_true, proba, n_bins=10):
+    y_true = np.asarray(y_true)
+    bins   = np.minimum((np.asarray(proba) * n_bins).astype(int), n_bins - 1)
+    ece    = 0.0
+    for b in range(n_bins):
+        mask = bins == b
+        if mask.any():
+            ece += mask.mean() * abs(y_true[mask].mean() - np.asarray(proba)[mask].mean())
+    return float(ece)
+
+
 def compute_metrics(name, model, X, y):
     proba = model.predict_proba(X)[:, 1]
     pred  = model.predict(X)
@@ -128,6 +141,7 @@ def compute_metrics(name, model, X, y):
         'auprc':     average_precision_score(y, proba),
         'brier':     brier_score_loss(y, proba),
         'log_loss':  log_loss(y, proba),
+        'ece':       expected_calibration_error(y, proba),
         'f2':        fbeta_score(y, pred, beta=2, zero_division=0),
         'f1':        f1_score(y, pred, zero_division=0),
         'precision': precision_score(y, pred, zero_division=0),
@@ -175,6 +189,22 @@ def calibrate_model(model, X_val, y_val, method='sigmoid'):
     calib = CalibratedClassifierCV(estimator=model, cv='prefit', method=method)
     calib.fit(X_val, y_val)
     return calib
+
+
+def select_method_cv(model, X_val, y_val, config, n_splits=5):
+    skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=config.random_state)
+    scores = {'sigmoid': [], 'isotonic': [], 'temperature': []}
+    for fit_idx, hold_idx in skf.split(X_val, y_val):
+        X_fit, y_fit = X_val[fit_idx], y_val[fit_idx]
+        X_hold, y_hold = X_val[hold_idx], y_val[hold_idx]
+        for method in ('sigmoid', 'isotonic'):
+            cal = calibrate_model(model, X_fit, y_fit, method=method)
+            scores[method].append(log_loss(y_hold, cal.predict_proba(X_hold)[:, 1], labels=[0, 1]))
+        T, _ = find_temperature(model, X_fit, y_fit)
+        cal = TemperatureScaledModel(model, T)
+        scores['temperature'].append(log_loss(y_hold, cal.predict_proba(X_hold)[:, 1], labels=[0, 1]))
+    mean_scores = {m: float(np.mean(v)) for m, v in scores.items()}
+    return min(mean_scores, key=mean_scores.get), mean_scores
 
 
 # =============================================================================
@@ -312,6 +342,7 @@ def main():
 
     rows_before, rows_sig, rows_iso, rows_temp = [], [], [], []
     models_sig, models_iso, models_temp = {}, {}, {}
+    selected_methods, cv_logloss = {}, {}
 
     print("\n" + "="*70)
     print("CALIBRATING MODELS")
@@ -356,14 +387,14 @@ def main():
               f"T*={T_opt:.4f}  "
               f"[LL d: {r_temp['log_loss']-m_before['log_loss']:+.4f}]")
 
-        lls = {'sigmoid': r_sig['log_loss'],
-               'isotonic': r_iso['log_loss'],
-               'temperature': r_temp['log_loss']}
-        best_method = min(lls, key=lls.get)
+        best_method, cv_scores = select_method_cv(model, X_val, y_val, config)
+        selected_methods[name] = best_method
+        cv_logloss[name]       = cv_scores
         best_calib  = {'sigmoid': m_sig, 'isotonic': m_iso, 'temperature': m_temp}[best_method]
         save_path   = config.calib_models_dir / f'{name}_calib.joblib'
         joblib.dump(best_calib, save_path)
-        print(f"    Saved best ({best_method}) -> {save_path.name}")
+        print(f"    Selected on validation CV ({best_method}) -> {save_path.name}  "
+              f"[CV log-loss: " + ", ".join(f"{k}={v:.4f}" for k, v in cv_scores.items()) + "]")
 
     df_before  = pd.DataFrame(rows_before)
     df_sig     = pd.DataFrame(rows_sig)
@@ -394,14 +425,25 @@ def main():
         'logloss_sigmoid':  df_sig['log_loss'].values,
         'logloss_isotonic': df_iso['log_loss'].values,
         'logloss_temp':     df_temp['log_loss'].values,
+        'ece_raw':          df_before['ece'],
+        'ece_sigmoid':      df_sig['ece'].values,
+        'ece_isotonic':     df_iso['ece'].values,
+        'ece_temp':         df_temp['ece'].values,
         'f2_raw':           df_before['f2'],
+        'f2_sigmoid':       df_sig['f2'].values,
+        'f2_isotonic':      df_iso['f2'].values,
+        'f2_temp':          df_temp['f2'].values,
+        'selected_method':  [selected_methods[n] for n in models_raw.keys()],
+        'val_cv_logloss_sigmoid':     [cv_logloss[n]['sigmoid'] for n in models_raw.keys()],
+        'val_cv_logloss_isotonic':    [cv_logloss[n]['isotonic'] for n in models_raw.keys()],
+        'val_cv_logloss_temperature': [cv_logloss[n]['temperature'] for n in models_raw.keys()],
     })
     print(compare.to_string(index=False))
     compare.to_csv(config.output_dir / 'calibration_comparison.csv', index=False)
     print(f"\n  Saved: calibration_comparison.csv")
 
     print("\n" + "="*70)
-    print(f"BEST LOG-LOSS PER MODEL  (prior baseline = {baseline_ll:.4f})")
+    print(f"BEST LOG-LOSS PER MODEL ON TEST, REPORTING ONLY  (prior baseline = {baseline_ll:.4f})")
     print("="*70)
     for i, name in enumerate(df_before['model']):
         lls = {

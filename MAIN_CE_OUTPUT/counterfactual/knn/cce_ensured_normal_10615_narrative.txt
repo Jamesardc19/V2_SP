@@ -6,14 +6,11 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 0
-Calibrated probability: 0.376
-Prediction Interval: [0.376, 0.376]
+Calibrated probability: 0.357
+Prediction Interval: [0.356, 0.357]
 
 Alternatives to increase the calibrated probability for class 1:
-- If alcohol > 0.00      then 0.831 [0.831, 0.831]
-- If con_alcohol < 1.00  then 0.831 [0.831, 0.831]
-- If age > -1.23         then 0.528 [0.527, 0.528]
+- If Ave_DBP > -2.05 then 0.103 [0.102, 0.103]
+- If vita < -0.05    then 0.103 [0.102, 0.103]
 
 Alternatives to decrease the calibrated probability for class 1:
-- If Ave_DBP > -1.98     then 0.097 [0.096, 0.097]
-- If anthro_group < 5.94 then 0.097 [0.096, 0.097]

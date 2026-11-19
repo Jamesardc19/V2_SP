@@ -11,7 +11,7 @@ Special Problem (CMSC 199, UP Manila): early detection of diabetes risk (FBS >= 
 3. `python main_train.py` -> `MAIN_TRAINED_MODELS/`, `MAIN_MODEL_RESULTS/`
 4. `python main_xai.py` -> `MAIN_XAI/`
 5. `python main_calibration.py` -> `MAIN_CALIBRATION/`, `MAIN_TRAINED_MODELS_CALIB/`
-6. `python main_ce.py` (uses `ce_utils.py`, `ce_factual.py`, `ce_cce.py`, `ce_global.py`, `ce_mondrian.py`) -> `MAIN_CE_OUTPUT/`
+6. `python ce_factual.py`, `ce_cce.py`, `ce_global.py`, `ce_mondrian.py` (share `ce_utils.py`) -> `MAIN_CE_OUTPUT/` (`main_ce.py` is an older combined script)
 
 `V2_Pipeline.ipynb` is a documentation notebook that collects the code of all scripts above. It has `RUN_*` flags; with flags off it only displays saved outputs.
 
@@ -30,6 +30,5 @@ Special Problem (CMSC 199, UP Manila): early detection of diabetes risk (FBS >= 
 - Check any file is under 100 MB before staging (GitHub limit). The largest dataset file is about 94 MB.
 
 ## Known issues (do not "fix" without asking; see Project-Context.md)
-- V2 applies SMOTE to the full dataset before the 70/15/15 split (data leakage). Reported V2 numbers are therefore optimistic.
-- `main_calibration.py` ranks calibrators on test data.
+- The V2 results (backup in `ARCHIVE/V2_final_backup/`) applied SMOTE before the split, and this is unchanged in the re-run. Calibrators were ranked on test data in V2 and are now selected on validation data.
 - The IDE markdown notebook renderer error ("Failed to fetch dynamically imported module ... markdown-language-features/notebook-out/index.js") is an IDE problem, not a notebook file problem.

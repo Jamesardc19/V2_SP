@@ -36,6 +36,8 @@ def run_cce_for_model(model_key, model_name, model,
 
     out_dir = config.output_dir / 'counterfactual' / model_key
     out_dir.mkdir(parents=True, exist_ok=True)
+    for stale in out_dir.glob('cce_*'):
+        stale.unlink()
 
     print(f"  Initializing CalibratedExplainer (n_cal={len(X_cal)})...")
     try:

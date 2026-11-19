@@ -121,6 +121,7 @@ def load_data(config):
     info    = joblib.load(config.data_dir / 'preprocessing_info.pkl')
 
     features = info.get('feature_names', [f'f{i}' for i in range(X_train.shape[1])])
+    config.sex_col_idx = list(features).index('sex')
     print(f"  Train : {X_train.shape}")
     print(f"  Cal   : {X_cal.shape}   (calibration set for Venn-Abers)")
     print(f"  Test  : {X_test.shape}")

@@ -6,23 +6,29 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 1
-Calibrated probability: 0.719
-Prediction Interval: [0.719, 0.720]
+Calibrated probability: 0.785
+Prediction Interval: [0.785, 0.787]
 
 Alternatives to increase the calibrated probability for class 1:
-- If binge_drink > 0.01   then 0.760 [0.760, 0.761]
-- If tri > 1.59           then 0.743 [0.742, 0.745]
-- If ever_smk > 0.07      then 0.737 [0.732, 0.749]
-- If smoke_status > 0.04  then 0.726 [0.726, 0.729]
-- If age > -0.10          then 0.724 [0.724, 0.726]
-- If waist > 0.77         then 0.724 [0.724, 0.726]
+- If anthro_group < 4.00  then 0.586 [0.585, 0.588]
+- If anthro_group > 5.52  then 0.699 [0.698, 0.701]
+- If Ave_SBP < 1.14       then 0.713 [0.712, 0.715]
+- If ldl_hdl_ratio < 1.44 then 0.740 [0.739, 0.743]
+- If Ave_DBP < 1.28       then 0.745 [0.744, 0.748]
+- If age < -0.14          then 0.745 [0.744, 0.748]
+- If waist < 0.32         then 0.745 [0.744, 0.748]
+- If chol < 1.16          then 0.755 [0.754, 0.758]
+- If vita < 0.33          then 0.755 [0.754, 0.758]
+- If ldl < 1.01           then 0.760 [0.759, 0.763]
+- If uic > 0.56           then 0.760 [0.759, 0.763]
+- If bmi < 0.36           then 0.761 [0.759, 0.767]
+- If hip < 0.43           then 0.761 [0.759, 0.767]
+- If con_alcohol < -0.79  then 0.765 [0.764, 0.767]
+- If sex > 1.26           then 0.765 [0.764, 0.767]
+- If tri < -0.03          then 0.765 [0.764, 0.767]
+- If weight < 0.32        then 0.765 [0.764, 0.767]
+- If alcohol < 0.99       then 0.769 [0.764, 0.787]
+- If hdl > -1.36          then 0.773 [0.771, 0.780]
+- If hemoglobin < -0.05   then 0.780 [0.778, 0.787]
 
 Alternatives to decrease the calibrated probability for class 1:
-- If anthro_group > 4.18  then 0.148 [0.147, 0.148]
-- If anthro_group < 3.99  then 0.251 [0.250, 0.251]
-- If Ave_SBP < 1.21       then 0.688 [0.688, 0.689]
-- If age < -0.24          then 0.691 [0.690, 0.694]
-- If ldl_hdl_ratio < 0.91 then 0.691 [0.690, 0.694]
-- If waist < 0.24         then 0.702 [0.701, 0.704]
-- If Ave_DBP < 0.71       then 0.709 [0.709, 0.710]
-- If ldl < 0.30           then 0.711 [0.710, 0.714]

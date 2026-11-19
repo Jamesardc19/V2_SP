@@ -6,26 +6,29 @@ Instance 0
 Alternative Explanation (Advanced):
 --------------------------------------------------------------------------------
 Prediction: 1
-Calibrated probability: 0.774
-Prediction Interval: [0.774, 0.775]
+Calibrated probability: 0.788
+Prediction Interval: [0.787, 0.789]
 
 Alternatives to increase the calibrated probability for class 1:
-- If waist > 0.54          then 0.817 [0.816, 0.821]
+- If anthro_group > 1.00 then 0.859 [0.858, 0.862]
+- If tri > 2.06          then 0.826 [0.822, 0.844]
+- If waist > 0.77        then 0.823 [0.823, 0.826]
+- If pa_met < 1.00       then 0.823 [0.822, 0.826]
+- If binge_drink > 0.00  then 0.814 [0.812, 0.819]
+- If Ave_DBP < 0.70      then 0.805 [0.804, 0.812]
 
 Alternatives to decrease the calibrated probability for class 1:
-- If age < 0.14            then 0.520 [0.519, 0.521]
-- If waist < 0.15          then 0.527 [0.526, 0.528]
-- If uic < -1.80           then 0.657 [0.656, 0.658]
-- If Ave_SBP < 0.72        then 0.682 [0.681, 0.684]
-- If anthro_group > 5.75   then 0.682 [0.670, 0.708]
-- If tri < -0.16           then 0.690 [0.689, 0.691]
-- If age > 1.81            then 0.696 [0.696, 0.698]
-- If vita < 0.27           then 0.708 [0.708, 0.710]
-- If ever_smk > 3.11       then 0.727 [0.727, 0.729]
-- If drnk_30days < 1.00    then 0.749 [0.749, 0.750]
-- If ever_smk < 2.00       then 0.749 [0.749, 0.750]
-- If hdl > 0.32            then 0.749 [0.749, 0.750]
-- If ldl < -1.56           then 0.749 [0.749, 0.750]
-- If drnk_30d_num > -1.46  then 0.766 [0.766, 0.767]
-- If ldl_hdl_ratio > -0.07 then 0.766 [0.766, 0.767]
-- If anthro_group < 3.73   then 0.769 [0.767, 0.775]
+- If age < 0.18          then 0.526 [0.524, 0.529]
+- If waist < 0.24        then 0.604 [0.604, 0.605]
+- If Ave_SBP < 0.80      then 0.666 [0.666, 0.667]
+- If tri < -0.16         then 0.687 [0.686, 0.688]
+- If uic < -1.68         then 0.692 [0.690, 0.694]
+- If age > 1.82          then 0.708 [0.707, 0.708]
+- If drnk_30days < 1.00  then 0.708 [0.707, 0.708]
+- If height < -2.08      then 0.708 [0.707, 0.708]
+- If vita < 0.24         then 0.708 [0.707, 0.708]
+- If weight < -0.03      then 0.708 [0.707, 0.708]
+- If chol < -0.13        then 0.724 [0.721, 0.735]
+- If hemoglobin < -0.38  then 0.734 [0.734, 0.735]
+- If bmi < 0.18          then 0.735 [0.734, 0.738]
+- If ever_smk > 3.00     then 0.749 [0.747, 0.753]
